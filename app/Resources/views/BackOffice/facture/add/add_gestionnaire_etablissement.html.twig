@@ -1,0 +1,63 @@
+<div class='panel panel-primary'>
+                <div class='panel-heading'><a data-toggle="collapse" href="#collapse1">Ajouter des établissement du gestionnaire : {{facture.getConcerne}}</a></div>        
+                    <table id="collapse1" class='table table-bordered table-triabe'>
+                    {% set nb_lignes = 0 %}
+                    {% for etab in facture.getConcerne.Etablissements %}
+                        
+                                {% set next_indice = etab.NewFactureRenouvellementIndice %}
+                                    
+                                {%  if  true or facture.HasNotEtablissement(etab) %}
+                                {% set  nb_lignes = 1 + nb_lignes %}
+                                
+
+                                {% if etab.lastFacture %}
+                                    <tr> 
+                                {% else %}
+                                    <tr class='alert-warning'> 
+                                {% endif  %}
+                                    <td><a href="{{ path('backoffice_etablissement_view', { 'id': etab.id }) }}">{{etab}}</a></td>
+                                    <td>{{etab.codeFiness}} 
+                                    
+                                    </td>
+                                    {# <a href='{{ path('backoffice_finess_show', { 'id': etab.codeFiness }) }}'> #}
+                                        {% if etab.lastFacture %}
+                                            <td>
+                                                    <a href="{{ path('facture_show', { 'numFacture': etab.lastFacture.numFacture }) }}">{{etab.lastFacture}}</a> ({{etab.lastFacture.dateEmission  |date('Y-m-d') }})
+                                            </td>
+                                            <td>
+                                                 {% include 'BackOffice/facture/inc_add_etablissement.html.twig' with {'montant' : etab.MontantRenew, 'version':next_indice } %}
+                                            </td>
+                                        {% else %}
+                                            <td  class='alert-danger'></td>
+                                            <td>
+                                                
+                                            {% if etab.MontantFirst == -999999 %}
+                                                {% include 'BackOffice/facture/inc_add_etablissement.html.twig' with {'montant' : 550 , 'version':0} %}
+                                                {% include 'BackOffice/facture/inc_add_etablissement.html.twig' with {'montant' : 900 , 'version':0 } %}
+                                            {% else %}
+                                                {% include 'BackOffice/facture/inc_add_etablissement.html.twig' with {'montant' : etab.MontantFirst, 'version':0 } %}
+                                            {% endif %}
+                                            </td>
+                                        {% endif %}
+
+                                        
+                                        
+                                        {#
+                                        {% if facture.DefautMontant  %}
+
+                                                {% include 'BackOffice/facture/inc_add_etablissement.html.twig' with {'montant' : facture.DefautMontant , 'version':next_indice} %}
+                                        {% else %}
+                                             include 'BackOffice/facture/inc_add_etablissement.html.twig' with {'montant' : 0 } #}
+                                            {# include 'BackOffice/facture/inc_add_etablissement.html.twig' with {'montant' : 150 } 
+                                            #}
+                                         
+                                    </tr>
+                                {% endif  %}
+                {% endfor  %}
+                {% if nb_lignes == 0  %}
+                    <tr class='alert-warning'><td>Tous les établissements du gestionnaires sont déja dans la facure</td></tr>
+                {% endif  %}
+                </table>
+                    
+                
+            </div>

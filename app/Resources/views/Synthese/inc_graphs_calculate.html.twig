@@ -1,0 +1,8 @@
+ <div class='graphs graphs_calculate'> 
+        <div class='graph_min_container'>
+            <canvas id="chartEvalGeneraleCanvas_{{etablissement.id}}" height="500" width="500"></canvas>
+                    {% for domaine in etablissement.domaines %}
+                    <canvas class="GraphSynthese GraphSynthese_{{etablissement.id}}" id="chartDomaine{{ domaine.id }}" height="500" width="500"></canvas>
+                {% endfor %}
+        </div>
+    </div>  

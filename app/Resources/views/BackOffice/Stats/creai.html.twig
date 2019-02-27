@@ -1,0 +1,22 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+
+{% block out_container  %}
+
+{{ parent() }}
+
+
+    <h1><a href="{{ path('arsene_stats') }}">Stats</a></h1>
+    <h2>{{creai}}</h2>
+    
+    
+    
+   {{ chartjs_canvas('grafic_bypublic',grafic_bypublic.width,grafic_bypublic.height,grafic_bypublic) }}
+ 
+                 
+  
+     
+
+    
+{% endblock %}
+ 

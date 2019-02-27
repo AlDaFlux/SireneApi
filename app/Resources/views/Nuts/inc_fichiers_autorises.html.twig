@@ -1,0 +1,8 @@
+<div class="alert alert-info">Type de fichier autorisé: 
+    <br>
+        {% for upload_extension in upload_extensions %}
+        {{upload_extension}},  
+    {% endfor %}
+    <br>
+    Taille maximum {{upload_max_file_size|formatBytes}}
+</div>

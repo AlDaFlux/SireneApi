@@ -1,0 +1,22 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('referentielpublic_index')}}">  Référentiels</a></h1>
+    <h2><a href="{{ path('referentielpublic_show', { 'id': referentielPublic.id }) }}">  {{ referentielPublic }} </a></h2>
+    <h3>Edition</h3>
+
+    
+    {% if is_granted('ROLE_MEGA_ADMIN') %}
+
+            
+    {{ form_start(edit_form) }}
+        {{ form_widget(edit_form) }}
+                {{ include("Nuts/cancelsave.html.twig") }}
+    {{ form_end(edit_form) }}
+
+    {% endif %}
+
+        
+{% endblock %}
+
+

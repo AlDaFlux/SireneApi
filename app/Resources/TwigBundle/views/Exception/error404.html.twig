@@ -1,0 +1,15 @@
+{% extends 'layout.html.twig' %}
+
+    {% block body %}
+            <h1>Erreur 404</h1>
+
+    {# if is_granted('IS_AUTHENTICATED_FULLY') %} #}
+
+        <div class='alert alert-danger'>
+            La page demandée n'existe pas, ou n'existe plus.
+        </div>
+    
+    {% endblock %}
+    
+    
+            

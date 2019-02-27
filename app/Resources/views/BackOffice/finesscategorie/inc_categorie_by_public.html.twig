@@ -1,0 +1,17 @@
+
+        {% if referentielPublic.getFiniAndLast %}
+            {% if referentielPublic.finessCategories | length > 0 %}
+                    <div class="panel panel-primary">
+                        <div class="panel-heading"><h3 class="panel-title">catégories (Finess)</h3></div>
+                        <div class="panel-body">
+                        <table class='table'>
+                            {% for finessCategorie in referentielPublic.finessCategories %}
+                                <tr><td>{{finessCategorie.id}}</td><td><a href="{{ path('backoffice_finess_categorie_show', { 'id': finessCategorie.id }) }}">{{finessCategorie}}</a></td></tr>
+                            {% endfor %}
+                               </table>
+                        </div>  
+                    </div>  
+            {% else %}
+                    <div class="alert alert-danger">Pas de catégories Finess associée au référentiel </div>
+            {% endif %}
+        {% endif %}

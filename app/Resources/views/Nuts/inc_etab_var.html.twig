@@ -1,0 +1,15 @@
+{% if is_granted('ROLE_ETABLISSEMENT')  %}
+    {% set etablissement=app.user.etablissement  %}
+{% else %}
+    {% if domaine is defined %}
+          {% set etablissement = domaine.etablissement %}
+    {% elseif dimension is defined  %}
+        {% set etablissement = dimension.domaine.etablissement %}
+    {% elseif critere is defined  %}
+         {% set domaine_menu = critere.dimension.domaine.etablissement %}
+    {% endif %}
+{% endif%}
+
+{% set domaines =   etablissement.domaines %}
+
+

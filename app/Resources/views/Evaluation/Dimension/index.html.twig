@@ -1,0 +1,29 @@
+{% extends "Evaluation/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - {{ dimension.domaine.referentiel.nom }}{% endblock %}
+
+{% block body %}
+    
+    
+  {{ parent() }}
+  
+       {% if advanced_gesionnaire and app.user.NbEtablissementsByRefPublic(etablissement.referentielPublic) > 1%} 
+        <a class="btn btn-success big full-width" href="{{ path('pericles3_dimension_ref', {'id': dimension.referentiel.id}) }}">
+            Voir pour les {{app.user.NbEtablissementsByRefPublic(etablissement.referentielPublic)}} établissements <b>{{etablissement.referentielPublic}} </b>
+         
+        </a><p>
+          {% endif %}  
+            
+        {% include "Nuts/menu_domaine_transversal.html.twig" with {'domaine': dimension.domaine}  %} 
+        {% include "Nuts/menu_dimension_transversal.html.twig"  with {'dimension': dimension  } %} 
+        
+        
+    <div id="CritereGlobalListContainer">
+        {{ render(controller('Pericles3Bundle:FrontOffice/Evaluation:listDimension', { 'id': dimension.domaine.id,'current_dimension_id' :dimension.id })) }}
+        {{ render(controller('Pericles3Bundle:FrontOffice/Evaluation:listCritere', { 'dimensionId': dimension.id })) }}
+        <div style="clear:both;"></div>
+    </div>
+        
+    {{ render(controller('Pericles3Bundle:FrontOffice/Evaluation:CorpsListCritere', { 'dimensionId': dimension.id })) }}
+
+{% endblock %}

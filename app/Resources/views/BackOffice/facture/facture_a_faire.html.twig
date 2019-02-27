@@ -1,0 +1,75 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block out_container  %}
+
+{{ parent() }}    
+
+
+    <h1><a href="{{ path('facture_index') }}">Factures</a></h1>
+
+
+         {% include 'BackOffice/facture/inc_menu.html.twig' %}
+    
+    
+    
+    <div class="row">
+
+        <div class="col-md-2">
+            <div class="panel panel-danger">
+              <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-king'></i>Gestionnaires sans factures </h3> </div>
+                  <table class='table table-bordered'>
+                      <tbody>
+                          {% for gestionnaire_sans_facture in gestionnaires_sans_facture %}
+                              <tr><td>{{gestionnaire_sans_facture}}</td></tr>
+                          {% endfor%}
+                      </tbody>
+                  </table>
+            </div>
+        </div>
+                      
+        <div class="col-md-2">
+            <div class="panel panel-danger">
+              <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-king'></i>Etablissements sans factures </h3> </div>
+                  <table class='table table-bordered'>
+                      <tbody>
+                          {% for etablissement_sans_facture in etablissements_sans_facture%}
+                              <tr><td>{{etablissement_sans_facture}}</td></tr>
+                          {% endfor%}
+                      </tbody>
+                  </table>
+            </div>
+        </div>
+                      
+        <div class="col-md-4">
+            <div class="panel panel-danger">
+              <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-king'></i>Factures à renouveller</h3> </div>
+                  <table class='table table-bordered'>
+                      <tbody>
+                          {% for etablissement_facture_afaire in etablissements_facture_afaire %}
+                              <tr>
+                                    <td><a href="{{ path('facture_show', { 'numFacture': etablissement_facture_afaire.numFacture }) }}">{{  etablissement_facture_afaire.numFacture }}</a></td>
+                                    <td>{{etablissement_facture_afaire.nom}}</td>
+                                    <td>{{etablissement_facture_afaire.dateEmission |date('Y-m-d') }}</td>
+                              </tr>
+                          {% endfor%}
+                      </tbody>
+                  </table>
+            </div>
+        </div>
+                      
+                      
+
+
+
+                      
+                      
+    </div>
+        
+    
+    
+    
+    
+    
+    
+    
+{% endblock %}

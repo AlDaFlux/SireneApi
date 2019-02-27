@@ -1,0 +1,70 @@
+{% if read_only is not defined %}
+    {% set read_only=false %}
+{% endif %}
+    
+    
+    <table  class='table table-bordered table-triable_simple_desc small'>
+        <thead>
+            <tr>
+                <td>Dt</td>
+                <th>Nom</th>
+                {% if show_affected %}
+                    <th>Type</th>
+                    <th class='small'>Affecté à </th>
+                {% endif %}
+                 
+                         
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                
+                {% if sortby is defined %}
+                    {% if sortby == 'dateCreate' %}
+                        <td class='small'>{{ user.dateCreate|date('Y-m-d H:i:s') }} </td>
+                    {% elseif sortby == 'dateLastConnect' %}
+                        <td class='small'>{{ user.dateLastConnect|date('Y-m-d H:i:s') }} </td>
+                    {% endif %}
+                {% endif %}
+                
+                
+                
+                <td class='small'>
+                {% if user.desactive == 0 %}
+                    <span title="L'utilisateur est actif" class='minstate alert-success glyphicon glyphicon-ok'></span>
+                {% elseif  user.desactive == 1 %}
+                    <span title="L'utilisateur est desactivé, il ne peut plus se connecter" class='minstate alert-warning glyphicon glyphicon-remove'></span>
+                {% elseif   user.desactive ==-1 %}
+                    <span  title="L'utilisateur est mis a la corbeille" class='minstate alert-danger glyphicon glyphicon-trash'> </span>
+                {% else %}
+                    {{ user.etat}}
+                {% endif %}
+                
+
+                {% if not app.user.CanSee(user) or read_only %}
+                    {{ user.username }}
+                {% else %}
+                    <a href="{{ path('backoffice_user_show', { 'id': user.id }) }}">{{ user.username }}</a>
+                {% endif %}
+                
+                </td>
+                
+                {% if show_affected %}
+                    <td class='small'>
+                        {{user.RolePrincipal | role_icon | raw}}
+                    </td>
+                    <td class='small'>{{user.ParentType}} -: {{user.Parent}}</td>
+                {% endif %}
+                
+                 
+                 
+                
+                 
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+        
+        
+        

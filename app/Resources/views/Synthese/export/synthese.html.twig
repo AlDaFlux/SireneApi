@@ -1,0 +1,106 @@
+{% set titre_synthese= 'Evaluation ' ~ application_name %}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+    <meta charset="UTF-8">
+    <TITLE>{{titre_synthese}}</TITLE>
+    {% include "Synthese/export/inc/export.css.html.twig" %}
+</HEAD>
+<BODY> 
+
+    
+    {% include "Synthese/export/inc/page_de_garde.html.twig" %}
+   
+     {% include "Synthese/export/inc/inc_etablissement.html.twig" %}
+     
+     
+
+<h1>Evaluation résumé </h1>
+{% include "Synthese/export/inc/inc_menu_domaine.html.twig" %}
+
+      
+
+<h3>Cotation moyenne des {{ etablissement.domaines|length }} domaines d'évaluation (10 points maximum)</h3>
+<div class='graph_big'>
+        {% set img_note = '/upload/st01/etablissement_' ~ etablissement.id ~ '/synthese/graphs/general.jpg' %}
+        {{ img_note | getImageExport(typeExport) | raw }}
+
+</div>
+        
+
+   
+
+
+ 
+{% for domaine in etablissement.domaines %}
+    <h1><a id="domaine_{{domaine.ordre}}" name="domaine_{{domaine.ordre}}">Domaine {{ domaine.ordre}}. {{ domaine}}</a></h1>
+
+    <div class='graph_big'>
+        {% set img_note = '/upload/st01/etablissement_' ~ etablissement.id ~ '/synthese/graphs/' ~ domaine.id ~'.jpg' %}
+        {{ img_note | getImageExport(typeExport) | raw }}
+    </div>
+
+    
+    
+    <div class='sub_menu_doc'>
+        {% for dimension in domaine.Dimensions | order %} 
+            {# <li><a href="#dimension_{{dimension.id}}">{{ dimension.numero }} - {{ dimension.nom }}</a></li>  #}
+             <li>{{ dimension.numero }} - {{ dimension.nom }}</li>  
+        {% endfor %}
+    </div>
+    
+     {% if domaine.preuves|length > 0 %}
+                    <h4>Point de vue de l’usager</h4>
+                        <ul>
+                    {% for preuve in domaine.preuves %}
+                            <li>
+                                {{ preuve.commentaire }}  -  <a href="{{ app.request.getSchemeAndHttpHost()~asset('upload') }}/{{ preuve.getRelativPath }}" target="_blank">{{ preuve.fichier }}</a>
+                            </li>
+                    {% endfor %}
+                    </ul>
+    {% endif %}
+    
+    
+    
+    {% if domaine.commentaires |length > 0 %}
+      <h4>Commentaires</h4>
+        <ul>
+            {% for commentaire in domaine.commentaires %}
+                <li>{{ commentaire.commentaire }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+            
+    
+    
+    {% include "Synthese/export/inc/inc_osa.html.twig" %}
+    
+    
+    
+    
+    
+        {% for dimension in domaine.Dimensions  | order %}
+            <h2 id="dimension_{{dimension.id}}" name="dimension_{{dimension.id}}" >Dimension {{ domaine.ordre }}.{{ dimension.ordre }} <small>{{ dimension.nom }}</small></h2>
+       
+            {% set Criteres = dimension.criteres | order %}
+            {% set externe = false %}
+
+            {% include "Synthese/export/inc/inc_critere_complet.html.twig" %}
+            
+        <br>
+        {% endfor %}
+        
+        
+        
+{% endfor %}
+
+
+             
+ </body>
+</html>
+
+
+
+

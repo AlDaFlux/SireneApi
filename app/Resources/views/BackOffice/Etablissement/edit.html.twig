@@ -1,0 +1,47 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Etablissement - Edition</h1>
+{% endblock %}
+
+
+{% block out_container  %} 
+    
+                          {% block message_flash %}
+                            {% include "MessageFlash/messageFlash.html.twig" %}
+                        {% endblock %}
+                        
+<div class='row'>
+<div class='col-md-6 white'>
+        
+            <div class='panel panel-primary'><div class='panel-heading '>Formulaire</div>
+                <div class='panel-body'>
+                    {{ form_start(form) }}
+                    {{ form_widget(form) }}
+
+                    {{ include("Nuts/cancelsave.html.twig") }}
+ 
+                    {{ form_end(form) }}
+                </div>
+                </div>
+    </div>
+ 
+        {% if etablissement.demande %}
+            
+            <div class='col-md-6 white'>
+                    <div class='panel panel-primary'><div class='panel-heading '>Demande </div>
+                    {% include "BackOffice/Demande/Etablissement/inc_show.html.twig" with {'demandeEtablissement':etablissement.demande }  %} 
+                    </div>
+                </div>
+        {% endif %}
+        {% if etablissement.finess  is defined %}
+            {% if etablissement.finess  is not empty %}
+                <div class='col-md-6 white'>
+                    <div class='panel panel-primary'><div class='panel-heading '>FINESS </div>
+                        {% include "BackOffice/finess/inc_show.html.twig" with {'finess':etablissement.finess} %} 
+                </div>
+                </div>
+            {% endif %}
+        {% endif %}
+</div>        
+{% endblock %}

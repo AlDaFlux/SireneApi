@@ -1,0 +1,81 @@
+{% extends "Evaluation/layout.html.twig" %}
+
+
+
+
+    
+    
+
+     
+{% block title %}{{ parent() }} - Domaines évalués{% endblock %}
+
+
+{% block legend %}
+    {# include("Nuts/inc_legend.html.twig") #} 
+{% endblock %} 
+
+                
+{% block body %}
+  {{ parent() }}
+    
+
+     
+
+     
+      {% if advanced_gesionnaire%} 
+    <div class="row">
+        <a href='{{ path('evaluation_etablissements')}}'>  
+             <div class="col-md-12 ">
+                <div class="panel panel-primary panel_osa">            
+                        <div class="panel-heading"> <h3 class="panel-title">Par établissement </h3> </div>
+                          <div class="panel-body">  
+                              
+                                  <canvas id="chartCanvasEtablissements"  ></canvas>
+                              
+                             
+                             
+                    </div>
+                </div>
+            </div>
+            </div>
+                          </a>
+    <div class="row">
+       
+             <div class="col-md-12 ">
+                 <a href='{{ path('pericles3_referentiel_ref_index')}}'> 
+                    <div class="panel panel-primary panel_osa">            
+                        <div class="panel-heading"> <h3 class="panel-title">Par reférérentiel Public  </h3> </div>
+                        <div class="panel-body"> 
+                            <canvas id="chartCanvasDomaines"  ></canvas>
+                        </div>
+                    </div>
+                 </a>
+            </div>
+        </div> 
+
+{% else%} 
+        {% include "Evaluation/etablissements/inc_etablissements.html.twig" %}
+
+{% endif %}
+                      
+        
+ 
+
+     
+{% endblock %}
+
+
+
+{% block javascripts %}
+    <script type="text/javascript">
+        
+        {% include "Synthese/inc_options_charts.js.twig" %}
+      {% if advanced_gesionnaire%} 
+            {{ etablissements | graphMultiDataSet('chartCanvasDomaines') |raw }}
+            {{ etablissements | graph('chartCanvasEtablissements',true,'options_responsive') |raw }}
+      {% else  %} 
+        {% include "Evaluation/etablissements/inc_etablissements_js.html.twig" %}
+      {% endif  %} 
+            
+    </script>          
+{% endblock %}

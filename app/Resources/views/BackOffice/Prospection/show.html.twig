@@ -1,0 +1,34 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('backoffice_prospection_index') }}">Prospection </a>
+
+        
+        {% if referentielPublic is defined %}
+            <h2>{{referentielPublic}}</h2>
+        {% endif %}
+    
+        
+        
+       {%  include ('BackOffice/finesscategorie/inc_categorie_by_public.html.twig') %}
+
+       
+       
+{% endblock %}
+
+    
+{% block out_container  %}
+
+      {% if is_granted('ROLE_SUPER_ADMIN') %}
+           <h2>Etablissements sans licences dont le gestionnaire utilise {{application_name}}</h2>
+            {%  include ('BackOffice/Prospection/inc_prospection_finess.html.twig') %}
+           
+           
+           <h2>Utilsiateurs Pericles sans licence {{application_name}}</h2>
+            {%  include ('BackOffice/pericles/inc_prospects.html.twig') %}
+            
+      {% endif %}
+{% endblock %}
+
+
+

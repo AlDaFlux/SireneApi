@@ -1,0 +1,52 @@
+    <table class='table  table-triable'>
+        <thead>
+            <tr>
+                <th>Codefiness</th>
+                <th>{{application_name}}</th>
+                <th>Raisonsociale</th>
+                <th>Catégorie</th>
+                <th>Codepostal</th>
+                <th>Ville</th>
+                <th>Public cible </th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for finess in finesses %}
+            <tr>
+
+                <td><a href="{{ path('backoffice_finess_show', { 'id': finess.codeFiness }) }}">{{ finess.codeFiness }}</a></td>
+                <td>
+                    {% if finess.HaveEtablissement %}
+                        <i class='glyphicon glyphicon-ok greenText'></i>
+                    {% endif %}
+                </td>
+                <td>{{ finess.raisonSociale }}</td>
+                
+                
+                <td>{{ finess.LibCategorie}}</td>
+                
+                <td>{{ finess.codePostal }}</td>
+                <td>{{ finess.ville }}</td>
+                {% if finess.referentielPublicDefaut is not empty  %}
+                        {% include "BackOffice/referentielpublic/inc_td.html.twig" with {'referentielPublic' : finess.referentielPublicDefaut }  %}</td>
+                 {% else %}
+                     <td></td>
+                {% endif %}
+                <td>
+                {% if cur_etablissement is defined %}
+                    {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT') and not finess.HaveEtablissement %}
+                        <a class='btn btn-danger' href='{{ path('backoffice_etablissement_linkfiness_go', { 'id':etablissement.id,'finess' : finess.codeFiness }) }}'>Lier le finess à l'établissement </a>
+                    {% endif %}
+                {% endif %}
+                    {% if is_granted('ROLE_MEGA_ADMIN')  %}
+                                <a href="{{ path('backoffice_finess_edit', { 'id': finess.codeFiness }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a>
+                    {% endif %}
+                </td>
+                
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+

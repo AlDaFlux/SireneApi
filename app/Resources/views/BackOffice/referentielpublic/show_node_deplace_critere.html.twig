@@ -1,0 +1,83 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block message_flash %}
+{% endblock %}
+
+{% block body %}
+    <h1><a href="{{ path('referentielpublic_index')}}">  Référentiels</a></h1>
+    <h2><a href="{{ path('referentielpublic_show', { 'id': node.referentielPublic.id }) }}">  {{ referentielPublic }} </a></h2>
+   
+    <h3>Déplacement de critere</h3>
+    <div class='alert alert-info'>{{node.numero}} {{node}}</div>
+    
+    {% include "BackOffice/referentielpublic/inc_node_tree.html.twig" %}
+
+    
+    <table class='table table-bordered'>
+        <tbody>
+            <tr>
+                <th>{{referentielPublic}}</th>
+            </tr>
+            <tr>
+                <th>Ordre</th>
+                <td>{{ node.numero}}</td>
+            </tr>
+            <tr>
+                <th>Critere</th>
+                <td>{{ node }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+            
+            
+                {% if node.EvaluationStarted %}
+                    <div class='alert alert-danger'>Attention !!!! <br>
+                    Le référentiel est déja affecté à des établissement !!
+                    <br>
+                    Le déplacement de critère n'est donc pas possible :! 
+                    </div>
+                {% else %}
+                    <div class='alert alert-success'>Le référentiel n'est pas utilsé, vous pouvez déplacer le critère </div>
+                
+                
+                
+ 		<form  class="well"  method="POST" >
+		
+		{% include "MessageFlash/messageFlash.html.twig" %}
+ 
+                
+
+                    <div class="row">
+                           <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label" for="dimension">Déplacer vers la dimension : </label>
+                                </div>
+                            </div>
+                    
+                               <div class="col-md-10">
+                                    <select name="dimension">
+                                        {% for dimension in dimensions %}
+                                            <option value="{{dimension.id}}">{{dimension.numero}} - {{dimension}}</option>
+                                        {% endfor  %}
+                                   </select>
+                               </div>
+                        
+                                   <button type="submit" class="btn btn-link full-width">Déplacer </button>
+
+                    </div>
+                </form>
+                                   
+                {% endif %}
+                        
+    
+                <a href="{{ path('referentielpublic_show', { 'id': referentielPublic.id })}}"  class = "btn  btn-link full-width">Retour à la liste</a>
+ 
+{% endblock %}
+
+
+{% block initjs %}
+    <script type="text/javascript">
+        window.scrollBy(0,500); // horizontal and vertical scroll increments
+    </script>
+{% endblock %}

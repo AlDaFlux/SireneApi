@@ -1,0 +1,162 @@
+{% extends "BackOffice/Demande/layout.html.twig" %}
+
+{% block message_flash %}
+{% endblock %}
+
+{% block body %}{{ parent() }}
+    
+    <h2> Gestionnaire</h2>
+
+    <table class='table table-bordered'>
+        <tbody>
+            <tr>
+                <th>Gestionnaire</th>
+                <td>{{ demandeGestionnaire.GestionnaireNom }}</td>
+                <th>Saisi par </th>
+                <td>{{ demandeGestionnaire.creai }}</td>
+            </tr>
+            <tr>
+                <th>Nom de famille</th>
+                <td>{{ demandeGestionnaire.demandeurNom }}</td>
+                <th>Prénom</th>
+                <td>{{ demandeGestionnaire.demandeurPrenom }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ demandeGestionnaire.email }}</td>
+                <th>Adresse</th>
+                <td>{{ demandeGestionnaire.adresse }}</td>
+            </tr>
+            <tr>
+                <th>Code Postal</th>
+                <td>{{ demandeGestionnaire.codePostal }}</td>
+                <th>Ville</th>
+                <td>{{ demandeGestionnaire.ville }}</td>
+            </tr>
+                <th>Commentaires CREAI</th>
+                <td>{{ demandeGestionnaire.commentaireCreai | nl2br}}</td>
+                <th>Commentaires ANCREAI</th>
+                <td>{{ demandeGestionnaire.commentaireAncreai | nl2br}}</td>
+            </tr>
+            <tr>
+                <th colspan='2'>Etat</th>
+                <td colspan='2'>{{ demandeGestionnaire.etat|  afficheDemandeEtat | raw }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p> 
+        
+    {% if app.user.isCreai %}
+        {% set collnb=6 %}
+    {% else %}
+        {% set collnb=6 %}
+    {% endif %}
+        
+            <div class="row">
+                <div class="col-sm-{{collnb}}">
+                    <a  class='btn btn-link full-width' href="{{ path('backoffice_demande_index') }}"> Retour au menu des demandes</a>
+                </div> 
+                
+                {% if demandeGestionnaire.hasGestionnaire %}
+                    <div class="col-sm-{{collnb}}">
+                        <a  class='btn btn-success full-width' href="{{ path('backoffice_gestionnaire_show', { 'id': demandeGestionnaire.Gestionnaire.id }) }}">Voir le gestionnaire</a>
+                    </div> 
+                {% else %}
+                    {% if is_granted('ROLE_SUPER_ADMIN_GESTIONNAIRE') %}
+                        <div class="col-sm-{{collnb}}">
+                            <a  class='btn btn-danger full-width' href="{{ path('demande_gestionnaire_create_bydemande', { 'id': demandeGestionnaire.id }) }}">Créer le gestionnaire</a>
+                        </div> 
+                    {% endif  %}
+                {% endif  %}
+
+                
+                    {% if  not is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
+                    {% if demandeGestionnaire.etat.id ==1  %}
+                            <div class="col-sm-{{collnb}}">
+                                <a  class='btn btn-warning full-width' href="{{ path('demande_gestionnaire_edit', { 'id': demandeGestionnaire.id }) }}"> Modifier la demande</a>
+                            </div> 
+                        {% endif %}
+                    {% else %}
+                        </div>
+                        <p>
+                        <div class="row">
+
+                        <div class="col-sm-{{collnb}}">
+                            <a  class='btn btn-warning full-width' href="{{ path('demande_gestionnaire_editancreai', { 'id': demandeGestionnaire.id }) }}"> Modifier la demande</a>
+                        </div> 
+                        <div class="col-sm-{{collnb}}">
+                                
+                         <i data-invite="Voulez-vous supprimer définitivement la demande de création gestionnaire ? il est conseillé de la passé en traité pour conserver l'historique des demandes."
+                                data-url_delete="{{ path('demande_gestionnaire_delete_get', {'id':demandeGestionnaire.id}) }}" 
+                               class='btn btn-danger full-width DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active full-width'
+                               >Supprimer  </i> 
+                        </div> 
+                    {% endif %}
+                 </div> 
+    <p>
+
+    {% include "MessageFlash/messageFlash.html.twig" %}
+   
+       
+    {% if not is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') and demandeGestionnaire.etat.id == 1 %}
+        
+    <p>   
+        <a  class='btn btn-warning full-width' href="{{ path('demande_gestionnaire_envoimail', { 'id': demandeGestionnaire.id }) }}"> La demande est terminée, envoyer un mail à l'ANCREAI !!! </a>
+    <p>   
+        
+        <div class='well'>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            {{ include("Nuts/cancelsave.html.twig") }}
+            {{ form_end(form) }}
+        </div>
+    
+    {% endif  %}
+
+        
+ 
+{# if demandeGestionnaire.finess is not empty %}              
+        {% set finess  = demandeGestionnaire.finess %}              
+            {% include "BackOffice/finess/inc_show.html.twig" %} 
+            
+                {% if is_granted('ROLE_SUPER_ADMIN_Gestionnaire') %}
+                    {% if demandeGestionnaire.finess.Gestionnaire is empty  %}
+                            <form method="POST" action="{{ path('backoffice_Gestionnaire_new_byfiness')}}" >
+                              <input name='num_finess' value='{{finess.codeFiness}}'>
+                              <input type='submit' value="Créer l'établissement">
+                            </form>
+                    {% endif%}
+                {% else %}
+                    {% if demandeGestionnaire.creai == app.user.creai %}
+
+
+                        <div class="row">
+                             <div class="col-sm-4">
+                                <a class='btn  btn-warning full-width' href="{{ path('demande_Gestionnaire_edit', { 'id': demandeGestionnaire.id }) }}">Modifier la demande</a>
+                             </div>
+                             <div class="col-sm-4">
+                                <a class='btn  btn-danger full-width' href="{{ path('demande_Gestionnaire_delete_get', { 'id': demandeGestionnaire.id }) }}">Annuler la demande</a>
+                             </div>
+                             <div class="col-sm-4">
+                                <a class='btn  btn-success full-width' href="{{ path('demande_Gestionnaire_valide', { 'id': demandeGestionnaire.id }) }}">Valider la demande</a>
+                             </div>
+                        </div>
+                    
+                {% endif%}
+
+        {% endif%}
+ 
+{% endif #}              
+
+
+{% include "BackOffice/Demande/Gestionnaire/inc_liste_etablissement.html.twig" with {'demandeEtablissements' :demandeGestionnaire.demandesEtablissement }%} 
+
+
+
+
+                        
+
+
+
+{% endblock %}

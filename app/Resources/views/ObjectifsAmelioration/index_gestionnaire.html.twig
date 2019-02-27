@@ -1,0 +1,51 @@
+{% extends "ObjectifsAmelioration/layout.html.twig" %}
+
+
+{% block body %}
+    {{ parent() }}
+    
+    <h1 class='paq'>Plan d'amélioration de la qualité</h1>
+    
+    {% if app.debug %}
+        <a class="btn btn-link full-width" href="{{ path('pericles3_paq_gantt') }}">Gantt</strong></a><br>
+    <br>
+    {% endif %}
+
+
+
+    <div class='row'>
+        <div class='col-md-6'>
+            <a class='btn btn-link oa full-width' href="{{ path('paq_osa_list') }}"><i class='glyphicon glyphicon-th-list'></i>Liste des Objectifs Stratégiques</a>
+        </div>
+        <div class='col-md-6'>
+            <a class='btn btn-link oa full-width' href="{{ path('paq_ooa_list') }}"><i class='glyphicon glyphicon-th-list'></i>Liste des Objectifs Opérationnels</a>
+        </div>
+    </div>
+    
+    <table  class='table table-bordered table-triable'>
+        <thead>
+            <tr>
+                <th>Etablissement</th>
+                <th>Objectifs Stratégiques</th>
+                <th>Objectifs Opérationnels</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for etablissement  in app.user.etablissements %}
+            <tr> 
+               <td><a href="{{ path('pericles3_paq_organigramme_etablissement', {'id': etablissement.id}) }}"><i class='glyphicon glyphicon-queen'></i> {{etablissement}}</a></td>
+               <td><a href="{{ path('paq_osa_list_etablissement', {'id': etablissement.id}) }}">{{etablissement.NbObjectifsSrategique}}</a></td>
+               <td><a href="{{ path('paq_ooa_list_etablissement', {'id': etablissement.id}) }}">{{etablissement.NbObjectifsOperationnel}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+        
+        
+        
+    
+{% endblock %}
+ 
+        
+        
+     

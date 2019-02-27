@@ -1,0 +1,28 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+
+{% block body %}
+    
+    <h1><a href='{{ path('backoffice_user_index')}}'>Liste des roles</a></h1>
+   
+    {% if is_granted('ROLE_MEGA_ADMIN')  %}
+
+        <table class='table table-bordered table-triable'>
+            <thead>
+            <tr>
+                <th>Role</th>
+            </tr>
+            </thead>
+                
+        {% for role in roles %}   
+            <tr>
+                <td><a href='{{ path("pericles3_backoffice_role_user", {'role_rechercher':role}) }}'>{{role}}</a></td>
+            </tr>
+        {% endfor %}
+        </table>
+        
+    {% endif %}
+
+     
+    
+{% endblock %}

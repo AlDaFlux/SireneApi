@@ -1,0 +1,33 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+  <h1><a href="{{ path('referentielpublic_index')}}">  Référentiels</a></h1>
+  <h2><a href="{{ path('referentielpublic_show', { 'id': referentielPublic.id }) }}">  {{ referentielPublic }} </a></h2>
+    
+    
+    <h3>Modification  {{rererentiel_type}} </h3>
+    <div class='well'>
+        <h3>{{node.numero}} : {{node}} </h3>
+        
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+                {{ include("Nuts/cancelsave.html.twig") }}
+            {{ form_end(form) }}
+        </div>
+     
+    
+{% endblock %}
+
+
+{% block javascripts %}
+    
+    <script>
+        
+        $('#referentiel_ReferentielExterneNiv1').autocompleter({
+    url_list: '{{ path('pericles3_backoffice_formsearch_referentielexterneniv1') }}',
+    url_get: '{{ path('pericles3_backoffice_formsearch_get_referentielexterneniv1')}}_'
+});
+        
+    </script>
+{% endblock %}
+

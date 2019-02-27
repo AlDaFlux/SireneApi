@@ -1,0 +1,61 @@
+{% set titre_synthese= 'Référentiel ' ~ application_name  %}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+    <meta charset="UTF-8">
+    <TITLE>{{titre_synthese}}</TITLE>
+    {% include "Synthese/export/inc/export.css.html.twig" %}
+</HEAD>
+<BODY> 
+
+    {% include "Synthese/export/inc/page_de_garde.html.twig" %}
+
+{% for domaine in etablissement.domaines %}
+    <h1><a id="domaine_{{domaine.ordre}}" name="domaine_{{domaine.ordre}}">Domaine {{ domaine.ordre}}. {{ domaine}}</a></h1>
+ 
+        {% for dimension in domaine.Dimensions  | order %}
+        <h2 id="dimension_{{dimension.id}}" name="dimension_{{dimension.id}}" >Dimension {{ domaine.ordre }}.{{ dimension.ordre }} <small>{{ dimension.nom }}</small></h2>
+
+        {% for critere in dimension.criteres | order %}
+            {% set currentState = critere.getStatus() %}
+                <h3>{{ critere.numero }} -  {{ critere.nom }}</h3>
+                    <ul>
+                    {% for question in critere.questions  %}
+                            <li>
+                                {{question | reponseIcone | getImageExport(typeExport) | raw }} {{question}} 
+                            </li>
+                        
+                        {% endfor %}
+                    </ul>
+                
+            {% endfor %}
+        
+        
+
+
+            
+        <br>
+        {% endfor %}
+        
+        
+        
+{% endfor %}
+
+
+
+            
+            
+            
+        
+        
+                    
+            
+             
+ </BODY>
+</HTML>
+
+
+
+

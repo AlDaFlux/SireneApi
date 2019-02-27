@@ -1,0 +1,24 @@
+
+<div class="DimensionListContainer screen_only">
+    <div id="DimensionTitle"><h3>DIMENSIONS ÉVALUÉES </h3></div>
+    <ul class='list_menu'>
+        
+        {% for dimension in dimensions %}
+            {% if current_dimension_ref_id is defined  %}
+                {% if dimension.id == current_dimension_ref_id  %} 
+                    {% set active_class=" actif " %}
+                {% else %}
+                    {% set active_class=" " %}
+                {% endif %}
+            {% else %}
+                {% set active_class=" " %}
+            {% endif %}
+            <li>
+                    <a class="dimension_link {{active_class}}" href="{{ path('pericles3_dimension_ref', {'id': dimension.id}) }}">
+                        > {{ dimension.numero}} - {{ dimension}}  
+                    </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+      

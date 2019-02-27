@@ -1,0 +1,42 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Gestionnaire</h1>
+
+    {% include "BackOffice/Gestionnaire/inc_show.html.twig" %}
+ 
+    
+    <table class='table table-bordered'>
+        <thead>
+            <tr>
+                <td>Etablissement</td>
+                <td>Finess</td>
+                <td>Gestionnaire</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for etablissement in gestionnaire.etablissements %}
+            <tr>
+                <td>{{etablissement}}</td>
+                <td>{{etablissement.finess}}</td>
+                <td>
+                    {% if etablissement.finess %}
+                        {{etablissement.finess.gestionnaire.raisonSociale}}
+                        </td>
+                        <td>
+                    <a href="{{ path('backoffice_gestionnaire_linkfiness_go', { 'id': gestionnaire.id ,'codeFiness' : etablissement.finess.gestionnaire.codeFiness }) }}"><i alt='voir' class='glyphicon glyphicon-eye-open'></i>{{ etablissement.finess.gestionnaire.codeFiness}}</a>
+                    {% else  %}
+                        </td>
+                        <td>
+                    {% endif  %}
+                </td>
+            </tr>
+        {% endfor  %}
+        </tbody>
+    </table>
+    
+        
+        
+    
+{% endblock %}

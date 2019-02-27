@@ -1,0 +1,48 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Etablissement{% endblock %}
+
+{% block body %}
+    {% set etablissement = cur_etablissement %}
+      <h1>Etablissement {{ etablissement.nom }}</h1>
+      {% if etablissement.gestionnaire.id  is defined %}
+      <h2> <a href="{{ path('backoffice_gestionnaire_show', { 'id': etablissement.gestionnaire.id }) }}"> ( Gestionnaire : {{etablissement.gestionnaire}} ) </a></h2>
+      {% endif %}
+      <table class='table table-bordered'>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Adresse </th>
+                <th>Referentiel</th>
+                <th>Département</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            <tr>
+                <td>{{ etablissement.nom }}</td>
+                <td>{{ etablissement.adresse }} - {{ etablissement.codepostal }} - {{ etablissement.ville }}</td>
+                <td>{{ etablissement.public }}</td>
+                <td>{{ etablissement.departement}}</td>
+            </tr>
+        </tbody>
+    </table>
+        
+            
+            
+
+{% include ('BackOffice/finess/inc_liste.html.twig') %}
+
+ 
+{% if  finessGestionnaire is defined %}
+          
+    <a class='btn btn-primary' href="{{ path('backoffice_etablissement_linkfiness_departement', { 'id': etablissement.id }) }}"> Par département / code postal</a></h2>
+    
+{% endif  %}
+    
+            
+            
+      
+	
+{% endblock %}
+

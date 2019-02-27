@@ -1,0 +1,11 @@
+
+                    {% if referentielPublic.obsolete %}
+                            <td title='! Le référentiel est obsolete' class='small alert-danger' title='{{referentielPublic}}'>{{referentielPublic.short}} ({{referentielPublic.year}})
+                    {% elseif referentielPublic.EnDev %}
+                            <td title='! Le référentiel est en cours de développement' class='small alert-warning' title='{{referentielPublic}}'>{{referentielPublic.short}} ({{referentielPublic.year}})
+                    {% else %}
+                            <td  title='Le référentiel est fini et en production' class='small alert-success' title='{{referentielPublic}}'>{{referentielPublic.short}} ({{referentielPublic.year}})
+                    {% endif %}
+                    
+                     {% if is_granted('ROLE_REFERENTIEL_WATCH')  %} <a href="{{ path('referentielpublic_show', {'id':referentielPublic.id}) }}"> <i class=" glyphicon glyphicon-eye-open"></i></a> {% endif %}
+                    </td>

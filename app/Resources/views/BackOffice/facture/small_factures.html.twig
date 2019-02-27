@@ -1,0 +1,49 @@
+    <table class='table  table-triable'>
+        <thead>
+            <tr>
+                <th>Numfacture</th>
+                <th>PDF</th>
+                <th>Date Emission</th>
+                <th>Montant</th>
+                <th>Payé le</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for facture in factures %}
+            <tr>
+                {% if facture.getAvoir %}
+                    <tr class='facture-annullee'>
+                        <td class='alert-danger facture-annullee'><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{ facture.numFacture }}</a></td>
+                {% elseif facture.getFinalise %}
+                    <tr>
+                        <td class='alert-info'><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{ facture.numFacture }}</a></td>
+                {% else %}
+                    <tr>
+                        <td class='alert-warning'><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{ facture.numFacture }}</a></td>
+                {% endif %}
+                    
+    
+                {% if facture.HasPDF  %}
+                <td class='alert-success'>
+            {% else  %}
+                <td class='alert-danger'>
+            {% endif %}
+                    {% if facture.HasPDF  %}
+                        <i alt='PDF' class='glyphicon glyphicon-save-file'></i>PDF
+                    {% endif %}
+                </td>
+                
+                   
+                <td>{% if facture.dateEmission %}{{ facture.dateEmission|date('Y-m-d') }}{% endif %}</td>
+           
+                <td class='alert-success'>{{ facture.montantTotal }} €</td>
+                
+                {% if facture.payele %}
+                    <td class='alert-success'>{{ facture.payele|date('Y-m-d') }}</td>
+                {% else %}                
+                    <td class='alert-danger'></td>
+                {% endif %}                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>

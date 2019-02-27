@@ -1,0 +1,52 @@
+
+{% if occurence is not empty  %}  
+    {% set  resultats_recherche = false %}
+    
+    
+    {% if occurence is not empty %}
+    <h2>Recherche : "{{occurence}}"</h2>
+    {% if results is defined %}  
+ 
+        {% if results | length>0  %}  
+            {% for  result_niv in results|keys  %}
+                {% if results[result_niv]| length>0 %}
+                    <h2>{{result_niv}}</h2>
+                    {% for  result in results[result_niv]%}
+                        <ul>
+                            {% set resultats_recherche = true %}
+                            <li>
+                                {% if result.ancre is defined %}
+                                    {% set ancre= "#" ~ result.ancre %}  
+                                {% else %}  
+                                    {% set ancre= "" %}  
+                                {% endif %}  
+                                <a href="{{ path(result.path, {'id': result.id}) }}{{ancre}}">
+                                {{result.lib | HighlightText(occurence) | raw }} 
+                                </a>
+                            </li>
+                        </ul>
+                    {% endfor %}  
+                {% endif%}  
+            {% endfor %}  
+        {% endif%}  
+        
+    {% endif%}  
+{% endif%}      
+
+
+    {% if not resultats_recherche %}  
+        <div class='alert alert-warning'>
+            Aucun résultat pour la recherche <b> {{occurence}}</b>
+        </div>
+    {% endif%}  
+{% endif%}  
+
+
+    {#
+  <form method='post' class='search'>
+      <input name='occurence'>
+        <input type="submit" value="Rechercher" />
+  </form> 
+  #}
+  
+  

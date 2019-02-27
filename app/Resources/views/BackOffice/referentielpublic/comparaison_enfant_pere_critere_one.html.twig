@@ -1,0 +1,36 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Parent <a href="{{ path('referentielpublic_show', { 'id': referentielPublic.sourceParent.id }) }}">  {{ referentielPublic.sourceParent}} </a></h1>
+    <h1>Enfant<a href="{{ path('referentielpublic_show', { 'id': referentielPublic.id }) }}">  {{ referentielPublic }} </a></h1>
+
+
+    <ul>
+    {% for quest in RefCritere.children %}
+        <li>{{quest.numero}} : {{quest}} ({{quest.referentielPublic}})
+    {% endfor %}
+    </ul>
+    
+    <div class='bilan_block'>
+        <h3>Eléments Communs: </h3>
+        {% set tmp_class='alert-success' %}
+        {% include 'BackOffice/referentielpublic/comparaison_enfant_pere_inc_table.html.twig' with { 'refs' : RefCritere.ElementsApreciationsCommunsByPublic(referentielPublic) }  %}
+    </div>
+    
+    <div class='bilan_block'>
+        <h3>Eléments ajoutés : </h3>
+        {% set tmp_class='alert-danger' %}
+        {% include 'BackOffice/referentielpublic/comparaison_enfant_pere_inc_table.html.twig' with { 'refs' : RefCritere.ElementsApreciationsNouveauxByPublic(referentielPublic) }  %}
+    </div>
+    
+    <div class='bilan_block'>
+        <h3>Eléments enlevés : </h3>
+        {% set tmp_class='alert-danger' %}
+        {% include 'BackOffice/referentielpublic/comparaison_enfant_pere_inc_table.html.twig' with { 'refs' : RefCritere.ElementsApreciationsEnlevesByPublic(referentielPublic) }  %}
+    </div>
+    
+    
+
+    
+
+{% endblock %}

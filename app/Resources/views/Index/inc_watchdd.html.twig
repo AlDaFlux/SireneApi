@@ -1,0 +1,68 @@
+
+
+
+{% set total_file=0 %}
+<table class='table table-bordered table-triable'>
+        <thead>
+            <tr>
+                <th>Fichier</th>
+                <th>Taille</th>
+                <th>Utilsé</th>
+                {% if dossier.name=='preuves' %}
+                    <th></th>
+                {% endif  %}
+            </tr>
+        </thead>
+            
+        <tbody>
+{% for  key, file in  dossier.files %}
+    <tr>
+        {% set total_file=total_file + file['size'] %}
+        <td>{{key}} </td>      
+        <td>{{file['size']|hiddenFormatBytes | raw }}</td>      
+        {% if dossier.name=='preuves' %}
+            <td>{{file['nb_used']}}</td>      
+            <td>
+                {% if file['nb_used']==0 %} 
+                    {% if app.user.Etablissement %}
+                      <i data-invite="Supprimer le fichier de manière définitive ? ?  ?"
+                                data-url_delete="{{ path('watch_dd_delete_preuve_file', {'filename': key}) }}"  
+                               class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText btn  btn-danger active '
+                               ></i> 
+                    {% else  %}
+                        <i data-invite="Supprimer le fichier de l'établissement de manière définitive ? ?  ?"
+                                data-url_delete="{{ path('watch_dd_delete_preuve_etablissement_file', {'id':etablissement.id, 'filename': key}) }}"  
+                               class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText btn  btn-danger active '
+                               ></i> 
+                    {% endif  %}
+                {% endif  %}
+            </td>      
+        {% else  %}
+            
+            {% if (file['id'] is not empty)%}
+                <td><a href="{{ path('pericles3_bibliotheque_show', {'id':file['id']}) }}"> <i class='glyphicon glyphicon-eye-open'></i></a></td>
+            {% else %}
+                <td>
+                    {% if app.user.Etablissement %}
+                        
+                    {% else  %}
+                          <i data-invite="Supprimer le fichier  définitive ? ?  ?" data-url_delete="{{ path('pericles3_bibliotheque_delete_fichier_gestionnaire', {'filename':key}) }}"  class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText btn  btn-danger active ' ></i> </td>
+                    {% endif  %}
+
+            {% endif  %}
+                
+        {% endif  %}
+    </tr> 
+
+    
+    {% endfor %}
+    <tfoot>
+        <th>Total  </th>      
+        <th>{{total_file|hiddenFormatBytes | raw }}</th>  
+          {% if dossier.name=='preuves' %}
+        <th colspan="2"></th>      
+       {% endif  %} 
+    </tfoot>
+       
+</tbody>
+</table>

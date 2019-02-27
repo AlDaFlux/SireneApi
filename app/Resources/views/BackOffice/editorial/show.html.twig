@@ -1,0 +1,61 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('backoffice_editorial_index') }}">Editorial</a> </h1>
+
+    
+                                    
+    <table class='table table-bordered table-triable_desc'>
+        <tbody>
+            <tr>
+                <th>Date de publication</th>
+                <td>
+                    {{editorial.datePublication |hiddenDate('d-m-Y') | raw  }}
+                </td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td> {{ editorial.titre }} </td>
+            </tr>
+            <tr>
+                <th>Commentaire</th>
+                <td>
+                    {{ editorial.commentaire | raw }}
+                </td>
+            </tr>
+            <tr>
+                <th>Etat</th>
+                {% include 'BackOffice/editorial/inc_td_publication.html.twig' %}
+            </tr>
+            <tr>
+                <th>Ref Public</th>
+                {% include 'BackOffice/editorial/inc_td_ref_publics.html.twig' %}
+            </tr>
+            <tr>
+                <th>Cible</th>
+                {% include 'BackOffice/editorial/inc_td_cible.html.twig' %}
+            </tr>
+            <tr>
+                <th>Ecris par </th>
+                <td>{{ editorial.createdBy }}</td>
+            </tr>
+
+        </tbody>
+    </table>
+        
+        
+    
+       <div class="row">
+            <div class="col-md-6">
+                <a class="btn btn-primary full-width" href='{{ path('backoffice_editorial_index')}}'>Retour</a>  
+            </div>
+            
+                {% if is_granted('ROLE_EDITORIAL_VALIDATEUR') or  (is_granted('ROLE_EDITORIAL_REDACTEUR') and app.user.id == editorial.createdBy.id and editorial.EtatPublication.id != 5 )   %}
+                    <div class="col-md-6">
+                       <a class="btn btn-warning full-width" href="{{ path('backoffice_editorial_edit', { 'id': editorial.id }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i>Modifier</a>
+                    </div>
+                {% endif %}
+        </div>
+ 
+ 
+{% endblock %}

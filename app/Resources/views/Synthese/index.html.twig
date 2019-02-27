@@ -1,0 +1,156 @@
+{% extends "Synthese/layout.html.twig" %}
+
+
+
+{% block body %}
+    {{ parent() }}
+
+    
+{% if is_granted('ROLE_GESTIONNAIRE')  %}
+            {#
+    <h2> Par public</h2>
+        <div class="row">
+        {%for public in app.user.GestionnaireReferentielsPublic %}
+    
+                  <div class="col-sm-6">
+                      <div class="panel panel-primary">
+                          <div class="panel-heading"><h3 class="panel-title"> {{public}}</h3></div>
+                              <div class="panel-body">
+
+                                  {% for dom in public.ReferentielDomaines %}
+                                      <li> + {{dom}}
+                                          
+                                  {% endfor  %}
+                                  
+                          </div>
+                      </div>
+                  </div>
+            
+
+        {% endfor %}            
+                  </div>
+        <hr>
+        #}
+    <h2> Par établissement</h2>
+
+        <div class="row">
+
+            {%for etablissement in app.user.etablissements %}
+
+                  <div class="col-sm-6">
+                      <div class="panel panel-primary">
+                          <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_etablissement",{'id' : etablissement.id}) }}">   <i class='glyphicon glyphicon-queen'></i>  {{etablissement}}</a></h3></div>
+                              <div class="panel-body">
+
+                                  <div class="GraphSyntheseContainer">    
+                                      <a href="{{ path("pericles3_synthese_etablissement",{'id' : etablissement.id}) }}">   
+                                          <canvas id="chartEvalGeneraleCanvas_{{etablissement.id}}" height="220" width="220"></canvas>
+                                      </a>
+                                  </div>
+                          </div>
+                      </div>
+                  </div>
+            {% endfor %}            
+
+        </div>         
+
+      
+{% else  %}
+
+        <div class="row">
+            {% if app.user.ReferentielExterne %}
+                <div class="col-sm-6">
+            {% else %}
+                <div class="col-sm-12">
+            {% endif  %}
+                  <div class="panel panel-primary">
+                      <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_pericles") }}">{{application_name}}</a></h3></div>
+                          <div class="panel-body">
+
+                              <div class="GraphSyntheseContainer">    
+                                  <a href="{{ path('pericles3_synthese_pericles') }}">   
+                                      <canvas id="chartEvalGeneraleCanvas" height="220" width="220"></canvas>
+                                  </a>
+                              </div>
+                      </div>
+                  </div>
+              </div>
+
+              {% if app.user.ReferentielExterne %}
+              <div class="col-sm-6">
+                  <div class="panel panel-primary">
+                      <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_alternatif") }}">{{app.user.ReferentielExterne}}</a></h3></div>
+                          <div class="panel-body">
+                              <div class="GraphSyntheseContainer">    
+                                  <a href="{{ path('pericles3_synthese_alternatif') }}">   
+                                      <canvas id="GraphEvalExterne" height="220" width="220"></canvas>
+                                  </a>
+                              </div>
+                      </div>
+                  </div>
+              </div>
+              {% endif  %}
+                                      
+        </div>
+
+
+
+    <div class="row">
+        <div class="col-sm-4">
+              <div class="panel panel-primary">
+                  <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_export_page") }}">Exportations / Impressions </a></h3></div>
+                      <div class="panel-body">
+                              <a href="{{ path('pericles3_synthese_export_page') }}">   
+                                  <div class='alert alert-info'>Exportation en pdf, doc, html....</div>
+                              </a>
+                  </div>
+              </div>
+          </div>
+        <div class="col-sm-4">
+
+              <div class="panel panel-primary">
+                  <div class="panel-heading"><h3 class="panel-title"> Annexes au rapport d'activité</h3></div>
+                      <div class="panel-body">
+                            {% if etablissement.NbSauvegardes == 0 %}
+                                <div class='alert alert-warning'>Vous devez avoir effectué au moins une sauvegarde pour acceder au annexes</div>
+                            {% else  %}
+                              <a href="{{ path('pericles3_annexes') }}">   
+                                  <div class='alert alert-info'>Faire un état des évolutions entre une sauvegarde et la moment présent</div>
+                              </a>
+                            {% endif %}
+                                  
+                  </div>
+              </div>
+
+          </div>
+                                  
+        <div class="col-sm-4">
+            {% include "Synthese/Sauvegardes/inc_panel_sauvegarde.html.twig" %}
+        </div> 
+
+    </div>         
+
+    {% endif %}
+
+
+{% endblock %}
+
+
+
+{% block javascripts %}
+    
+    <script type="text/javascript">
+      {% include "Synthese/inc_options_charts.js.twig" %}
+        {% if is_granted('ROLE_GESTIONNAIRE')  %}
+
+                    {%for etablissement in app.user.etablissements %}
+                       {{ etablissement.domaines  | order | graph('chartEvalGeneraleCanvas_' ~ etablissement.id) | raw }}
+                 {% endfor %}
+
+        {% else %}
+            {{ domaines  | order | graph('chartEvalGeneraleCanvas') |raw }}
+            {{ etablissement.domainesExterne | order | graph('GraphEvalExterne') |raw }}
+        {% endif %}
+    </script>
+        
+{% endblock %}

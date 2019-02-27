@@ -1,0 +1,84 @@
+    <table class='table table-bordered  table-triable_desc'>
+        <thead>
+            <tr>
+                <th class='hidden'></th>
+                <th>Public</th>
+                <th>Version</th>
+                <th>Annexe</th>
+                <th>Etablissements <br> Réels</th>
+                <th>Etablissements <br>  Tests</th>
+                {#
+                <th>Domaines</th>
+                <th>Dimensions</th>
+                #}
+                <th>Critères</th>
+                <th>Questions</th>
+                <th>Biblio</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for referentielPublic in referentielPublics %}
+            {% set nb_reel = referentielPublic.NbEtablissementsReels %}
+            <tr>
+                <td class='hidden'>{{ nb_reel}}</td>
+                <td>
+                    <a title="{{referentielPublic}}" href="{{ path('referentielpublic_show', { 'id': referentielPublic.id }) }}">{{ referentielPublic.short }}</a>
+                </td>
+                <td>
+                    {{referentielPublic.Version}}
+                </td>
+                    {% if referentielPublic.referentielExterne is empty %}
+                        <td class='alert-warning'></td>
+                    {% elseif referentielPublic.referentielExterne.NbDomaines != referentielPublic.getNbN1ExterneByPublic %}
+                        <td class='alert-danger'>{{referentielPublic.referentielExterne}} :  {{referentielPublic.referentielExterne.NbDomaines}} <> {{referentielPublic.getNbN1ExterneByPublic}}</td>
+                    {% else  %}
+                        <td>{{referentielPublic.referentielExterne}}</td>
+                    {% endif %}
+                
+                {% if nb_reel > 0 %}
+                    <td class='text-center'>
+                {% else  %}
+                    <td class='text-center alert-warning'>
+                {% endif  %}
+                    <a href="{{ path('pericles3_backoffice_etablissement_bybublic', { 'id': referentielPublic.id})  }}">{{ nb_reel}} </a>
+                    
+                 - 
+                 <a title='Voir les évaluation' href="{{ path('pericles3_backoffice_suivi_etablissement_bybublic', { 'id': referentielPublic.id})  }}">{{ 'evaluation' | get_icon | raw }} </a>
+                </td>
+                <td class='text-center'><a href="{{ path('pericles3_backoffice_etablissement_bybublic', { 'id': referentielPublic.id})  }}">{{referentielPublic.NbEtablissementsTest}}</a></td>
+                
+                {#
+                
+                <td class='text-center'>{{ referentielPublic.NbDomaines}}</td>
+                <td class='text-center'>{{ referentielPublic.NbDimensions}}</td>
+                #}
+              
+                
+                    {% if referentielPublic.referentielExterne is empty %}
+                           <td class='text-center'>
+                                  <a class="" href="{{ path('referentiel_criteres_show', { 'id': referentielPublic.id }) }}">{{ referentielPublic.NbCriteresCache}}</a>
+                            </td>
+                    {% elseif referentielPublic.NbCriteresCache != referentielPublic.getNbCritereRefExterneByPublic %}
+                        <td class='alert-danger'> {{referentielPublic.NbCriteresCache}} <> {{referentielPublic.getNbCritereRefExterneByPublic}}</td>
+                    {% else  %}
+                       <td class='text-center'>
+                                  <a class="" href="{{ path('referentiel_criteres_show', { 'id': referentielPublic.id }) }}">{{ referentielPublic.NbCriteresCache}}</a>
+                            </td>
+                    {% endif %}
+
+                    
+                
+                <td class='text-center'>{{ referentielPublic.NbQuestionsCache}}</td>
+                {% if referentielPublic.NbBibliothequesAncreai == 0 %}
+                        <td class='text-center alert-danger'>{{ referentielPublic.NbBibliothequesAncreai}}</td>
+                {% else  %}
+                        <td class='text-center'>
+                            <a class="" href="{{ path('backoffice_bibliotheque_ancreai_index_public', { 'id': referentielPublic.id }) }}">
+                                {{ referentielPublic.NbBibliothequesAncreai}}
+                            </a>
+                        </td>
+                {% endif  %}
+            </tr>
+        {% endfor %}
+        </tbody>
+</table>

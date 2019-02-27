@@ -1,0 +1,82 @@
+security:
+
+    role_hierarchy:
+        ROLE_MEGA_ADMIN: [ROLE_SUPER_ADMIN_COMPTA_EDIT,ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE,ROLE_EDITORIAL_VALIDATEUR,ROLE_ADMIN_SUPERVISOR]
+        ROLE_ADMIN_SUPERVISOR: [ROLE_SUPER_ADMIN_COMPTA_VIEW,ROLE_EDITORIAL_LECTEUR,ROLE_REFERENTIEL_WATCH]
+        ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE: [ROLE_SUPER_ADMIN_GESTIONNAIRE,ROLE_SUPER_ADMIN_ETABLISSEMENT,ROLE_SUPER_ADMIN_UTILISATEUR]
+        ROLE_SUPER_ADMIN_COMPTA_EDIT: [ROLE_SUPER_ADMIN_COMPTA_VIEW]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_USER]
+        ROLE_ADMIN: [ROLE_USER]
+        ROLE_GESTIONNAIRE: [ROLE_USER]
+        ROLE_ETABLISSEMENT: [ROLE_USER]
+        ROLE_EDITORIAL_VALIDATEUR: [ROLE_EDITORIAL_REDACTEUR]
+        
+    providers:
+        main:
+            entity: { class: Pericles3Bundle\Entity\User, property: username }
+            
+    encoders:
+       Pericles3Bundle\Entity\User:
+            algorithm: sha512
+            iterations: 6421
+            encode_as_base64: true
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        login:
+            pattern: ^/login$
+            security: false
+
+        main:
+            pattern: ^/
+            form_login:
+                login_path: login
+                check_path: login_check
+            anonymous: true
+
+            logout:
+                path: /logout
+                target: /
+
+            remember_me:
+                secret: %secret%
+                lifetime: 2232000
+                
+    access_control:
+        - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/motdepasseoublie$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetpassword, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/backoffice/user/, roles: [ROLE_USER] }
+        
+        - { path: ^/backoffice/referentielpublic/, roles: [ROLE_SUPER_ADMIN]}
+        - { path: ^/backoffice/bibliothequeancreai/, roles: [ROLE_SUPER_ADMIN]}
+        - { path: ^/backoffice/demande, roles: [ROLE_SUPER_ADMIN]}
+        - { path: ^/backoffice/finess, roles: [ROLE_SUPER_ADMIN]}
+        - { path: ^/backoffice/editorial, roles: [ROLE_SUPER_ADMIN]}
+        - { path: ^/backoffice/profilesroles, roles: [ROLE_SUPER_ADMIN]}
+        - { path: ^/backoffice/pericles, roles: [ROLE_SUPER_ADMIN]}
+        - { path: ^/backoffice/prospection, roles: [ROLE_SUPER_ADMIN]}
+        - { path: ^/backoffice/facture, roles: [ROLE_SUPER_ADMIN_COMPTA_VIEW]}
+        - { path: ^/backoffice/creai, roles: [ROLE_SUPER_ADMIN]}
+        - { path: ^/backoffice/stats, roles: [ROLE_SUPER_ADMIN]}
+        - { path: ^/backoffice/etablissement/new, roles: [ROLE_SUPER_ADMIN_ETABLISSEMENT]}
+        - { path: ^/backoffice/gestionnaire/new, roles: [ROLE_SUPER_ADMIN_GESTIONNAIRE]}
+        - { path: ^/backoffice/trash, roles: [ROLE_SUPER_ADMIN]}
+
+
+        
+        - { path: ^/backoffice, roles: [ROLE_ADMIN ,ROLE_GESTIONNAIRE] }
+
+
+
+        - { path: ^/eval, roles: [ROLE_USER] }
+        - { path: ^/evaluation, roles: [ROLE_USER] }
+        - { path: ^/etablissement, roles: [ROLE_USER] }
+        - { path: ^/paq, roles: [ROLE_USER] }
+        - { path: ^/synthese, roles: [ROLE_USER] }
+        - { path: ^/bibliotheque, roles: [ROLE_USER] }
+        

@@ -1,0 +1,61 @@
+
+             <table class='table table-triable table-bordered'>
+                    <thead>
+                        <tr>
+                            <th class='text-center'>Public</th>
+                            <th class='text-center'>Version</th>
+                            <th class='text-center'>Annexe</th>
+                            <th class='text-center'>Domaines</th>
+                            <th class='text-center'>Dimensions</th>
+                            <th class='text-center'>Critères</th>
+                            <th class='text-center'>Questions</th>
+                            <th class='text-center'>Biblio</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for referentielPublic in app.user.getReferentielsPublicNonFini %}
+                        
+                            {% if referentielPublic.fini == -2 %}
+                                <tr class='alert-danger alert'>
+                            {% else %}
+                                <tr class='alert-warning alert'>
+                            {% endif %}
+                                    
+                            
+                                
+                                
+                                <td>{{referentielPublic.fini}}
+                                    
+
+                                    <a title="{{referentielPublic}}" href="{{ path('referentielpublic_show', { 'id': referentielPublic.id }) }}">{{ referentielPublic.short }}</a>
+                                </td>
+                                
+                                <td>
+                                    {{referentielPublic.Version}}
+                                </td>
+                                <td>
+                                    {{referentielPublic.referentielExterne}}
+                                </td>
+                                
+                                <td class='text-center'>{{ referentielPublic.NbDomaines}}</td>
+                                <td class='text-center'>{{ referentielPublic.NbDimensions}}</td>
+                                <td class='text-center'>{{ referentielPublic.NbCriteresCache}} </td>
+                                <td class='text-center'>{{ referentielPublic.NbQuestionsCache}}</td>
+                                
+                                {% if referentielPublic.NbBibliothequesAncreai == 0 %}
+                                        <td class='text-center alert-danger'>{{ referentielPublic.NbBibliothequesAncreai}}</td>
+                                {% else  %}
+                                        <td class='text-center'>
+                                            <a class="" href="{{ path('backoffice_bibliotheque_ancreai_index_public', { 'id': referentielPublic.id }) }}">
+                                                {{ referentielPublic.NbBibliothequesAncreai}}
+                                            </a>
+                                        </td>
+                                {% endif  %}
+                                <td>
+                                    <a href="{{ path('referentielpublic_show', { 'id': referentielPublic.id }) }}"><i class='glyphicon glyphicon-pencil'></i></a>
+                                </td>
+                            </tr>
+                    {% endfor %}
+        </tbody>
+    </table>

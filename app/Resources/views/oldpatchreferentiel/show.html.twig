@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Patchreferentiel</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ patchReferentiel.id }}</td>
+            </tr>
+            <tr>
+                <th>Deletedat</th>
+                <td>{% if patchReferentiel.deletedAt %}{{ patchReferentiel.deletedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Createdby</th>
+                <td>{{ patchReferentiel.createdBy }}</td>
+            </tr>
+            <tr>
+                <th>Updatedby</th>
+                <td>{{ patchReferentiel.updatedBy }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('patchreferentiel_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('patchreferentiel_edit', { 'id': patchReferentiel.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

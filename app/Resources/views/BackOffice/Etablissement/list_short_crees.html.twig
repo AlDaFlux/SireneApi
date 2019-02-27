@@ -1,0 +1,52 @@
+    <table class='table table-bordered table-triable_simple small'>
+        <thead>
+            <tr>
+                <th>Date de <br>Création</th>
+                <th>FINESS</th>
+                <th>Nom</th>
+                {% if gestionnaire is not defined %}
+                    <th>Gestionnaire</th>
+                {% endif %}
+                <th>Public</th>
+            </tr>
+        </thead>
+         
+        <tbody>
+        {% for etablissement in etablissements  %}
+            {% if  etablissement.users | length == 0 %}
+            <tr class='alert-danger'>
+            {% else %}
+            <tr>
+            {% endif %}
+                <td class='small'>{{ etablissement.CreatedDate  | hiddenDate | raw }}</td>
+                <td>{{ etablissement.codefiness }}</td>
+                   
+                {% if etablissement.category.reel %}
+                    <td  class='alert alert-info' title='{{ etablissement.category.commentaire}}'> <a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}">{{ etablissement.nom }}</a></td>
+                {% else %}
+                    <td  class='alert alert-warning' title='{{ etablissement.category.commentaire}}'> <a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}">{{ etablissement.nom }}</a></td>
+                {% endif %}
+ 
+                {% if gestionnaire is not defined %}
+                    {% if etablissement.gestionnaire is not null %}
+                        <td class='small'><a href="{{ path('backoffice_gestionnaire_show', { 'id': etablissement.gestionnaire.id }) }}">{{ etablissement.gestionnaire }}</a></td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endif %}
+               
+                {% if ReferentielPublic is not defined %}
+                    {% if etablissement.referentielPublic.obsolete %}
+                            <td title='! Le référentiel est obsolete' class='small alert-danger' title='{{etablissement.public}}'>{{etablissement.referentielPublic.short}} ({{etablissement.referentielPublic.year}})</td>
+                    {% elseif etablissement.referentielPublic.EnDev %}
+                            <td title='! Le référentiel est en cours de développement' class='small alert-warning' title='{{etablissement.public}}'>{{etablissement.referentielPublic.short}} ({{etablissement.referentielPublic.year}})</td>
+                    {% else %}
+                            <td  title='Le référentiel est fini et en production' class='small alert-success' title='{{etablissement.public}}'>{{etablissement.referentielPublic.short}} ({{etablissement.referentielPublic.year}})</td>
+                    {% endif %}
+                {% endif %}
+
+                 
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>

@@ -1,0 +1,100 @@
+
+    <table class='table table-bordered'>
+        <tbody>
+            <tr>
+                <th>Num facture</th>
+                <td>{{ facture.numFacture }}</td>
+                    <th>PDF</th>
+            {% if facture.HasPDF  %}
+                    <td class='alert-success'>
+                        <a href="{{ path('facture_get_pdf', { 'numFacture': facture.numFacture }) }}"> <i alt='PDF' class='glyphicon glyphicon-save-file'></i> </a>
+                    </td>
+            {% else  %}
+                    <td class='alert-danger'> PAS DE FICHIER !! </td>
+            {% endif %}
+
+            <tr>
+            <th>Concerne</th>
+            {% if facture.Concerne  %}
+                <td colspan='3' class='alert-success'>
+            {% else  %}
+                <td colspan='3' class='alert-danger'>
+            {% endif %}
+                {% if facture.ConcerneTypeLib =='GESTIONNAIRE' %}
+                    <a   href='{{ path('backoffice_gestionnaire_show', {'id': facture.Concerne.id}) }}'>{{'gestionnaire' | get_icon | raw }} {{facture.Concerne}}  </a> 
+                    
+                {% else %}
+                    <a   href='{{ path('backoffice_etablissement_view', {'id':facture.Concerne.id}) }}'>{{'etablissement' | get_icon | raw }} {{facture.Concerne}} </a> 
+                {% endif  %}
+                </td>
+                
+            </tr>
+            <tr>
+                <th>Date Emission</th>
+                <td>{% if facture.dateEmission %}{{ facture.dateEmission|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <th>Creai</th>
+                <td>{{ facture.creai }}</td>
+            </tr>
+            
+            <tr>
+                <th>Crée par</th>
+                <td> {{ facture.CreatedBy  }} </td>
+                <th>Mis à jour par</th>
+                <td>{{ facture.UpdatedBy }}</td>
+            </tr>
+            
+            
+            {% if facture.montant %}
+                
+                {% if facture.montant != facture.montantTotal %}
+                    <tr class='alert-danger'>
+                {% else %}
+                    <tr class='alert-success'>
+                {% endif %}
+                    <th>Montant</th>
+                <td>{{ facture.montant }} €</td>
+                <th>Montant calculé</th>
+                <td>{{ facture.montantTotal }} €</td>
+                </tr>
+            {% else  %}
+                {% if facture.montantTotal > 0 %}
+                    <tr class='alert-success'>
+                {% else %}
+                    <tr class='alert-danger'>
+                {% endif %}
+                    <th colspan='2'>Montant calculé</th>
+                    <td colspan='2'>{{ facture.montantTotal }} €</td>
+                </tr>
+
+            {% endif %}
+
+            <tr>
+                {% if facture.payele %}
+                <th>Payé le : </th>
+                    <td class=''alert-success'>{{ facture.payele|date('d/m/Y') }}</td>
+                    <th>Moyen de Paiement</th>
+                <td>{{ facture.MoyenPaiement }}</td>
+                {% else %}
+                     <th>Payé le : </th>
+                     <td class='alert-danger' colspan='3'>En attente de paiement</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <th>Dernier rappel</th>
+                <td>{% if facture.lastRappel %}{{ facture.lastRappel.dateRappel|date('d/m/Y') }}{% endif %}</td>
+               
+            </tr>
+            {% if facture.montant and false %}
+            <tr>
+                <th>Ren300</th>
+                <td>{{ facture.ren300 }}</td>
+                <th>Ren150</th>
+                <td>{{ facture.ren150 }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <th>Commentaire</th>
+                <td colspan='3'>{{ facture.commentaire }}</td>
+            </tr>
+        </tbody>
+    </table>

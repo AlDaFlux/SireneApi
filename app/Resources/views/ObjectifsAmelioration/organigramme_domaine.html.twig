@@ -1,0 +1,113 @@
+{% extends "ObjectifsAmelioration/layout.html.twig" %}
+
+
+{% block stylesheets %} 
+    {% stylesheets '@Pericles3Bundle/Resources/public/css/arbre.css' %}
+        <link rel="stylesheet" href="{{ asset_url }}" type="text/css" />
+    {% endstylesheets %}
+    
+{% endblock %}
+
+{% block title %}{{ parent() }} - Organigramme{% endblock %}
+
+{% block body %}{{ parent() }}
+    
+    <h2 class='osa'><a href="{{ path('pericles3_paq_organigramme') }}">Qualigramme</a></h2>
+ 
+    {% include "Nuts/menu_domaine_transversal.html.twig" %} 
+
+      
+    {# if pistesAmeliorations|length > 0 #}
+        {% if domaine.NbObjectifs > 0 %}
+            
+          
+            <button type="button" class="btn btn-link screen_only" data-toggle="collapse" data-target="#demo"><i class='glyphicon glyphicon-info-sign'></i></button>
+  <div id="demo" class="collapse out panel panel-primary panel_osa">
+              <div class="panel-heading"><h3 class="panel-title">Légende</h3></div>
+        
+                <div class="panel-body">
+        <div class="leef_oa leef_osa doing"> Objectifs Stratégiques d'Amélioration </div>
+                        <div class="arbre_container">
+                        <span class="leef leef_dimension leef_arbo">
+                           0.0 Dimension
+                        </span>
+                            <div class="branch lv1">
+                                <div class="entry sole">
+                                    <span class="leef leef_critere leef_arbo">
+                                        0.0.0 -  Critère
+                                    </span>
+                                    <div class="branch lv2">
+                                        <div class="entry sole">
+                                             <a>
+                                                 <span class="leef leef_oa leef_ooa todo">
+                                                 Objectif Opérationnel d'Amélioration
+                                                 </span></a></div>
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
+        </div>
+   </div>
+ 
+            
+            
+           
+
+        
+
+                                 
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <div class="arbre_container">
+                          {% include "ObjectifsAmelioration/inc_organigramme.html.twig" %} 
+            </div>        
+        {% else %}
+            <div class='alert alert-warning'>
+                Vous n'avez pas d'objectifs pour ce domaine.
+            </div>
+        {% endif %}
+                
+
+    {#
+        <a class="btn btn-primary active full-width" href="{{ path('pericles3_paq_create') }}"><i class='icon-plus'></i>Créer une piste d'amélioration</a>
+
+             #}
+    
+    <p>
+    <p>
+    <p>
+        <hr class=''separateur'>
+    <p>
+    <p>
+    <p>
+        
+{% endblock %}

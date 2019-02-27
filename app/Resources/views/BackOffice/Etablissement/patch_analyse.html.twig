@@ -1,0 +1,91 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Etablissement{% endblock %}
+
+{% block body %}
+    {% set etablissement = cur_etablissement %}
+        <h1> <a href="{{ path('backoffice_etablissement_view', {'id': etablissement.id})}}">{{etablissement}}</a> </h1>
+        {% if  is_granted('ROLE_MEGA_ADMIN') %}
+            <div class='alert alert-danger'>
+                Vous êtes en train de changer le public de  <b><a href="{{ path('referentielpublic_show', { 'id': ReferentielPublicSource.id })}}" >{{ReferentielPublicSource}}</b></a> à  <b><a href="{{ path('referentielpublic_show', { 'id': ReferentielPublicCible.id })}}" >{{ReferentielPublicCible}}</a></b> 
+            </div>
+            
+            <a class='btn  btn-danger full-width'  href="{{ path('backoffice_etablissement_patch_filiation_go', { 'id': etablissement.id, 'ref_cible':ReferentielPublicCible.id, 'etape': etape })}}" >Prochaine étape : {{etape}}</a>
+            
+
+            
+             <table class='table table-bordered table-triable '>
+               
+              {% for domaine in etablissement.getDomainesReferentiel(ReferentielPublicCible) %}
+                <tr class='dom'>
+                  <td> {{domaine.id}}</td>
+                  <td> {{domaine}}</td>
+                    {% set source =  domaine.EvalSource  %}
+                  {% if source  is not empty %}
+                          <td>{{source}}</td>
+                          <td>{{source.id}}</td>
+                    {% endif  %}
+                       
+                  </tr>
+                    {% for dimension in domaine.dimensions %}
+                    <tr class='dim'>
+                      <td> {{dimension.id}}</td>
+                      <td> {{dimension}}</td>
+                      <td> </td>
+                      <td> </td>
+                    </tr> 
+                       {% for critere in dimension.criteres %}
+                    <tr class='crit'>
+                      <td> {{critere.id}}</td>
+                      <td> {{critere}}</td>
+                      {% set source =  critere.EvalSource  %}
+                  {% if source  is not empty %}
+                          <td>{{source}}</td>
+                          <td>{{source.id}}</td>
+                    {% endif  %}
+                    </tr> 
+                    {% endfor %}
+                  
+                    {% endfor %}
+                  
+                      
+
+                    {#
+                    {% if domaine.Referentiel  is not empty %}
+                            <td> {{domaine.Referentiel}}</td> 
+                            {% if domaine.Referentiel.SourceParent  is not empty %}
+                                <td> {{domaine.Referentiel.SourceParent}}</td> 
+                                <td> {{domaine.Referentiel.SourceParent.id}}</td> 
+//                              <td> {{domaine.Referentiel.DomaineEtablissementRef(etablissement,ReferentielPublicSource)}}</td> 
+                                <td> {{domaine.Referentiel.SourceParent.getDomaineEtablissement(etablissement) }}</td> 
+
+                                
+                                {% set dom = domaine.Referentiel.SourceParent.getDomaineEtablissement(etablissement) %}
+
+                                <tr>
+                                            <td>++ {{dom.id}} </td>
+                                            <td> {{dom}} </td>
+                                            <td> {{dom.ReferentielPublic}} </td>
+                                            <td> {{dom.etablissement}} </td>
+                                            <td> {{dom.NbObjectifsSrategique}} </td>
+                                </tr>
+                                
+                             
+                            {% endif  %}
+                            
+                      {% endif  %}
+                      #}
+                       
+                    
+                </tr>
+                            
+              {% endfor %}
+        </table>
+        {% endif  %}
+
+
+        
+{% endblock %}
+
+
+

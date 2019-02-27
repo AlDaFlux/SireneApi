@@ -1,0 +1,44 @@
+{# empty Twig template #}
+<table class='table table-bordered table-triable_simple_desc small'>        
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Etablissement</th>
+                {% if  is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
+                        <th>Creai</th>
+                {% endif %}
+                <th>Etat</th>
+            </tr>
+        </thead>
+        <tbody>
+
+                
+                
+        {% for demandeEtablissement in demandeEtablissements %}
+            {% if demandeEtablissement.finess is not empty %}
+                {% set etab  = demandeEtablissement.finess.etablissement %}
+            {% else %}
+                {% set etab  = '' %}
+            {% endif  %}
+
+            {% if etab is not empty and demandeEtablissement.etat.id != 3 %}
+                <tr title="la demande n'est pas terminée mais l'établissement est créer" class='alert-danger'>
+            {% else %}
+                <tr>
+            {% endif  %}
+                <td>{{ demandeEtablissement.dateDemande|hiddenDate("d-m-Y") | raw }}</td>
+                <td>
+                        <a href="{{ path('backoffice_demande_etablissement_show', { 'id': demandeEtablissement.id }) }}">{{ demandeEtablissement.etablissementNom }} </a>
+                </td>
+                  
+                    
+                {% if  is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
+                    <td>{{ demandeEtablissement.creai  }}</td>
+                {% endif %}
+
+                <td><a href="{{ path('backoffice_demande_etablissement_show', { 'id': demandeEtablissement.id }) }}">{{ demandeEtablissement.etat|  afficheDemandeEtat | raw }}</a></td>
+            
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>

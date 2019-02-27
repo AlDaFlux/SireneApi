@@ -1,0 +1,70 @@
+{% extends "Bibliotheque/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Bibliothèque{% endblock %}
+
+{% block body %}
+         {{ parent() }} 
+         
+         <h2><a href="{{ path('pericles3_bibliotheque_preuves') }}"  >Bibliothèque de preuves de qualité</a></h2>
+    
+    {% set par_type_preuve =false %}
+    {% set is_critere =false %}
+    {% set is_objectif_operationnel =false %}
+    {% set is_pdv =false %}
+
+    {% if domaine is defined %}
+        {% include "Nuts/menu_domaine_transversal.html.twig" %} 
+            {% set sous_titre = domaine %}
+     {% endif %}
+     
+     
+    {% if type_preuve is defined %}
+        {% if type_preuve is not empty  %}
+            {% set sous_titre = type_preuve | typePreuveLib %}
+            
+            {% set par_type_preuve = true%}
+                {% if type_preuve=='critere' %}
+                    {% set is_critere = true%}
+                {% endif %}            
+                {% if type_preuve=='objectif_operationnel' %}
+                    {% set is_objectif_operationnel = true%}
+                {% endif %}            
+                {% if type_preuve=='pdv' %}
+                    {% set is_pdv = true%}
+                {% endif %}            
+        {% endif %}
+    {% endif %}
+    
+    {% if sous_titre is defined %}
+        <h3 class='alert alert-success'>{{sous_titre}}</h3>
+    {% endif %}
+    
+
+    
+    {% if  preuves|length == 0 %}
+        <div class='alert alert-warning'>
+            Aucune preuves 
+             {% if not par_type_preuve %}
+                     {% if sous_titre is defined %}
+                 <b>{{sous_titre}}</b>
+                    {% endif %}
+             {% endif %}
+             pour l'instant
+        </div>
+    {% endif %}
+    
+    
+
+ {% endblock %}
+
+ 
+ 
+{% block out_container  %} 
+        {% if  preuves|length > 0 %}
+         {% include "Bibliotheque/preuves_list.html.twig" %} 
+
+    {% endif %}
+    
+ {% endblock %}
+
+ 

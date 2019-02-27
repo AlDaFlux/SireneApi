@@ -1,0 +1,61 @@
+{% if  constats | length ==0 %}
+    <div class='alert alert-warning'>
+        Aucun constat
+    </div>
+{% else %}
+    <table class='table table-bordered table-triable'>
+     <thead>
+        <tr>
+        <td>Etablissement</td>
+        {% if is_granted('ROLE_MEGA_ADMIN') and trash is defined %}
+            <td>Référentiel Public</td>
+            <td>Référentiel Public normal</td>
+        {% endif  %}
+        <td>Commentaire</td>
+        <td>Utilisateur</td>
+        {% if critere_referentiel is not defined %}
+            <td>Critere</td>
+        {% endif %}
+        <td>Date</td>
+        <td>Action</td>
+        </tr>
+     </thead>
+  {% for constat in constats %}
+      <tr>
+        <td> <a   href="{{ path('pericles3_critere', {'id': constat.critere.id}) }}#0">{{ constat.etablissement }}</a></td>
+        {% if is_granted('ROLE_MEGA_ADMIN') and trash is defined %}
+
+            <td>{{constat.critere.referentiel.ReferentielPublic}}</td>
+            <td>{{constat.critere.etablissement.referentielPublic}}</td>
+        {% endif  %}
+        
+
+            <td id='constat_{{ constat.id}}'>{{ constat.commentaire }}</td>
+        <td id='constat_{{ constat.id}}_user'>{{ constat.user }}</td>
+        
+        {% if critere_referentiel is not defined %}
+            <td>{{ constat.critere.numero }} : {{ constat.critere }}</td>
+        {% endif %}
+
+        <td id='constat_{{ constat.id}}_date'>{{ constat.dateCreate|date('d-m-Y H:i:s')  }}</td>
+        <td>     
+       
+        {% if is_granted('ROLE_RW_EVAL') and  (is_granted('ROLE_ADMIN') or constat.user.id==app.user.id)  %}
+            <a title='Modifier le constat' href="javascript:updateConstat({{ constat.id }});"><i class='glyphicon glyphicon-pencil'></i></a>
+            <span data-url_delete_ajax="{{ path('pericles3_delete_constat_from_eval_ref', {'id':constat.id}) }}"
+               data-invite="Voulez-vous supprimer définitivement le constat ? " 
+               data-zone_to_reload='#constat_liste'
+               title='Supprimer le constat' class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active'></span>
+        {% endif %}
+        </td>        
+        </tr>        
+
+{% endfor %}
+    </table>
+{% endif %}
+
+
+  {% include "Evaluation/Critere/inc_constats_modal.html.twig" %} 
+
+  
+  

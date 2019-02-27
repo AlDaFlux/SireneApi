@@ -1,0 +1,52 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+ 
+
+{% block body %}
+    <h1><a href="{{ path('trash_index') }}">Trash</a></h1>
+   
+    <h2>Etablissements / ref Externe</h2>
+    
+        <li>Etablissements avec ref externe
+            
+            <table class='table table-triable'>
+            {% for etablissement in etablissements %}
+                {% if etablissement.getReferentielExterne is not empty  %}
+                    {% if etablissement.NbDomainesExterne  != etablissement.getReferentielExterne.NbDomaines %}
+                        <tr class='alert-danger'>
+                        </tr>
+                        <tr>
+                            
+                        <td>{{etablissement.id}}</td> 
+                        <td>{{etablissement}}</td> 
+                        <td>{{etablissement.referentielPublic}}</td> 
+                        <td>{{etablissement.getReferentielExterne}}</td> 
+                        <td>{{etablissement.getReferentielExterne.NbDomaines}}</td> 
+                        
+                        <td>{{etablissement.NbDomainesExterne}}</td> 
+                        <td>
+                            {% for dom in etablissement.getDomainesExterneObsolete %}
+                                {% if dom.hasOnlyObsolete %}
+                                     <li class='alert-danger'>{{dom}} - {{dom.nbCriteres}}</li>
+                                {% else  %}
+                                    <li class='alert-success'>{{dom}} - {{dom.nbCriteres}}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </td> 
+
+                        {% if  is_granted('ROLE_MEGA_ADMIN') %}
+
+                                {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+                {% endif %}
+            {% endfor %}
+            </table>
+   
+            
+            <pre>{% for etablissement in etablissements %}{% if etablissement.getReferentielExterne is not empty  %}{% if etablissement.NbDomainesExterne  != etablissement.getReferentielExterne.NbDomaines %}php bin/console patch:etablissement-del-obs-ref-externe --etablissement_id={{etablissement.id}}
+{% endif %}{% endif %}{% endfor %}
+</pre>
+{% endblock %}
+ 

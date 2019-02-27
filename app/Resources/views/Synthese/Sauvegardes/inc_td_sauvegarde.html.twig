@@ -1,0 +1,38 @@
+                
+{% if etablissement.NbSauvegardes == 0 %}
+    {% set td_save_title = 'Aucune sauvegarde ! ' %}
+    
+     {% if  etablissement.SaisieTerminee %}
+            {% set td_save_title = td_save_title ~ ' - évaluation est finie !! faire une sauvegarde !  ' %}
+            {% set td_save_class = 'alert-danger' %}
+     {% else %}
+            {% set td_save_class = 'alert-warning' %}
+            {% set td_save_title = td_save_title ~ ' - L\'évaluation en cours ! sauvegardes indisponibles' %}
+     {% endif  %}
+     
+{% else %}
+    {% set td_save_title= 'Sauvegardes effectuées' %}
+     {%  if  etablissement.getLastSauvegarde.getPlusDunAn %}  
+            {% set td_save_title = td_save_title ~ ' - Il est fortement conseillé de faire une sauvegarde par an minimum !' %}
+            {% set td_save_class = 'alert-danger' %}
+     {% else %}
+            {% set td_save_class = 'alert-success' %}
+            {% set td_save_title = td_save_title ~ ' il y \'a moins d\'un an ! ' %}
+     {% endif  %}
+                       
+    
+
+{% endif %}
+
+<td title='{{td_save_title}}' class='help center alert {{td_save_class}}'>
+    {% if app.user.isGestionnaire %}
+        <a href="{{ path('pericles3_sauvegardes_etablissement', {'id': etablissement.id}) }}">
+                {{ etablissement.NbSauvegardes}}
+        </a>
+    {% else %}
+        {{ etablissement.NbSauvegardes}}   
+    {% endif %}
+</td>
+
+
+

@@ -1,0 +1,205 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+ 
+{% block body %}
+    <h1><a href="{{ path('patch_index') }}">Patch</a></h1>
+    <h2><a href="{{ path('patch_show', {'id': patchReferentiel.Patch.id }) }}">Patch {{patchReferentiel.Patch}}</a></h2>
+    
+    
+    <table class='table table-bordered'>
+        <tbody>
+            {% if patchReferentiel.valide %}  
+                <tr class='alert-success'>
+            {% else %}  
+                <tr class='alert-danger'>
+            {% endif  %}  
+                <th>Id</th>
+                <td>{{ patchReferentiel.id }}</td>
+                <th>Validé</th>
+                <td colspan='2'>
+                    {% if patchReferentiel.valide %}  
+                        <i class='glyphicon glyphicon-ok greenText'></i> 
+                    {%  else  %}
+                        <i class='glyphicon glyphicon-warning-sign redText'></i> 
+                    {%  endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Source</th>
+                <td>{{ patchReferentiel.source}}</td>
+                {% if patchReferentiel.source %}
+                    <td>
+                        {{ patchReferentiel.source.numero}}</a>
+                    </td>
+                    <td>
+                        {{ patchReferentiel.source.referentielPublic}}</a>
+                    </td>
+                    <td>
+                        <a href="{{ path('referentielpublic_show_node', {'id': patchReferentiel.source.ReferentielPublic.id,'id_node': patchReferentiel.source.id }) }}">{{ patchReferentiel.source.id}}</a>
+                    </td>
+                {% else %}
+                    <td></td>
+                    <td></td>
+                {% endif  %}
+            </tr>
+            <tr>
+                <th>Aieul</th>
+                <td>{{ patchReferentiel.Aieul}}</td>
+                {% if patchReferentiel.Aieul %}
+                    <td>
+                        {{ patchReferentiel.Aieul.numero}}</a>
+                    </td>
+                    <td>
+                        {{ patchReferentiel.Aieul.referentielPublic}}</a>
+                    </td>
+                    <td>{{ patchReferentiel.Aieul.id}}</td>
+                {% else %}
+                    <td></td>
+                    <td></td>
+                {% endif  %}
+            </tr>
+            <tr>
+                <th>Cible</th>
+                <td>{{ patchReferentiel.cible}}</td>
+                {% if patchReferentiel.cible %}
+                    <td>
+                        {{ patchReferentiel.cible.numero}}</a>
+                    </td>
+                    <td>
+                        {{ patchReferentiel.cible.referentielPublic}}</a>
+                    </td>
+                    <td>{{ patchReferentiel.cible.id}}</td>
+                {% else %}
+                    <td></td>
+                    <td></td>
+                {% endif  %}
+            </tr>
+            
+            {% if patchReferentiel.source and  patchReferentiel.cible  %}
+                    <tr><td>Diff</td><td colspan='4'>
+                            <div class='alert alert-info'>
+                                {{renderDiff(patchReferentiel.cible,patchReferentiel.source,"word")}} 
+                            </div>
+                    </td></tr>
+            {% endif  %}
+              
+            
+        </tbody>
+    </table>
+
+
+            {% if patchReferentiel.source and  patchReferentiel.cible  and  not patchReferentiel.valide %}
+                <a title="" href="{{ path('patch_unlink_patch_ref', { 'id': patchReferentiel.id }) }}"  class = "full-width btn  btn-danger  ">Supprimer la liason</a> 
+                <p>
+            {% endif  %}
+            
+            
+            {% if nextPatchToValide is not empty and nextPatch is not empty  %}
+                {% if nextPatchToValide.id == nextPatch.id %}
+                    <div class='row'>
+                        <div class="col-sm-8"></div><div class="col-sm-4">
+                        <a title="" href="{{ path('patchreferentiel_show', { 'id': nextPatch.id }) }}"  class = "full-width btn  btn-warning ">Suivant (à valider) </a> 
+                        </div>
+                    </div>
+                {% else  %}
+                    <div class='row'>
+                        <div class="col-sm-8"></div><div class="col-sm-4">
+                            <a title="" href="{{ path('patchreferentiel_show', { 'id': nextPatch.id }) }}"  class = "full-width btn  btn-warning ">Suivant </a> 
+                        </div>
+                        <div class="col-sm-8"></div><div class="col-sm-4">
+                            <a title="" href="{{ path('patchreferentiel_show', { 'id': nextPatchToValide.id }) }}"  class = "full-width btn  btn-warning ">Suivant à valider</a> 
+                        </div>
+                    </div>
+                {% endif  %}
+            {% elseif nextPatch is not empty   %}
+                    <div class='row'>
+                        <div class="col-sm-8"></div><div class="col-sm-4">
+                        <a title="" href="{{ path('patchreferentiel_show', { 'id': nextPatch.id }) }}"  class = "full-width btn  btn-warning ">Suivant</a> 
+                        </div>
+                    </div>
+            {% endif  %}
+                <p>
+                <p>
+            
+            
+                                
+        {% if patchReferentiel.valide  %}
+                <a class='btn btn-warning full-width' href='{{ path('patchreferentiel_unvalide', { 'id': patchReferentiel.id }) }}'>Considérer ce patch comme non valide (à re-vérifié)</a>
+        {% else  %}
+            {% if not patchReferentiel.cible %}
+                <a class='btn btn-warning full-width' href='{{ path('patchreferentiel_valide', { 'id': patchReferentiel.id }) }}'>Considérer <br> <b>{{ patchReferentiel.source.numero}} : {{patchReferentiel.source }}</b> <br> comme suppprimé dans <b> {{patchReferentiel.Patch.Cible}} </b></a>
+            {% elseif not patchReferentiel.source  %}
+                <a class='btn btn-warning full-width' href='{{ path('patchreferentiel_valide', { 'id': patchReferentiel.id }) }}'>Considérer <br> <b>{{ patchReferentiel.cible.numero}} : {{patchReferentiel.cible}}</b> <br> comme ajouté dans <b> {{patchReferentiel.Patch.Cible}} </b></a>
+            {% else  %}
+                <a class='btn btn-success full-width' href='{{ path('patchreferentiel_valide', { 'id': patchReferentiel.id }) }}'>Considérer la liason comme valide</a>
+            {% endif  %}            
+        {% endif  %}            
+        
+                                
+       
+    
+{% endblock %}
+
+
+{% block out_container  %} 
+
+        
+            
+    {% if not patchReferentiel.cible %}
+            
+    <table class='table table-bordered table-triable_desc'>
+           <thead>
+            <tr>
+                <th>Corespondance</th>
+                <th>Chaine</th>
+                <th>Numéro</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+             {% set node = patchReferentiel.source %}
+            
+                {% for node_to_link in nodes_without_child %}
+                <tr>
+                    {{node_to_link.cible | similar_text_td(patchReferentiel.source) | raw }}
+                    <td>
+                        {{renderDiff(node_to_link.cible,patchReferentiel.source,"word")}}</td>
+                    
+                    {% if ( node.numero == node_to_link.cible.numero )  %}
+                        <td class="alert-success">{{node_to_link.cible.numero}}</td>
+                    {% else   %}
+                        <td class="alert-warning">{{node_to_link.cible.numero}}</td>
+                        
+                    {% endif  %}
+                    {#
+                        <td>{{node_to_link.cible}}</td>
+                        <td>{{node_to_link.cible.referentielPublic}}</td>
+                    #}
+                    <td>
+
+                        {{node_to_link.cible}}
+                        
+                        {% set trouve = false %}
+                        
+                        {% if node_to_link.source %}
+                            <a href="{{ path('patchreferentiel_show', { 'id': node_to_link.id }) }}"> déja lié au {{ node_to_link.source.numero }}</a>
+                       {% else %}
+                            <a href="{{ path('patchreferentiel_link', { 'patchSource': patchReferentiel.id ,'patchCible': node_to_link.id }) }}"  class= "btn  btn-danger ">Lier</a> 
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+        
+            
+{% endif %}
+            
+            
+        {#
+        <li>
+            <a href="{{ path('patchreferentiel_edit', { 'id': patchReferentiel.id }) }}">Edit</a>
+        </li>
+        #}
+{% endblock %}

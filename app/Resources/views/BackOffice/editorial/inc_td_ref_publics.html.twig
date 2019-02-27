@@ -1,0 +1,16 @@
+    {% if editorial.referentielPublics | length > 0 %}
+     <td class='alert-success'>
+            <ul>
+            {% for ref in editorial.referentielPublics  %}
+                    <li>{{ref}}
+
+            {% endfor %}
+            </ul>
+        </td>
+    {% else %}
+     <td class='alert-info'>
+         Tous
+    </td>
+    {% endif  %}
+
+

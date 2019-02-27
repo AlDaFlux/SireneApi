@@ -1,0 +1,31 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Pericle edit</h1>
+
+    {{ form_start(edit_form) }}
+        {{ form_widget(edit_form) }}
+        {{ include("Nuts/cancelsave.html.twig") }}
+    {{ form_end(edit_form) }}
+ 
+{% endblock %}
+
+
+
+
+{% block javascripts %}
+    
+    <script>
+        $('#pericles3bundle_pericles_etablissement').autocompleter({
+    url_list: '{{ path('pericles3_backoffice_formsearch_etablissement') }}',
+    url_get: '{{ path('pericles3_backoffice_formsearch_get_etablissement') }}_'
+});
+        
+        $('#pericles3bundle_pericles_gestionnaire').autocompleter({
+    url_list: '{{ path('pericles3_backoffice_formsearch_gestionnaire') }}',
+    url_get: '{{ path('pericles3_backoffice_formsearch_get_gestionnaire') }}_'
+});
+        
+    </script>
+{% endblock %}
+

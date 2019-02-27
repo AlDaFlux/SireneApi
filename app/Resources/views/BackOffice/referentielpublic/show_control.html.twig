@@ -1,0 +1,101 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Control Ordre</h1>
+     
+{% include "MessageFlash/messageFlash.html.twig" %}
+           
+    <h2>Elements avec un probleme de numéro d'ordre</h2>
+
+        <table class='table table-bordered table-triable'>
+        <thead>
+            <tr>
+                <th>Numero</th>
+                <th>Ordre</th>
+                <th>GetTmpNB</th>
+                <th>NbChil</th>
+                <th>Max OrdreChil</th>
+                <th>Fdiff </th>
+                <th>Nom</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+             {% for referentielNode in referentielNodes  %}
+                 {# if referentielNode.NbChildren != referentielNode.MaxOrdreChildren #}
+                 
+                 {% if not referentielNode.GetChildrenOrdreOK %}
+                    <tr>
+                        <td>{{ referentielNode.numero }}</td>
+                        <td>{{ referentielNode.ordre }}</td>
+                        
+                        <td>{{ referentielNode.GetTmpNB}}</td>
+                        
+                        <td>{{ referentielNode.NbChildren}}</td>
+                        <td>{{ referentielNode.MaxOrdreChildren}}</td>
+                        <td>{{ referentielNode.NbChildren - referentielNode.MaxOrdreChildren}}</td>
+                        
+                        <td>
+                        {% for child in referentielNode.children %}
+                           <a href='{{ path('referentielpublic_show_node', {'id_node': child.id, 'id': referentielNode.referentielPublic.id}) }}'>
+                               <span title ='{{child}} (Num : {{child.id }})'> {{child.ordre }} </span>-
+                           </a>
+                        {% endfor %}
+                        </td> 
+                        
+                        <td><a href='{{ path('referentielpublic_show_node', {'id_node': referentielNode.id, 'id': referentielNode.referentielPublic.id}) }}'>{{ referentielNode.nom}}</a></td>
+                        <td><a href='{{ path('referentielpublic_show_node', {'id_node': referentielNode.id, 'id': referentielNode.referentielPublic.id}) }}'><i class='glyphicon glyphicon-eye-open'></i></a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+     
+        
+        
+        <h2>Elements avec pas ou peu d'enfants : </h2>
+        
+           
+        
+        <table class='table table-bordered table-triable'>
+        <thead>
+            <tr>
+                <th>Public</th>
+                <th>Numero</th>
+                <th>NbChil</th>
+                <th>Nom</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+             {% for referentielNode in referentielNodes  %}
+                 {% if referentielNode.NbChildren < 2 %}
+                    <tr>
+                        <td>{{ referentielNode.referentielPublic }}</td>
+                        <td>{{ referentielNode.numero }}</td>
+                        <td>{{ referentielNode.NbChildren}}</td>
+                        {#
+                        <td>
+                        {% for child in referentielNode.children %}
+                            <span title ='{{child}} (Num : {{child.id }})'> {{child.ordre }} </span>-
+                        {% endfor %}
+                        </td> 
+                        #}
+                        <td><a href='{{ path('referentielpublic_show_node', {'id_node': referentielNode.id, 'id': referentielNode.referentielPublic.id}) }}'>{{ referentielNode.nom}}</a></td>
+                        <td><a href='{{ path('referentielpublic_show_node', {'id_node': referentielNode.id, 'id': referentielNode.referentielPublic.id}) }}'><i class='glyphicon glyphicon-eye-open'></i></a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+     
+        
+
+        <a href="{{ path('referentielpublic_index') }}"  class = "btn  btn-link full-width">Retour à la liste</a><ul>
+
+            
+{% endblock %}
+
+
+
+  

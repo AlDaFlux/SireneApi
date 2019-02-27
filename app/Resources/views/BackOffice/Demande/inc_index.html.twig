@@ -1,0 +1,63 @@
+
+{% set notsearchable = false %}
+
+{% set short = true %}
+
+<div class='row'>
+    
+    <div class='col-md-4'>
+        <div class="panel panel-primary">
+            <div class="panel-heading"> <h3 class="panel-title"><i class='icon-king'></i>Demandes de création gestionnaire</h3></div>
+
+                {% if NbDemandesGestionnaireNonFinies  >0 %}
+                    {% include "BackOffice/Demande/Gestionnaire/inc_liste_short.html.twig" with {'demandesGestionnaire' : DemandesGestionnaireNonFinies} %}
+                {% else %}
+                    <div class="panel-body alert-success">
+                            Toutes les demandes de création gestionnaire ont été traitées...
+                        </div>   
+                {% endif %}
+            <div class="panel-footer">
+                    <a class='btn btn-link full-width' href="{{ path('backoffice_demande_gestionnaire_index_all', {}) }}">Voir toutes les demandes de création gestionnaire</a>    
+
+            </div>   
+        </div>   
+    </div>   
+                     
+    <div class='col-md-4'>
+        <div class="panel panel-primary">
+            <div class="panel-heading"> <h3 class="panel-title"><i class='icon-queen'></i>Demandes de création d'établissement</h3></div>
+
+                {% if NbDemandesEtablissementNonFinies  >0 %}
+                    {% include "BackOffice/Demande/Etablissement/inc_liste_short.html.twig" with {'demandeEtablissements' : DemandesEtablissementNonFinies} %}
+                {% else %}
+                    <div class="panel-body alert-success">
+                            Toutes les demandes de création d'établissement ont été traitées...
+                    </div>   
+                {% endif %}
+            <div class="panel-footer">
+                    <a class='btn btn-link full-width' href="{{ path('backoffice_demande_etablissement_index_all', {}) }}">Voir toutes les demandes de création d'établissement</a>    
+            </div>   
+        </div>   
+    </div>   
+            
+            
+    <div class='col-md-4'>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading"> <h3 class="panel-title"><i class='icon-info'></i>Demandes d'informations à traiter par l'ANCREAI</h3></div>
+
+
+                {% if demandeInfosSansCreai | length  > 0 %}
+                    {% include "BackOffice/Demande/Info/inc_liste.html.twig" with {'demandeInfos' : demandeInfosSansCreai } %}
+                {% else %}
+                    <div class="panel-body alert-success">
+                        Toutes les demandes d'informations ANCREAI ont été traitées...
+                    </div>   
+            {% endif %}
+            <div class="panel-footer">
+                <a class='btn btn-link full-width'  href='{{ path('bo_demande_info_ancreai') }}'>Voir toutes les demandes d'infos ANCREAI</a>
+            </div>
+        </div>
+    </div>
+
+</div>

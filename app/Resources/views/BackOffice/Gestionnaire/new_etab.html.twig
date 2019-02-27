@@ -1,0 +1,13 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Gestionnaire : {{gestionnaire.nom}} </h1>
+    <h2>Nouvel Etablissement</h2>
+    
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <input class='create btn btn-primary active' type="submit" value="Créer l'établissement" />
+    {{ form_end(form) }}
+
+          <p>  <a class="back_to back_to_list" href="{{ path('backoffice_gestionnaire_show', {'id': gestionnaire.id}) }}">Retour</a>
+{% endblock %}  

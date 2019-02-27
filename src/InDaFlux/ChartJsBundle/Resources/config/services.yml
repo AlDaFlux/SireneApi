@@ -1,0 +1,4 @@
+services:
+#    in_da_flux_chart_js.example:
+#        class: InDaFlux\ChartJsBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

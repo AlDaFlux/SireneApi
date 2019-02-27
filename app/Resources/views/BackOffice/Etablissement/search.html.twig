@@ -1,0 +1,27 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Administration{% endblock %}
+{% block out_container  %}
+
+{{ parent() }}
+      <h1><a href="{{ path('pericles3_backoffice_etablissement') }}"> Etablissements</a></h1>
+
+    <h2>Recherche : {{occurence}}</h2>
+ 
+ 
+             <form action="{{path("pericles3_etablissement_search")}}" method="POST"   >
+                        <div class="form-group">
+                          <input type="text" name='occurence' value="{{occurence}}" class="form-control" placeholder="Rechercher dans les établissements ">
+                        </div>
+                        <button type="submit" class="btn btn-link full-width"><i class='glyphicon glyphicon-search'></i></button>
+            </form>
+ 
+                            
+                        
+            {% set vue_globale=true %}
+                        
+            {% if etablissements is not empty %}
+                {% include 'BackOffice/Etablissement/list.html.twig' %}
+            {% endif %}
+    
+{% endblock %}

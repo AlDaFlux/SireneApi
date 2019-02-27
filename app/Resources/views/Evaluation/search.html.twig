@@ -1,0 +1,17 @@
+{% extends "Evaluation/layout.html.twig" %}
+
+
+{% block title %}{{ parent() }} - Recherche{% endblock %}
+
+
+{% block legend %}
+    {# include("Nuts/inc_legend.html.twig") #} 
+{% endblock %} 
+
+                
+{% block body %}
+  {{ parent() }}
+
+  {% include("Nuts/inc_search.html.twig") %} 
+
+{% endblock %}

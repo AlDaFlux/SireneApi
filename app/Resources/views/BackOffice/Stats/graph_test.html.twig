@@ -1,0 +1,47 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+    {% block css %}
+    {% endblock %}
+
+
+ {% block stylesheets %}
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
+    <link href="{{ asset('bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/carousel.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet">
+{#            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>    #}
+        {% endblock %}
+
+    
+
+
+
+
+{% block out_container  %}
+
+{{ parent() }}
+
+<h1>{{ title }} </h1>
+
+{% include("BackOffice/Stats/inc_paiements.html.twig") %}
+
+
+{% set num = 0 %}
+{% for grafica in graficas %}
+    {% set num = num  + 1  %}
+        <h2>{{grafica.title}}</h2>
+        {{ chartjs_canvas('myPieChart_' ~ num ,grafica.width,grafica.height,grafica) }}
+{% endfor %}
+ 
+    
+{% endblock %}
+
+
+{% block javascript %}
+    
+    <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('holder/holder.min.js') }}"></script>
+    <script src="{{ asset('bundles/chartjs/js/Chart.min.js') }}"></script>
+     
+    
+{% endblock %}

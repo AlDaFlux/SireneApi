@@ -1,0 +1,35 @@
+{% extends "::layout.html.twig" %}
+
+
+{% block title %}{{ parent() }} - CGU {% endblock %}
+ 
+{% block menu %}
+{% endblock %}
+
+    {% block body %}
+    {{ parent() }}
+    <h1>Conditions générales d'utilisation</h1>
+    
+    <div class='alert alert-warning'>
+        Vous devez lire et accepter les nouvelles conditions générales d'utilisation.
+    </div>
+    <a href="/conditions_generales_de_licence.pdf" target='blank' class='btn btn-primary full-width'>Télécharger les conditions (besoin d'Acrobat Reader)</a>
+    <p>
+    <br>
+    <iframe id="iframepdf" src="/conditions_generales_de_licence.pdf"></iframe>
+    
+    
+
+<div class='row'>
+      <div class="col-sm-6">
+                <a class="btn btn-danger active full-width" href="{{ path('login_logout') }}">Je refuse les conditions d'utilisation</a>
+    </div>
+      <div class="col-sm-6">
+                <a class="btn btn-success active full-width" href="{{ path('arsene_accepted_conditions') }}">J'accepte les conditions d'utilisation</a>
+    </div>
+</div>
+    
+    
+    
+    
+{% endblock %}

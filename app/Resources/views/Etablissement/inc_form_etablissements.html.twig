@@ -1,0 +1,11 @@
+
+
+<fieldset>
+{% for etab in app.user.getEtablissementsByRefPublic(refPublicCible) %}
+        <div>
+          <input type="checkbox" id="etab_{{etab.id}}" name="etab_{{etab.id}}" value="{{etab.id}}" checked>
+          <label for="etab_{{etab.id}}">{{etab}}</label>
+        </div>
+{% endfor %}
+</fieldset>
+

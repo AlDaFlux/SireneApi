@@ -1,0 +1,125 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Parent <a href="{{ path('referentielpublic_show', { 'id': referentielPublic.sourceParent.id }) }}">  {{ referentielPublic.sourceParent}} </a></h1>
+    <h1>Enfant<a href="{{ path('referentielpublic_show', { 'id': referentielPublic.id }) }}">  {{ referentielPublic }} </a></h1>
+   
+    <a class='btn btn-primary' href="{{ path('referentielpublic_comparaison_criteres', { 'id': referentielPublic.id }) }}">  Criteres </a>
+    <a class='btn btn-primary' href="{{ path('referentielpublic_comparaison_questions', { 'id': referentielPublic.id }) }}">  Questions </a>
+
+    
+    {% if firstOrphan is not empty %}
+        <a title="{{firstOrphan}}" href="{{ path('referentielpublic_show_link_source_move', { 'id': referentielPublic.id , 'id_node': firstOrphan.id  })}}"  class = "btn  btn-warning ">Effectuer les liasons : {{firstOrphan.numero}} >>  </a> 
+    {% endif  %}
+
+    
+    {% if is_granted('ROLE_MEGA_ADMIN') %}
+        <a class='btn btn-primary' href="{{ path('referentielpublic_comparaison_autolink', { 'id': referentielPublic.id }) }}">  AutoLink</a>
+    {% endif  %}
+    
+    <table class='table table-bordered table-triable_desc'>
+           <thead>
+            <tr>
+                <th></th>
+                <th>Parent</th>
+                <th>Numéro</th>
+                    <th>Liason</th>
+                <th>Enfant</th>
+                <th>Numéro</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for refParentSansEnfant in refsParentSansEnfant %}
+        <tr>
+                <td>  <a href='{{ path('referentielpublic_show_node', {'id_node': refParentSansEnfant.id, 'id': refParentSansEnfant.ReferentielPublic.id}) }}'><i class='glyphicon glyphicon-eye-open '></i></a></td>
+                <td class='alert-danger'>{{refParentSansEnfant.numero}}</td>
+                <td class='alert-danger'>{{refParentSansEnfant}}</td>
+                <td class='alert-danger'>Suprimé</td>
+                <td class='alert-danger'></td>
+                <td class='alert-danger'></td>
+                <td class='alert-danger'></td>
+        </tr>
+     
+    {% endfor  %}
+
+        {% for ref  in referentielPublic.referentiels %}
+        <tr>
+            
+            {% if ref.sourceParent is not empty %}
+                <td>  <a href='{{ path('referentielpublic_show_node', {'id_node': ref.sourceParent.id, 'id': ref.sourceParent.ReferentielPublic.id}) }}'><i class='glyphicon glyphicon-eye-open '></i></a></td>
+
+                {% if ref.sourceParent.numero == ref.numero %}
+                    <td class='alert-success'>{{ref.sourceParent.numero}}</td>
+                    {% set deplacement_ordre =  false %}
+                    {% set deplacement_parent =  false %}
+                {% else  %}
+                    <td class='alert-warning'>{{ref.sourceParent.numero}}</td>
+                    {% if ref.sourceParent.parent.numero == ref.parent.numero %}
+                        {% set deplacement_ordre =  true %}
+                        {% set deplacement_parent =  false %}
+                    {% else %}
+                        {% set deplacement_ordre =  false %}
+                        {% set deplacement_parent =  true %}
+                    {% endif %}
+                {% endif %}
+                <td>{{ renderDiff(ref, ref.sourceParent,"word") }}</td>
+                {% set nouveau = false %}
+            {% else  %}
+                {% set nouveau =true %}
+                <td></td>
+                <td></td>
+                <td></td>
+            {% endif %}
+            
+            {% if nouveau %}
+                <td class='alert-danger'>Nouveau
+                {% if app.user.hasReferentielPublic(ref.referentielPublic)  or  is_granted('ROLE_MEGA_ADMIN') %}
+                    <a href='{{ path('referentielpublic_show_link_source_move', { 'id': ref.referentielPublic.id ,'id_node': ref.id }) }}'><i class='glyphicon glyphicon-link'></i></a>
+                {% endif %}
+                </td>
+            {% elseif deplacement_ordre  %}
+                <td class='alert-warning'>Deplacement Ordre</td>
+            {% elseif deplacement_parent  %}
+                <td class='alert-danger'>Deplacement !!!</td>
+            {% elseif  ref.sourceParent.nom == ref.nom %}
+                <td class='alert-success'>Similaire</td>
+            {% else %}
+                <td class='alert-warning'>Modifié</td>
+            {% endif %}
+            
+            
+            
+            {% if nouveau %}
+                <td class='alert-danger'>{{ref.numero}}</td>
+                <td class='alert-danger'>{{ref}}</td>
+            {% else  %}
+                {% if ref.sourceParent.numero == ref.numero %}
+                    <td class='alert-success'>{{ref.numero}}</td>
+                {% else  %}
+                    <td class='alert-warning'>{{ref.numero}}</td>
+                {% endif %}
+                <td>{{ renderDiff(ref.sourceParent, ref,"word") }}</td>
+            {% endif %}
+
+            <td> <a href='{{ path('referentielpublic_show_node', {'id_node': ref.id, 'id': ref.ReferentielPublic.id}) }}'><i class='glyphicon glyphicon-eye-open '></i></a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+        
+            
+        
+
+
+    
+    
+ 
+{% endblock %}
+
+
+{% block initjs %}
+    <script type="text/javascript">
+        window.scrollBy(0,500); // horizontal and vertical scroll increments
+    </script>
+{% endblock %}

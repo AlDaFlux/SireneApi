@@ -1,0 +1,49 @@
+{% extends "Synthese/layout.html.twig" %}
+    {% set domaine=domaineBackup.domaineOriginal %}
+
+{% block body %}
+    {{ parent() }}
+    <h1> <a href='{{ path('pericles3_backup_synthese', {'id': domaineBackup.Sauvegarde.id}) }}'>{{domaineBackup.Sauvegarde}}</a></h1>
+    <h2>Domaine</h2>
+    
+    
+    {% include "Nuts/menu_domaine_transversal.html.twig"  with {'domaine': domaineBackup } %} 
+    
+    
+    <h2>Évaluation générale <small>moyenne des {{ domaineBackup.dimensions |length }} dimensions d'évaluation</small></h2>
+    <div>
+        <div class="GraphSyntheseContainer">
+            <canvas id="chartEvalGeneraleCanvas" height="500" width="500"></canvas>
+        </div>
+  
+        <div class="synthese_menu">
+            <div>
+            <span class='numero'>  </span> 
+                     <span class='lib'> </span>
+                     <span class='note'> {{domaineBackup.Sauvegarde.dateCreate|date('m/Y ') }}</span>
+                     <span class='note'> </span>
+                     <span class='note'> {{ "now"|date("m/Y") }}</span>
+            </div>
+            
+            {% for dimension in domaineBackup.dimensions | order %}
+                 <a href= '{{ path('pericles3_sauvegardes_dimension', {'id': dimension.id}) }}'>
+                     <span class='numero'>{{ dimension.numero  }} </span>
+                     <span class='lib'> {{ dimension}}</span>
+                    <span class='note'> {{ dimension.Note | formatNoteSimple}} </span>
+                     <span class='note'> {{ dimension.Evolution | get_icon_evol | raw}} </span>
+                     <span class='note'> {{ dimension.NoteActuelle | formatNoteSimple}} </span>
+
+                 </a>
+            {% endfor %}
+        </div>
+            
+            
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+         {% include "Synthese/inc_options_charts.js.twig" %}
+      {{ domaineBackup.domaineOriginal.dimensions  | order  | graph2(domaineBackup.dimensions,domaineBackup.Sauvegarde,'chartEvalGeneraleCanvas') |raw }}
+    </script>
+{% endblock %}

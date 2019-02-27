@@ -1,0 +1,33 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+
+
+    <h1><a href="{{ path('referentielpublic_index') }}">  Référentiels</a></h1>
+    
+    {% include "BackOffice/referentielpublic/arborescence_versionning_inc.html.twig"  with {'referentielPublics':referentielPublics0} %}
+                
+    
+
+        <table class='table table-bordered'>
+        {% for refPublic in referentielPublics0 %} 
+            <tr>
+                <th>{{refPublic.Public}}</th>
+                <td>{{refPublic.getTheLastGood}}</td>
+                    {% include "BackOffice/referentielpublic/arborescence_versionning_inc_td.html.twig"  with {'refPublic':refPublic} %}
+                
+            </tr>
+            
+        {% endfor  %}
+        </table>
+        
+        
+        
+        
+        
+        
+{% endblock %}
+
+
+{% block initjs %}
+{% endblock %}

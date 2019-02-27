@@ -1,0 +1,147 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+
+{% block body %}
+    <h1>{{'user' | get_icon | raw}}  Utilisateur</h1>
+    
+    {% if not app.user.CanSee(user) %}
+        
+        <div class='alert-danger alert'>
+            Vous n'avez pas accès à cet utilisateur
+        </div>
+    {% else  %}
+             <h2>Saisies de {{ user.username }}</h2>
+            
+             <div class="row">
+                 
+            {% if user.NbEtablissementsCrees > 0 %}
+                <div class="col-md-6">
+                   <div class="panel panel-primary">
+                           <div class="panel-heading"> <h3 class="panel-title">2tablissements crées</h3> </div>
+                           <ul>
+                               {% for etab in user.getEtablissementsCree %}
+                                   <li>{{etab}}</a>
+                               {% endfor %}
+                         </ul>
+                   </div>
+               </div>
+             {% endif  %}
+
+                 
+            {% if user.NbBibliotheque > 0 %}
+                <div class="col-md-6">
+                   <div class="panel panel-primary">
+                           <div class="panel-heading"> <h3 class="panel-title">bibliotheque</h3> </div>
+                           <ul>
+                               {% for biblio in user.Bibliotheques %}
+                                   <li><a href='{{ path("pericles3_bibliotheque_show", {"id":  biblio.id}) }}'>{{biblio}}</a>
+                               {% endfor %}
+                         </ul>
+                   </div>
+               </div>
+             {% endif  %}
+
+
+            {% if user.GetNbCommentaireDomaine > 0 %}
+                <div class="col-md-6">
+                   <div class="panel panel-primary">
+                           <div class="panel-heading"> <h3 class="panel-title">Commentaires Domaine</h3> </div>
+                           <ul>
+                               {% for CommentaireDomaine in user.commentaires %}
+                                   <li><a href='{{ path("pericles3_domaine", {"id":  CommentaireDomaine.domaine.id})}}#synth'>{{CommentaireDomaine.domaine}}</a> : {{CommentaireDomaine}}
+                               {% endfor %}
+                           </ul>
+                   </div>
+               </div>
+             {% endif  %}
+
+            {% if user.NbConstats > 0 %}
+                    <div class="col-md-6">
+                   <div class="panel panel-primary">
+                           <div class="panel-heading"> <h3 class="panel-title">constats</h3> </div>
+                           <ul>
+                               {% for constat in user.constats %}
+                                   <li><a href='{{ path("pericles3_critere", {"id":  constat.critere.id})}}#0'>{{constat.critere}}</a> : {{constat}}
+                               {% endfor %}
+                           </ul>
+                   </div>
+               </div>
+             {% endif  %}
+
+      {% if user.NbOSA > 0 %}
+            <div class="col-md-6">
+                   <div class="panel panel-primary">
+                           <div class="panel-heading"> <h3 class="panel-title">Objectifs stratégiques</h3> </div>
+                           <ul>
+                               {% for OS in user.ObjectifsSrategiques %}
+                                   <li><a href='{{ path("paq_osa_show", {"id":  OS.id})}}'> {{OS}}</a>
+                               {% endfor %}
+                           </ul>
+                   </div>
+               </div>
+             {% endif  %}
+
+             
+             
+             
+             
+             
+            {% if user.NbOOA > 0 %}
+            <div class="col-md-6">
+                   <div class="panel panel-primary">
+                           <div class="panel-heading"> <h3 class="panel-title"> Objectifs opérationnels </h3> </div>
+                           <ul>
+                               {% for OS in user.ObjectifsOperationnel %}
+                                   <li><a href='{{ path("paq_ooa_show", {"id":  OS.id})}}'> {{OS}}</a>
+                               {% endfor %}
+                          </ul>
+                   </div>
+               </div>
+             {% endif  %}
+
+
+             
+            {% if user.NbPreuves > 0 %}
+            <div class="col-md-6">
+                   <div class="panel panel-primary">
+                           <div class="panel-heading"> <h3 class="panel-title"> Preuves </h3> </div>
+                           <ul>
+                               {% for preuve in user.Preuves %}
+                                   <li>
+                                       
+                                           {% if preuve.typePreuve =='pdv' %}
+                                    <a title="Accèdez à l'évaluation du domaine {{preuve.domaine}} " href="{{ path('pericles3_domaine', {'id': preuve.domaine.id}) }}"><i class='glyphicon glyphicon-thumbs-up'></i>Dom. {{preuve.domaine.numero}}</a>
+                                {% elseif preuve.typePreuve =='objectif_operationnel'  %} 
+                                           <a  title="Accèdez à l'objectif opérationnel {{preuve.ObjectifOperationnel}}" href="{{ path('paq_ooa_show', {'id': preuve.ObjectifOperationnel.id}) }}"><i class='glyphicon glyphicon-export'></i></a>
+                                {% elseif preuve.typePreuve =='critere'  %} 
+                                    <a title="Accèdez à l'évaluation du critère {{preuve.critere}} " href="{{ path('pericles3_critere', {'id': preuve.critere.id}) }}"><i class='glyphicon glyphicon-thumbs-up'>{{preuve.critere.numero}}</i></a>
+                                {% endif %} {{preuve}}
+                                       {#<a href='{{ path("paq_ooa_show", {"id":  OS.id})}}'>#}
+                               {% endfor %}
+                          </ul>
+                   </div>
+               </div>
+             {% endif  %}
+
+
+            {% if user.NbSauvegardes > 0 %}
+            <div class="col-md-6">
+                   <div class="panel panel-primary">
+                           <div class="panel-heading"> <h3 class="panel-title"> Sauvegardes </h3> </div>
+                           <ul>
+                               {% for sauvegarde in user.Sauvegardes %}
+                                   <li><a  href="{{ path('pericles3_backup_synthese', {'id': sauvegarde.id}) }}">{{sauvegarde}} </a>
+                               {% endfor %}
+                          </ul>
+                   </div>
+               </div>
+             {% endif  %}
+ 
+            </div>
+             
+ 
+             
+    {% endif %}
+                    
+                                  
+{% endblock %}

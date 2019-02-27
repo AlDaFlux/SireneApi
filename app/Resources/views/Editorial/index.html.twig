@@ -1,0 +1,15 @@
+{% extends "::layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Editorial {% endblock %}
+
+
+{% block body %}
+    <h1><a href="{{ path("pericles3_editorial") }}">Editorial</a></h1>
+    
+    {% for editorial in editos %}
+        
+        {% include "Editorial/inc_editorial.html.twig" %}
+    {% endfor %}
+        
+
+{% endblock %}

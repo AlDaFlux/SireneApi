@@ -1,0 +1,38 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+ 
+
+{% block body %}
+    <h1><a href="{{ path('trash_index') }}">Trash</a></h1>
+   
+    <h2>Domaines</h2>
+    
+        <li>Domaines : {{domaines | length }}
+        <li>Domaines Desuets : {{domaines_desuet | length }}
+            
+            <table class='table table-triable'>
+            {% for domaine_desuet in domaines_desuet %}
+            <tr>
+                <td>{{domaine_desuet.etablissement}}</a></td>
+                <td>
+                    {% if domaine_desuet.etablissement.nbSauvegardes %}
+                        {{domaine_desuet.etablissement.nbSauvegardes}} - {{domaine_desuet.etablissement.lastSauvegarde.dateCreate| date("d/m/Y") }}
+                    {% endif %}
+                </td>
+                <td>{{domaine_desuet.referentielPublic}}</a></td>
+                <td>{{domaine_desuet.etablissement.referentielPublic}}</a></td>
+                <td>{{domaine_desuet.numero}}</a></td>
+                <td><a href="{{ path('pericles3_domaine', {'id': domaine_desuet.id}) }}"> {{domaine_desuet}}</a></td>
+            </tr>
+            
+        
+            {% endfor  %}
+            </table>
+
+
+            <li><a class='btn btn-danger fullwidth' href="{{ path('trash_domaines_trash') }}">Supression de tous les désuets ! </a></<li>
+                  
+   
+   
+{% endblock %}
+ 

@@ -1,0 +1,63 @@
+<h2>{{ finess.raisonSociale }}</h2>
+    <table class='table'>
+        <tbody>
+            <tr>
+                <th>Code Finess</th>
+                <td>{{ finess.codeFiness }}</td>
+            </tr>
+            <tr>
+                <th>Raison Sociale</th>
+                <td>{{ finess.raisonSociale }}</td>
+            </tr>
+            <tr>
+                <th>Complement Adresse</th>
+                <td>{{ finess.complementAdresse }}</td>
+            </tr>
+            <tr>
+                <th>Adresse</th>
+                <td>{{ finess.adresse }}</td>
+            </tr>
+            <tr>
+                <th>Code Postal</th>
+                <td>{{ finess.codePostal }}</td>
+            </tr>
+            <tr>
+                <th>Ville</th>
+                <td>{{ finess.ville }}</td>
+            </tr>
+            <tr>
+                <th>Tel</th>
+                <td>{{ finess.tel }}</td>
+            </tr>
+             
+            
+            {% if is_granted('ROLE_ADMIN_SUPERVISOR')  and finess.HasPericles %}  
+                {% for Pericle in finess.Pericles %}
+                <tr>
+                    <th>Pericles</th>
+                    <td>
+                        <a href="{{ path('backoffice_pericles_show', { 'id':  Pericle.id }) }}">{{ Pericle }}
+                     </td>
+                </tr>
+                {% endfor %}  
+              
+            {% endif  %}  
+            
+            
+            <tr class="alert alert-info">
+                <th>Gestionnaire {{application_name}} </th>
+                <td>
+                    
+                    {% if finess.HaveGestionnaire %}
+                        <a href="{{ path('backoffice_gestionnaire_show', { 'id':  finess.gestionnaire.id }) }}">{{  finess.gestionnaire }}</a>  
+                    {% else %}
+                        <div class='alert alert-warning full-width'>AUCUN !</div>
+                          {% if is_granted('ROLE_SUPER_ADMIN_GESTIONNAIRE') %}
+                                <a class='btn btn-warning' href="{{ path('backoffice_gestionnaire_new_byfiness', { 'codeFiness':  finess.codeFiness })}}" >Créer le gestionnaire</a>
+                            {% endif%}
+                        {% endif%}
+                    </td>
+            </tr>
+      
+        </tbody>
+    </table>

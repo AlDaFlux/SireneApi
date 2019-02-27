@@ -1,0 +1,117 @@
+
+        
+
+        {% for critere in Criteres %}
+            {% set currentState = critere.getStatus() %}
+            <table class='critere' width="100%">
+                <tr>
+                    <td>
+                            {% if externe %}
+                                {{ loop.index }} - 
+                            {% else %}
+                                {{ critere.numero }} - 
+                            {% endif %}
+                            {{ critere.nom }}
+                            
+                            {% if currentState==3 %}
+                                <span style="color:green">Terminé</span>
+                            {% else %}
+                                <span style="color:{% if currentState==3 %}green{% elseif currentState==2 %}orange{% elseif currentState==1 %}#777777{% endif %};">{% if currentState==3 %}[Terminé]{% elseif currentState==2 %}[En cours]{% elseif currentState==1 %}[Non démarré]{% endif %}</span>
+                            {% endif %}
+                    </td>                                                            
+                            
+                            
+                    {% if not externe %}
+                        <td width='100px' style="font-size:2em;text-align: right;">
+                            {{critere.note | formatNoteSimple}} 
+                            {% set img_note = critere.note | formatNoteNuage %}
+                            {{ img_note | getImageExport(typeExport) | raw }}
+                        </td>
+                    {% endif %}
+
+                </tr>
+    
+      
+       
+            </table>
+                
+                
+            <div class='critere_detail'>
+                
+                
+                           
+       {% if critere.rbpp   %}
+            <h4>RBPP</h4>
+                <ul>
+                    <li><a target='blank' href='{{critere.rbpp.href}}'>{{critere.rbpp}}</a>  <i>{{critere.RbpppComment}}</i>
+                </ul>  
+       {% endif  %}
+                
+                {% if critere.NbQuestionsRepondues > 0 %}
+                    {% set points_forts =''%}
+                    {% set points_faible =''%}
+                    {% for question in critere.questions %}
+                        {% if question.repondu %}
+                            {% if question.reponse %}
+                                 {% set points_forts = points_forts ~ '<li>' ~  question.ReponseLib ~ '</li>'%}
+                            {% else %}
+                                 {% set points_faible = points_faible ~  '<li>' ~ question.ReponseLib  ~  '</li>'%}
+                            {% endif%}
+                        {% endif%}
+                    {% endfor %}
+                    
+                    {% if points_forts is not empty %}
+                            <h4>Eléments qualité à conserver </h4>
+                                <ul>
+                                        {{ points_forts | raw }} 
+                                </ul>
+                    {% endif%}
+                           
+                    {% if points_faible is not empty %}
+                            <h4>Points qualité à améliorer </h4>
+                                <ul>
+                                        {{ points_faible | raw }} 
+                                </ul>
+                    {% endif%}
+                {% endif %}
+
+                {% if critere.constats|length > 0 %}
+                    <h4>Constats et analyses</h4>
+                    <ul>
+                    {% for constat in critere.constats %}
+                        <li>{{ constat.commentaire }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if critere.preuves|length > 0 %}
+                    <h4>Portefeuille de preuves</h4>
+                        <ul>
+                    {% for preuve in critere.preuves %}
+                            <li>
+                                {{ preuve.commentaire }}  -  <a href="{{ app.request.getSchemeAndHttpHost()~asset('upload') }}/{{ preuve.getRelativPath }}" target="_blank">{{ preuve.fichier }}</a>
+                            </li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                
+                
+                
+                {% if critere.NbObjectifsOperationnel > 0 %}
+                        <h4>Objectifs Opérationnels d'Amélioration</h4>
+                        <ul>
+                            {% for objectif in critere.objectifs %}
+                            <li>{{ objectif }}</li>          
+                            {% endfor %}
+                        </ul>
+                {% endif %}
+                
+    
+                
+               </div> 
+               
+               
+                
+                
+            {% endfor %}
+        
+        

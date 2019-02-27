@@ -1,0 +1,284 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Etablissement{% endblock %}
+
+{% block body %}
+    {% set etablissement = cur_etablissement %}
+
+    
+          
+                {% if etablissement.category.reel %}
+                      <h1  title='{{ etablissement.category.commentaire}}'>Etablissement {{ etablissement.nom }}</h1>
+                {% elseif etablissement.finContrat %}
+                     <h1 class='fincontrat' title='{{ etablissement.category.commentaire}}'>Contrat TERMINE : <br>Etablissement {{ etablissement.nom }}</h1>
+                {% else %}
+                     <h1 class='alert-warning' title='{{ etablissement.category.commentaire}}'>Etablissement {{ etablissement.nom }}</h1>
+                {% endif %}
+                
+                
+    
+    
+
+       
+
+      {% include "BackOffice/Etablissement/inc_show.html.twig" %} 
+
+      
+      {#
+      <table class='table table-bordered'>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Adresse </th>
+                <th>Referentiel</th>
+                <th>FINESS</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            <tr>
+                <td>{{ etablissement.nom }}</td>
+                <td>{{ etablissement.adresse }} - {{ etablissement.codepostal }} - {{ etablissement.ville }}</td>
+                <td>{{ etablissement.public }}</td>
+                
+                
+                {% if  etablissement.codeFiness %}
+                    <td class='alert-success'>
+                            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                <a href='{{ path("backoffice_finess_show", {"id":  etablissement.codeFiness}) }}'>{{ etablissement.codeFiness}}</a>
+                            {% else %}
+                                {{ etablissement.codeFiness}}
+                            {% endif %}
+                    </td>
+                {% else %}
+                    <td class='alert-danger'>
+                        
+                    {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT') %}
+                        <a href='{{ path("backoffice_etablissement_linkfiness", {"id":  etablissement.id}) }}'>Lier à un finess</a>
+                    {% endif %}
+                        
+                    </td>
+    
+                {% endif %}
+                    
+                
+ 
+            </tr>
+            <tr>
+                <th>Crée par</th>
+                <td>{{ etablissement.CreatedBy }}</td>
+                <th>Le </th>
+                <td>{{ etablissement.CreatedDate  | date('Y-m-d H:i:s') }}</td>
+            </tr>
+        </tbody>
+    </table>
+            
+          
+        
+
+      <table class='table table-bordered'>
+        <thead>
+            <tr>
+                <th>Departement</th>
+                <th>CREAI</th>
+                <th>Delegation CREAI</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ etablissement.departement}}</td>
+                <td>{{ etablissement.creai}}</td>
+                <td>{{ etablissement.delegationCreai | reponseGlyphIcone | raw }}
+                {% if etablissement.delegationCreai and app.user.isCreai %}
+                    {% if etablissement.Creai == app.user.Creai %}
+                            <a title="Voir les saisies de 'établissement" href='{{ path("pericles3_homepage_etablissement", {"id":  etablissement.id}) }}'>
+                              <i class='glyphicon glyphicon-thumbs-up'></i>  
+                            </a>
+                    {% endif %}
+                {% endif %}d
+                </td>
+            </tr>
+        </tbody>
+    </table>        
+      
+      
+        #}
+   
+            {% include "BackOffice/Etablissement/suivi_eval.html.twig" %}
+
+               <br>
+                
+
+               
+    <div class="panel panel-primary">
+        <div class="panel-heading"> <h3 class="panel-title"><i class='icon-user'></i>{{etablissement.users | length}} Utilisateurs ({{ etablissement.nom }})</h3> </div>
+        
+        
+      <div class="panel-body">
+         
+                  
+          
+          {% if etablissement.users | length > 0   %}
+                              {% set show_affected = false %}
+
+                <div id='liste_user' data-reload_with='{{ path("backoffice_users_from_etablissent", {"id":  etablissement.id}) }}'>
+                    {% include "BackOffice/user/list.html.twig" with {'users': etablissement.users} %}
+                </div>
+
+            {% else %}
+              <div class="alert alert-warning" role="warning">Il n'y a aucun utilisateurs ! </div>
+              <div class="alert alert-danger" role="danger">Chaque établissement doit avoir au moin un utilisateur/administrateur ! </div>
+              
+              {% if etablissement.demande %}
+                  <a href="{{ path('backoffice_etablissement_add_user_fromdemande', {'id': etablissement.id}) }}"  class = "btn  btn-success full-width">Créer l'utilisateur pour <b>{{etablissement.demande.demandeurPrenom}}.{{etablissement.demande.demandeurNom}} ({{etablissement.demande.email}})</b> avec les droits administrateurs  </a>
+              {% endif %}
+              
+              
+        {% endif %}
+              
+        </div>
+        
+        <div class="panel-footer">
+            
+            
+    {% if is_granted('ROLE_SUPER_ADMIN_UTILISATEUR') or ((is_granted('ROLE_ADMIN') and (app.user.GetParentType == "E" or app.user.GetParentType == "G" )))  %}
+              <a href="{{ path('backoffice_etablissement_add_user_choiceprofile', {'id': etablissement.id}) }}"  class = "btn  btn-link full-width">Ajouter un utilisateur</a>
+             
+    {% endif %}
+    
+    
+    
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    
+     
+    
+          {% if etablissement.userPole | length > 0   %}
+               
+    <div class="panel panel-primary">
+        <div class="panel-heading"> <h3 class="panel-title"><i class='icon-user'></i>{{etablissement.userPole | length}} Gestionnaires Poles ({{ etablissement.gestionnaire }})</h3> </div>
+      <div class="panel-body">
+          {% if etablissement.userPole | length > 0   %}
+                {% set show_affected = false %}
+
+                <div id='liste_user_pole' data-reload_with='{{ path("backoffice_users_from_etablissent_pole", {"id":  etablissement.id}) }}'>
+                    {% include "BackOffice/user/list.html.twig" with {'users': etablissement.userPole, 'list_user_id' : 'liste_user_pole'  } %}
+                </div>
+        {% endif %}
+        </div>
+    </div>
+        {% endif %}
+    
+    
+            
+{% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')  %}
+    <div class="panel panel-primary">
+        <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-euro'></i> Facturation </h3> </div>
+        
+        <div class="panel-body">
+            {% if etablissement.ModeCotisation.Id == 0 %}
+                <div class='alert alert-danger'>
+                        L'établissement n'a pas de mode de cotisation identifié. Il est nécessaire de le renseigner pour effectuer des facturation !
+                </div>
+            {% endif %}
+                
+            {% if  etablissement.getFacturesAll | length > 0 %}
+                {% include "BackOffice/facture/small_factures.html.twig" with {'factures': etablissement.facturesAll} %}
+            {% endif %}
+            {% if  etablissement.getFacturesNotAVoir  | length == 0 %}
+                <div class='alert alert-danger'>
+                        Aucune facture ! 
+                        {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') and etablissement.ModeCotisation.Id > 0 %}  
+                            <br><a class='btn btn-danger full-width' href='{{ path('facture_new_from_etab', {'id': etablissement.id}) }}'>Créer une facture pour l'établissement</a>
+                        {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endif %}
+    
+         
+    {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT')  %}
+        
+        
+        <div class='panel panel-danger'>
+                        <div class='panel-heading'><a data-toggle="collapse" href="#collapse_sup">Suppression </a></div>        
+                        <div  id="collapse_sup" class='panel-body panel-collapse collapse list-group'>
+                            
+                            
+
+                        {% if   etablissement.isReel %} 
+                                 <i data-invite="Voulez ne pouvez pas supprimer cet établissement  car c'est un établissement réél" class='CantDeleteBoxBefore glyphicon glyphicon-trash iconhead  redText btn  btn-danger active full-width '>Supprimer</i> 
+                        {%  else %}
+                                    <hr class='separateur'>    
+                                {% if   etablissement.getSwitchableRef %}
+                                    {% if   etablissement.getNbObjectifsOperationnel> 0 %}
+                                        <i  data-invite="Voulez-vous supprimer de manière définitive les ojectifs opérationnels de l'établissement   ?" class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText btn  btn-danger active full-width'   data-url_delete="{{ path('backoffice_etablissement_delete_oo', { 'id': etablissement.id}) }}" > Supprimer tous les objectifs opérationnels de l'établissement</i>
+                                    {%  elseif etablissement.getNbBibliotheques > 0 %}
+                                        <i  data-invite="Voulez-vous supprimer de manière définitive les bibliothèques de l'établissement ?" class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText btn  btn-danger active full-width'   data-url_delete="{{ path('backoffice_etablissement_delete_biblio', { 'id': etablissement.id}) }}" > Supprimer tous les bibliothèques de l'établissement</i>
+                                    {%  endif %}
+                                {%  else %}
+                                    <i  data-invite="Voulez-vous supprimer de manière définitive les données et les saisies de l'établissement   ?" class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText btn  btn-danger active full-width'   data-url_delete="{{ path('backoffice_etablissement_delete_saisies', { 'id': etablissement.id}) }}" > Supprimer toutes les saisies de l'établissement et ses sauvegardes</i>
+                                {%  endif %}
+
+
+
+                                            {% if etablissement.CantDelete %}
+                                                                    <i data-invite="Voulez ne pouvez pas supprimer cet établissement  car : {{etablissement.MessageCantDelete | raw }}"
+                                                                                    class='CantDeleteBoxBefore glyphicon glyphicon-trash iconhead  redText btn  btn-danger active full-width '>Supprimer</i> 
+                                             {% else %}
+                                                      <i data-invite="Voulez-vous supprimer définitivement l'établissement ? ?  ?"
+                                                                 data-url_delete="{{ path('backoffice_etablissement_delete', {'id': etablissement.id}) }}"  
+                                                                class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText btn  btn-danger active full-width'
+                                                                >Supprimer l'établissement de manière définitive</i> 
+                                                                <p><br>
+                                             {%  endif %}
+
+
+
+                            {% if   is_granted('ROLE_MEGA_ADMIN') %}
+                                <p>&nbsp<i data-invite="Voulez-vous supprimer définitivement l'établissement ? ?  ?"
+                                            data-url_delete="{{ path('backoffice_etablissement_delete_force', {'id': etablissement.id}) }}"  
+                                           class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText btn  btn-danger active full-width'
+                                           > !!!!!!!! Supprimer l'établissement de manière définitive EN FORCE !!!!!! </i> 
+                                           <p>&nbsp&nbsp;
+                             {%  endif %}
+   {%  endif %}
+
+                                    </div>            
+                        </div>            
+         
+            
+            
+            
+             {% if is_granted('ROLE_MEGA_ADMIN') and etablissement.getSwitchableRef   %}
+                       {% include "BackOffice/Etablissement/inc_switch_etablissement.html.twig" %} 
+             {%  endif %}
+             
+
+
+            
+        
+          <a class='btn  btn-warning full-width' href="{{ path('backoffice_etablissement_edit', {'id': etablissement.id})}}">Modifier</a> 
+    {% endif %}
+                             
+         
+    <br>
+    <br>
+           {% include "BackOffice/Etablissement/inc_patch_etablissement.html.twig" %} 
+
+
+    <br>
+    <br>
+                               
+    <a href="{{ path('pericles3_backoffice_etablissement') }}"  class = "back_to back_to_list btn  btn-link full-width">Retour à la liste</a>
+ 
+	
+{% endblock %}
+

@@ -1,0 +1,117 @@
+{% extends "::layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Index{% endblock %}
+
+{% block legend %}{{ parent() }}
+{% endblock %}
+
+{% block body %}
+    
+        
+    <div class="row">
+            <div class='col-sm-12'>
+                {% include 'Nuts/inc_presentation_arsene.html.twig' %}
+        </div> 
+    </div> 
+
+        
+<div class="panel panel-primary">
+   <div class="panel-heading"> <h3 class="panel-title">Vue globale</h3> </div>
+
+   <table  class='table table-bordered table-triable_simple'>
+        <thead>
+            <tr>
+                <th>Etablissement</th>
+                <th>Questions répondues</th>
+                <th>Evaluation Notes</th>
+                <th>Objectifs <br>Stratégiques</th>
+                <th>Objectifs <br>Opérationnels</th>
+                <th>Bibliothèques </th>
+                <th>Sauvegardes</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for etablissement  in etablissements %}
+            <tr> 
+               <td> <a href="{{ path('pericles3_homepage_etablissement', {'id': etablissement.id}) }}"> {{etablissement.nom}}</a></td>
+{#               <td>{{ include("Nuts/inc_pastilles_etablissement.html.twig") }}</td> #}
+
+               <td>{{ etablissement.NbQuestionsRepondues | progressBarNotCent(etablissement.NbQuestions)  | raw}} </td>
+               
+                <td>{{ etablissement.getNbCriteresWithNote | progressBarNotCent( etablissement.getNbCriteres)  | raw}}  </td>
+               <td><a href="{{ path('paq_osa_list_etablissement', {'id': etablissement.id}) }}">{{etablissement.NbObjectifsSrategique}}</a></td>
+               <td><a href="{{ path('paq_ooa_list_etablissement', {'id': etablissement.id}) }}">{{etablissement.NbObjectifsOperationnel}}</td>
+               <td><a href="{{ path('pericles3_bibliotheque_etablissement_id', {'id': etablissement.id}) }}">{{etablissement.NbBibliotheques}}</td>
+                
+            {% include "Synthese/Sauvegardes/inc_td_sauvegarde.html.twig" %} 
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+         
+    </div>  
+    
+  
+
+
+
+
+
+
+
+        <h2> <a href="{{ path("pericles3_evaluation") }}">Evaluation</a></h2>
+
+
+        {% for etablissement in etablissements %}
+                <div class="panel panel-primary">
+                    <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_eval_etablissement",{'id':etablissement.id}) }}">{{etablissement}} ({{etablissement.referentielPublic}})</a></h3></div>
+
+                        <table  class='table table-bordered table-triable_simple'>
+                             <tbody>
+
+                                {% set rowspan = etablissement.domaines | length %}
+                                {% set premier = true %}
+
+
+                        {% for domaine in etablissement.domaines %}
+                            <tr>
+                              <td>
+                                  <a href="{{ path("pericles3_domaine",{'id': domaine.id}) }}"> {{domaine.nom}}
+                              </td>
+                              <td>
+                                    {{ include("Nuts/inc_pastilles.html.twig") }}
+                              </td>
+
+                                {% if premier %}
+                                    {% set premier = false %}
+                                    <td rowspan='{{rowspan}}'>
+                                         <a href="{{ path('pericles3_paq_organigramme_etablissement', {'id': etablissement.id}) }}">
+                                             <img width='120px' src="{{ asset('img/qualigramme.png')}}"/>
+                                         </a>
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                              <tr>
+                            </tbody>
+                       </table>
+                <div class="panel-footer">
+    
+                    
+                </div> 
+            </div> 
+        {% endfor %}
+            
+        
+        <div class="panel panel-primary">
+            <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("watchdd_index") }}">Espace disque</a></h3></div>
+             <div class="panel-body">  
+                    
+                    {% include "Index/inc_watchdd_global.html.twig" %}
+               </div> 
+        </div>
+               
+               
+               
+
+             
+{% endblock %}

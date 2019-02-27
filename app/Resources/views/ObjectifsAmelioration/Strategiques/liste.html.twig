@@ -1,0 +1,57 @@
+{% extends "ObjectifsAmelioration/Strategiques/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - PAQ{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    
+    
+    {% if domaine is defined %}
+        {% include "Nuts/menu_domaine_transversal.html.twig" %} 
+        {% set domaine_id = domaine.id %}
+        
+     {% else %}
+        {% set domaine_id = 0 %}
+        {% if sous_titre is not empty  %}
+            <h3 class='alert alert-success'>{{sous_titre}}</h3>
+        {% endif %}
+    {% endif %}
+
+    
+    {#
+    <div style="float:right;">
+        PDF - CSV
+    </div>
+    <div style="clear: both;"></div>
+   #}
+    
+    
+    {% if ObjectifsStrategiques|length > 0 %}
+        {% include "ObjectifsAmelioration/Strategiques/inc_liste.html.twig" %} 
+    {% else %}
+        <div class='alert alert-warning'>
+            Vous n'avez pas d'objectifs stratégiques {% if sous_titre is defined %} / {{sous_titre}} {% endif %}
+            {% if app.user.isGestionnaire and etablissement is defined %}
+                pour l'établissement <b>{{etablissement}}</b>
+            {% endif %}
+                
+        </div>
+    {% endif %}
+    
+    {% if is_granted('ROLE_RW_PAQ') %}
+        {% if domaine_id > 0  %}
+         <a class="btn btn-primary active oa  full-width" href="{{ path('paq_osa_new_domaine', {'id': domaine_id}) }}">
+                 <i class='icon-plus'></i>Créer un objectif stratégique pour le domaine <strong>{{sous_titre}}</strong>
+         </a>
+      {% else %}
+            {% if etablissement is defined  %}
+                 <a class="btn btn-primary active oa full-width" href="{{ path('paq_osa_new', {'id': etablissement.id}) }}"><i class='glyphicon glyphicon-plus'></i>Créer un objectif stratégique</a>
+          {% endif %}
+      {% endif %}
+    {% endif %}
+     
+        
+{% endblock %}
+
+ 
+ 

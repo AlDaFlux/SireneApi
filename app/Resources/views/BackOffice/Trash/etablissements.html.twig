@@ -1,0 +1,48 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+ 
+
+{% block body %}
+    <h1><a href="{{ path('trash_index') }}">Trash</a></h1>
+   
+    <h2>Etablissements</h2>
+    
+        <li>Etablissements avec ref desuet{{etablissements | length }}
+            
+            <table class='table table-triable'>
+            {% for etablissement in etablissements %}
+            <tr>
+                <td>{{etablissement}}</td>
+                <td>{{etablissement.getNbSauvegardesReferentielDesuet}}</td>
+                <td>
+                    {% if etablissement.nbSauvegardes %}
+                        {{etablissement.nbSauvegardes}} 
+                        
+                        {% for sauvegarde in etablissement.sauvegardes %}
+                            {% if sauvegarde.ReferentielDesuet %}
+                                <li class='alert-danger'>{{sauvegarde.dateCreate| date("d/m/Y") }}</li>
+                            {% else %}
+                                <li class='alert-success'>{{sauvegarde.dateCreate| date("d/m/Y") }}</li>
+                            {% endif %}
+                        {% endfor  %}
+                    {% endif %}
+                </td>
+                <td>{{etablissement.referentielPublic}}</a></td>
+                <td>
+                        {% if  is_granted('ROLE_MEGA_ADMIN') %}
+                              <a href="{{ path('trash_etablissement_delete_oldref', { 'id': etablissement.id }) }}">Supression</a>
+                        {% endif %}
+                    </td>
+            </tr>
+            {% endfor %}
+            </table>
+   
+            
+            <pre>
+                php bin/console patch:etablissement-del-obs-ref ---all-etab !!!!!!!!!!!!!
+
+                {% for etablissement in etablissements %}
+php bin/console patch:etablissement-del-obs-ref --etablissement_id={{etablissement.id}}
+{% endfor %}</pre>
+{% endblock %}
+ 

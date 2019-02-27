@@ -1,0 +1,32 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1> <a href="{{ path('qualieval_index') }}"> Quali Eval</a> </h1>
+    
+      
+  
+    <table class='table table-bordered table-triable'>
+        <thead>
+            <th>Numéro</th>
+            <th>Nom</th>
+            <th>Id</th>
+            <th>{{application_name}}</th>
+        </thead>
+    <tbody>
+            
+    {% for qualiEvalReferentiel in qualiEvalReferentiels %}
+        <tr>
+            <td>{{qualiEvalReferentiel.numero}}</td>
+            <td><a href="{{ path('qualieval_show', { 'id': qualiEvalReferentiel.id }) }}">{{qualiEvalReferentiel}}</a></td>
+            <td>{{qualiEvalReferentiel.niveau}}</td>
+            
+            {% include "QualiEval/inc_arsene.html.twig" %}
+ 
+        </tr>
+            
+    
+    {% endfor %}
+           </tbody>
+                    </table>
+    
+{% endblock %}

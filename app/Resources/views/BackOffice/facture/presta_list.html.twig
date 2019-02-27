@@ -1,0 +1,69 @@
+<table class='table table-bordered table-triable'> 
+    <thead>
+        <tr>
+            <td>Facture</td>
+            <td>id</td>
+            <td>Concerne</td>
+            <td>Concerné Date de création</td>
+            <td> Facture DateEmission </td>
+            <td> Date Début</td>
+            <td> Date de fin </td>
+            <td> creaplus </td>
+            <td> Diff</td>
+            <td>presta.Montant </td>
+            <td>Renouvellement</td>
+            {% if  is_granted('ROLE_MEGA_ADMIN')  %}
+                <td></td>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+    {% for presta in prestas %}
+        
+            <tr>
+                {% if presta.facture.getFinalise %}
+                    <td class='alert-info'><a href="{{ path('facture_show', { 'numFacture': presta.facture.numFacture }) }}">{{ presta.facture.numFacture }}</a></td>
+                {% else %}
+                    <td class='alert-warning'><a href="{{ path('facture_show', { 'numFacture': presta.facture.numFacture }) }}">{{ presta.facture.numFacture }}</a></td>
+                {% endif %}
+
+                <td><a href="{{ path('facture_index_presta_show', { 'id': presta.id }) }}">{{presta.id}}</a></td>
+
+                <td>
+
+                          {% if presta.ConcerneTypeLib =='GESTIONNAIRE' %}
+                              {{'gestionnaire' | get_icon | raw}}    <a href="{{ path('backoffice_gestionnaire_show', { 'id': presta.concerne.id }) }}">{{presta.concerne}}</a>
+                                  
+                            {% else %}
+                              {{'etablissement' | get_icon | raw}}    <a href="{{ path('backoffice_etablissement_view', { 'id': presta.concerne.id }) }}">{{presta.concerne}}</a>
+                            {% endif %}
+                    </td>
+
+                <td> {{presta.concerne.CreatedDate | date('Y-m-d H:i:s')  }}</td>
+
+                <td>{{presta.Facture.DateEmission | hiddenDate | raw}}</td>
+                {% if presta.DateFiff2 > 0 %}
+                    {% set tmp_class= 'alert-danger' %}
+                {% else %}
+                    {% set tmp_class= 'alert-default' %}
+                {% endif  %}
+                
+                <td class='{{tmp_class}}'>{{presta.getDateDebut| hiddenDate | raw}}</td>
+                <td class='{{tmp_class}}'>{{presta.DateFin | hiddenDate | raw}}</td>
+                <td class='{{tmp_class}}'>{{presta.DateFinCalcule | hiddenDate | raw}}</td>
+                <td class='{{tmp_class}}'>{{presta.DateFiff2 }}</td>
+                
+                <td>{{presta.Montant}} €</td>
+                <td>{{presta.RenouvellementLib}}</td>
+            {% if  is_granted('ROLE_MEGA_ADMIN')  %}
+                 <td> <a href="{{ path('facture_presta_edit', { 'id': presta.id }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a> </td>
+            {% endif %}
+            </tr>
+    {% endfor %}
+    </tbody>
+</table>
+    
+    
+    
+    
+    

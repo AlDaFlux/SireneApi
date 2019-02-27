@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Demande Infos {{application_name}}</h1>
+
+    <table class='table'>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Demandeurnomprenom</th>
+                <th>Etablissementsevice</th>
+                <th>Email</th>
+                <th>Tel</th>
+                <th>Datedemande</th>
+                <th>Referentielpublicautre</th>
+                <th>Directiongenerale</th>
+                <th>Fonction</th>
+                <th>Structuregestionnaire</th>
+                <th>Nombreemsinteresse</th>
+                <th>Commentaireancreai</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for demandeInfo in demandeInfos %}
+            <tr>
+                <td><a href="{{ path('demande_info_show', { 'id': demandeInfo.id }) }}">{{ demandeInfo.id }}</a></td>
+                <td>{{ demandeInfo.demandeurNomPrenom }}</td>
+                <td>{{ demandeInfo.etablissementService }}</td>
+                <td>{{ demandeInfo.email }}</td>
+                <td>{{ demandeInfo.tel }}</td>
+                <td>{% if demandeInfo.dateDemande %}{{ demandeInfo.dateDemande|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ demandeInfo.commentaireAncreai }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('demande_info_show', { 'id': demandeInfo.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('demande_info_edit', { 'id': demandeInfo.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('demande_info_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

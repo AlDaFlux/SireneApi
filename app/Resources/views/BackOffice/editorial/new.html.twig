@@ -1,0 +1,11 @@
+{% extends "BackOffice/layout.html.twig" %}
+{% block body %}
+    <h1><a href="{{ path('backoffice_editorial_index') }}">Editorial</a> </h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ include("Nuts/cancelsave.html.twig") }}
+    {{ form_end(form) }}
+
+    <p><br>                <a class="btn btn-primary full-width" href='backoffice_editorial_index'>Retour</a>  
+{% endblock %}

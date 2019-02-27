@@ -1,0 +1,61 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+  <h1><a href="{{ path('referentielpublic_index')}}">  Référentiels</a></h1>
+    <h2>Creation d'un référentiel public</h2>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        
+                <div class="form-group">
+                    <label class="col-sm-2 control-label required" for="referentiel_source">Source</label>
+                    <div class="col-sm-10">
+                        <select id="referentiel_source" name="referentiel_source" class="form-control">
+                            <option value=""></option>
+                                {% for  referentielPublicSource  in referentielPublicsSource %}
+                                    <option value='{{referentielPublicSource.id}}'> {{referentielPublicSource}}
+                                {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                        
+                <div class="form-group">
+                    <label class="col-sm-2 control-label required" for="avec_ouinon">Reponses Oui non</label>
+                    <div class="col-sm-10">
+                            <input type="checkbox" name="avec_ouinon" id="avec_ouinon" checked/>
+                    </div>
+                </div>
+                 
+                <div class="form-group">
+                    <label class="col-sm-2 control-label required" for="avec_critereannexe">Avec critere ANNEXE (Anesm....</label>
+                    <div class="col-sm-10">
+                            <input type="checkbox" name="avec_critereannexe" id="avec_critereannexe" checked/>
+                    </div>
+                </div>
+
+                        
+                <div class="form-group">
+                    <label class="col-sm-2 control-label required" for="avec_biblio">Avec bibliotheque</label>
+                    <div class="col-sm-10">
+                            <input type="checkbox" name="avec_biblio" id="avec_biblio" checked/>
+                    </div>
+                </div>
+                        
+                                  
+                <div class="form-group">
+                    <label class="col-sm-2 control-label required" for="avec_rbpp">Avec liason critere / RBPPP</label>
+                    <div class="col-sm-10">
+                            <input type="checkbox" name="avec_rbpp" id="avec_rbpp" checked/>
+                    </div>
+                </div>
+                        
+                        
+                        
+                        
+                        
+                {{ include("Nuts/cancelsave.html.twig") }}
+
+                {{ form_end(form) }}
+    <p>
+        <a href="{{ path('referentielpublic_index') }}"  class = "btn  btn-link full-width">Retour à la liste</a><ul>
+{% endblock %}

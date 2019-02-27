@@ -1,0 +1,78 @@
+{% extends "Synthese/layout.html.twig" %}
+
+{% block body %}
+    {{ parent() }}
+    <h1>Domaine</h1>
+    {% include "Nuts/menu_domaine_transversal.html.twig" %} 
+    
+    <h2 id="TitreSyntheseGeneral">Évaluation générale <small>moyenne des {{ domaine.dimensions |length }} dimensions d'évaluation</small></h2>
+    <div>
+        <div class="GraphSyntheseContainer">
+            <canvas id="chartEvalGeneraleCanvas" height="500" width="500"></canvas>
+        </div>
+  
+          
+                
+
+  
+        <div class="synthese_menu">
+            {% for dimension in domaine.dimensions | order %}
+                 <a href= '{{ path('pericles3_synthese_dimension', {'id': dimension.id}) }}'>
+                     <span class='numero'>{{ dimension.numero  }}</span>
+                     <span class='lib'> {{ dimension}}</span>
+                     <span class='note'> {{ dimension.MoyenneNotes | formatNoteSimple}} </span>
+                    </a>
+            {% endfor %}
+        </div>
+        
+        <p>
+        
+          {% set preuves = domaine.preuves %}
+
+        {% if preuves | length > 0 %}
+             <p>
+        <div class="row">
+             <div class="col-md-12 ">
+                <div class="panel panel-primary panel_osa">            
+                    <div class="panel-heading"> <h3 class="panel-title">Point de vue de l’usager...   </h3> </div>
+                            {% set access = false %}
+                            {% set is_pdv = false %}
+                            {% set par_type_preuve = true %}
+
+                            {% include 'Bibliotheque/preuves_list.html.twig' %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+                
+                
+                
+    {% if domaine.commentaires |length > 0 %}
+         <p>
+        <div class="row">
+             <div class="col-md-12 ">
+                <div class="panel panel-primary panel_osa">            
+                    <div class="panel-heading"> <h3 class="panel-title">Commentaires</h3> </div>
+      
+        <table class='table'>
+            {% for commentaire in domaine.commentaires %}
+                <tr><td>{{ commentaire.commentaire }}</td></tr>
+            {% endfor %}
+        </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+            
+                
+            
+            
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+         {% include "Synthese/inc_options_charts.js.twig" %}
+      {{ domaine.dimensions  | order | graph('chartEvalGeneraleCanvas') |raw }}
+    </script>
+{% endblock %}

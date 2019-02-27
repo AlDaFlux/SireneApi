@@ -1,0 +1,27 @@
+
+
+
+
+{% for critere in criteres %}
+    <div class="ResumeCritereContainer">
+        <div class="ResumeCritereTitleContainer">
+            {% set currentState = critere.getStatus() %}
+            <h3>
+                {#<span class="{% if currentState==3 %}greenText{% elseif currentState==2 %}orangeText{% elseif currentState==1 %}redText{% endif %}">
+                #}
+                    <span class="critere_state {{ currentState | critereStateCss }}">                
+                       {{ currentState | critereStateLib }}
+                    </span>
+                </span>
+                {{ critere.dimension.domaine.referentiel.ordre }}.{{ critere.dimension.referentiel.ordre }}.{{ critere.referentiel.ordre }} {{ critere.referentiel.nom }}</h3>
+        </div>
+        <div class="divContainer">
+            <h4>Constats et analyses</h4>
+            {% for constat in critere.constats %}
+                <p class="bubble CommentCore">{{ constat.commentaire }}</p>
+                <p class="CommentDetail">{{ constat.user.username }}, {{ constat.dateCreate|date('d-m-Y H:i:s') }}</p>
+            {% endfor %}
+        </div>
+
+    </div>
+{% endfor %}

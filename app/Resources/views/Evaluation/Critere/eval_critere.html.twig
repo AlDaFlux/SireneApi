@@ -1,0 +1,20 @@
+                    {% include "MessageFlash/messageFlash.html.twig" %}
+
+                    
+            
+    	<script type="text/javascript">
+                                      
+         $( "#slider_note" ).slider({
+                       max: 10,
+                       min : -1,
+                       value: {{critere.note}},
+                       step: 1,
+                    slide: changeNote,
+                    change: changeNote
+                });
+                
+                          changeNote()
+                                                   
+                         
+                         </script>
+                             

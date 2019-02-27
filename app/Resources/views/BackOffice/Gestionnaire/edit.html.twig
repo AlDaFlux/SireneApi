@@ -1,0 +1,64 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block title %}{{ parent() }}{% endblock %}
+
+{% block body %}
+     
+    <h1>Gestionnaire</h1>
+
+    {{ form_start(edit_form) }}
+        {{ form_widget(edit_form) }}
+                 {{ include("Nuts/cancelsave.html.twig") }}
+   {{ form_end(edit_form) }}
+    
+ 
+           {#
+            {{ form_start(delete_form) }}
+                <button type="submit" class="btn btn-default btn-danger active full-width">
+                        <span class="glyphicon glyphicon glyphicon glyphicon-remove" aria-hidden="true">Supprimer l'enregesitrement ! </span>
+                </button>
+            {{ form_end(delete_form) }}
+            #}
+ 
+     
+  {% if gestionnaire.etablissements | length == 0 and gestionnaire.users | length ==0 %}
+        <div class="btn-group">
+          <button type="button" class="btn btn-danger active">Supprimer l'enregistrement ! </button>
+          <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+          </button>
+  {% else %}
+           <i data-invite="Voulez ne pouvez pas supprimer cestionnaire car il possede des utilisateurs ou des établissements" class='CantDeleteBoxBefore btn btn-danger active full-width  '>Supprimer</i> 
+  {% endif %}
+  
+  <ul class="dropdown-menu">
+      {{ form_start(delete_form) }}
+                <button type="submit" class="btn btn-default btn-danger active full-width">
+                        <span class="glyphicon glyphicon glyphicon glyphicon-remove" aria-hidden="true">Supprimer l'enregistrement de manière définitive ! </span>
+                    </button>
+            {{ form_end(delete_form) }}
+  </ul>
+</div>
+            
+{% endblock %}
+
+
+
+
+{% block javascripts %}
+    
+    
+    
+    <script> 
+        $('#gestionnaire_finess').autocompleter({
+    url_list: '{{ path('pericles3_backoffice_formsearch_finess_gestionnaire') }}',
+    url_get: '{{ path('pericles3_backoffice_formsearch_get_finess_gestionnaire') }}_'
+});
+        
+        
+    </script>
+{% endblock %}
+
+
+

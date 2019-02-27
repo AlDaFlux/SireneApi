@@ -1,0 +1,54 @@
+{% extends "Bibliotheque/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Bibliothèque{% endblock %}
+
+{% block body %}
+         {{ parent() }} 
+         
+         <h2> <a href="{{ path('pericles3_bibliotheque_ancreai') }}" >BIBLIOTHÈQUE {{application_name}}</a></h2>
+   
+    <table class='table'>
+        <tbody>
+            <tr>
+                <th>Titre</th>
+                <td>{{ bibliotheque.titre }}</td>
+            </tr>
+            <tr>
+                <th>Href</th>
+                <td><a href='{{ bibliotheque.href }}' target='blank'>{{ bibliotheque.href }}</a></td>
+                </tr>
+            <tr>
+                <th>Type de source</th>
+                <td>{{ bibliotheque.typeSource }}</td>
+            </tr>
+            <tr>
+                <th>Date de la publication</th>
+                <td>{{ bibliotheque.datePublication|date('Y-m') }} </td>
+            </tr>
+           
+             
+           
+        </tbody>
+    </table>
+
+
+    {% if  criteres | length > 0 %}
+    <h3>Liason avec les référentiels : </h3>
+    <table class='table'>
+        <tbody>
+                    {% for critere in criteres %}
+            <tr>
+                        <td><a href='{{ path('pericles3_critere', {'id': critere.id}) }}#0'>{{critere.numero}}</td>
+                        <td>{{critere}}</td>
+                        <td>{{critere.note | formatNoteSimple}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+                
+                
+        
+ {% endblock %}
+
+ 

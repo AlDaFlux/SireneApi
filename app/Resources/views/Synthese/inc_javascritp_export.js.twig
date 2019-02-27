@@ -1,0 +1,130 @@
+
+
+
+{% if Sauvegarde is defined %}
+    {% set PathDoc = path("pericles3_synthese_document_generation_sauvegarde") %}
+{% else %}
+    {% set PathDoc = path("pericles3_synthese_document_generation")  %}
+{% endif  %}
+ 
+
+
+{% include "Synthese/inc_options_charts.js.twig" %}
+
+              $('.lien_synt').hide();
+            
+        
+        function genere_document(type,extension,etablissement_id)
+        {
+            
+            $('#loader_' + etablissement_id).loader('show');
+            {% if wgraph %}
+                GenereGraphs(etablissement_id);
+            {% endif %}
+            var data = {type : type, extension:extension,etablissement_id:etablissement_id};
+            $.ajax({
+                type: "POST",
+                url: '{{PathDoc}}',
+                data: data,
+                async :false,
+                dataType: "json",
+                success: function(response) {
+                    $('#loader_' + etablissement_id).loader('hide');
+                   $('#' + type + "_"+ etablissement_id + "_" + extension).show(500);
+     
+                },  
+                error: function(XMLHttpRequest, textStatus, errorThrown)
+                {
+                    $('#loader_' + etablissement_id).loader('hide');
+                }
+            });
+        }
+             
+        function GenereGraphs(etablissement_id)
+        {
+            var graphsDomaines = new Object();
+            $( ".GraphSynthese_"+etablissement_id  ).each(function( index ) {
+                graphsDomaines[this.id.substring(12)]=document.getElementById(this.id).toDataURL();
+            });
+            
+             
+
+            
+            {% if prefix is defined %}
+                var dt = {prefix:'{{prefix}}', graphGeneral : document.getElementById('chartEvalGeneraleCanvas_' + etablissement_id).toDataURL(), graphsDomaines : graphsDomaines,etablissement_id : etablissement_id};
+            {% else  %}
+                var dt = {graphGeneral : document.getElementById('chartEvalGeneraleCanvas_' + etablissement_id).toDataURL(),  graphsDomaines : graphsDomaines,etablissement_id : etablissement_id}; 
+            {% endif %}
+     
+            
+            $.ajax({
+                type: "POST",
+                url: '{{ path("pericles3_genere_graphs", {}) }}',
+                data: dt,
+                async :false,
+                success: function(response) {
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown)
+                {
+                }
+            });
+        }
+        
+        function genere_document_sauvegarde(type,extension,sauvegarde_id)
+        {
+            $('#loader_' + sauvegarde_id).loader('show');
+            {% if wgraph %}
+                GenereGraphs_sauvegarde(sauvegarde_id);
+            {% endif %}
+            var data = {type : type, extension:extension,sauvegarde_id:sauvegarde_id};
+            $.ajax({
+                type: "POST",
+                url: '{{PathDoc}}',
+                data: data,
+                async :false,
+                dataType: "json",
+                success: function(response) {
+                    $('#loader_' + sauvegarde_id).loader('hide');
+                   $('#' + type + "_"+ sauvegarde_id + "_" + extension).show(500);
+     
+                },  
+                error: function(XMLHttpRequest, textStatus, errorThrown)
+                {
+                    $('#loader_' + sauvegarde_id).loader('hide');
+                }
+            });
+        }
+             
+        function GenereGraphs_sauvegarde(sauvegarde_id)
+        {
+            var graphsDomaines = new Object();
+            $( ".GraphSynthese_"+sauvegarde_id  ).each(function( index ) {
+               var identifiant_dom=this.id.split('_');
+               identifiant_dom=identifiant_dom[2];
+               
+                graphsDomaines[identifiant_dom]=document.getElementById(this.id).toDataURL();
+            });
+            
+            
+
+            
+            {% if prefix is defined %}
+                var data = {graphsDomaines : graphsDomaines, prefix:'{{prefix}}', sauvegarde_id : sauvegarde_id, graphGeneral : document.getElementById('chartEvalGeneraleCanvas_' + sauvegarde_id).toDataURL()};
+            {% else  %}
+                var data = {graphsDomaines : graphsDomaines,graphGeneral : document.getElementById('chartEvalGeneraleCanvas_' + sauvegarde_id).toDataURL(), sauvegarde_id : sauvegarde_id};
+            {% endif %}
+    
+            $.ajax({
+                type: "POST",
+                url: '{{ path("pericles3_genere_graphs", {}) }}',
+                data: data,
+                dataType: "json",
+                async :false,
+                success: function(response) {
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown)
+                {
+                }
+            });
+        }
+         

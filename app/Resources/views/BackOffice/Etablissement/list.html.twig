@@ -1,0 +1,175 @@
+
+    <table class='table table-bordered table-triable'>
+        <thead>
+            <tr>
+                <th>FINESS</th>
+                <th>Nom</th>
+                <th>Date de <br>Création</th>
+                {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')  %}
+                    <th title='Facture'><i class='glyphicon glyphicon-euro'></i> </th>
+                {% endif %}
+                
+                {% if is_granted('ROLE_SUPER_ADMIN')  %}
+                    <th>Type Facture</th>
+                {% endif %}
+
+                <th>Adresse </th>
+                {% if ReferentielPublic is not defined %}
+                    <th>Referentiel</th>
+                {% endif %}
+                
+                {% if gestionnaire is not defined %}
+                    <th>Gestionnaire</th>
+                {% endif %}
+                
+                
+                {% if is_granted('ROLE_SUPER_ADMIN') and vue_globale is defined %}
+                    <th>Questions Répondues</th>
+                    <th>Critères notés</th>
+                    <th>Usage disque </th>
+                {% endif %}
+ 
+
+
+                
+                 
+                {% if is_granted('ROLE_SUPER_ADMIN') and not app.user.IsCreai  %}
+                    <th>Creai</th>
+                {% endif %}
+                
+                              
+                <th title="Nombre d'utilisateurs"><i class="glyphicon glyphicon-user"></th>
+                <th></th>
+            </tr>
+        </thead>
+        
+       
+
+        <tbody>
+        {% for etablissement in etablissements  %}
+           
+            <tr>
+            
+                <td>
+                    
+                {% if occurence is defined %}
+                   {{etablissement.codefiness | HighlightText(occurence) | raw }} 
+                {% else %}
+                     {{ etablissement.codefiness }}
+                {% endif %}
+               </td>
+                
+                    
+                {% if etablissement.category.reel %}
+                    <td  class='alert small small  alert-info' title='{{ etablissement.category.commentaire}}'> <a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}">
+                {% elseif etablissement.finContrat %}
+                    <td  class='fincontrat alert small small  alert-danger' title='{{ etablissement.category.commentaire}}'> <a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}">
+                {% else %}
+                    <td  class='alert small small  alert-warning' title='{{ etablissement.category.commentaire}}'> <a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}">
+                {% endif %}
+                
+                
+                {% if occurence is defined %}
+                   {{etablissement.nom | HighlightText(occurence) | raw }} 
+                {% else %}
+                     {{ etablissement.nom }}
+                {% endif %}
+                                 </a></td>           
+
+                <td>{{ etablissement.CreatedDate  | hiddenDate | raw }}</td>
+                {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')  %}
+                    
+                        {% if not etablissement.Facturable %}
+                            <td class='alert small small  alert-info'></td>
+                            
+                        {% elseif (etablissement.getNbPrestasNotAVoir) %}
+                            <td class='alert small small  alert-success'><i class="glyphicon glyphicon-ok greenText"></i></td>
+                        {% else  %}
+                   
+                            <td class='alert small small  alert-danger'></td>
+                        {% endif %}
+                {% endif %}
+                
+                {% if is_granted('ROLE_SUPER_ADMIN')  %}
+                    {% include "BackOffice/Etablissement/inc_td_mode_cotisation.html.twig"    %}
+                {% endif %}
+                
+                
+                 {% if  etablissement.codepostal   %}
+                     <td class='small small' title="{{ etablissement.adresse }} ">{{ etablissement.codepostal }} - {{ etablissement.ville }}</td>
+                 {% else  %}
+                    <td class='alert-warning'></td>
+                 {% endif %}
+                
+                
+                {% if ReferentielPublic is not defined %}
+                        {% include "BackOffice/referentielpublic/inc_td.html.twig" with {'referentielPublic' : etablissement.referentielPublic }  %}
+                {% endif %}
+                
+                
+                {% if gestionnaire is not defined %}
+                    {% if etablissement.gestionnaire is not null %}
+                        <td><a href="{{ path('backoffice_gestionnaire_show', { 'id': etablissement.gestionnaire.id }) }}">{{ etablissement.gestionnaire }}</a></td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endif %}
+                     
+                
+                     {% if is_granted('ROLE_SUPER_ADMIN') and vue_globale is defined %}
+                    <td>{{ etablissement.NbQuestionsReponduesCache | progressBarNotCent(etablissement.NbQuestions)  | raw}} </td>
+                    <td>{{ etablissement.NbCriteresNotesCache | progressBarNotCent( etablissement.getNbCriteres)  | raw}}  </td>
+                    
+                    {% set SizeTotalFileUploadCache = etablissement.SizeTotalFileUploadCache %}
+                    {% if etablissement.sizeMaxUpload  <   SizeTotalFileUploadCache %}
+                        <td title='{{SizeTotalFileUploadCache | formatBytes}} sur  {{etablissement.sizeMaxUpload | formatBytes}} autorisés).' class='alert alert-danger'>    
+                    {% else %}
+                        <td title='{{SizeTotalFileUploadCache | formatBytes}} sur  {{etablissement.sizeMaxUpload | formatBytes}} autorisés).' class='alert alert-success'>    
+                    {% endif %}
+                        
+                        {{SizeTotalFileUploadCache | sizeFileUpladBar(etablissement.sizeMaxUpload ) | raw }}
+                    </td>
+                {% endif %}
+
+                
+                
+                
+                
+                {% if is_granted('ROLE_SUPER_ADMIN') and not app.user.IsCreai  %}
+                    {% if etablissement.creaiCascade is empty %}
+                        <td class='danger small'>{{ etablissement.creaiCascade}}</td>
+                    {% else  %}
+                        <td class='small small small'>{{ etablissement.creaiCascade}}</td>
+                    {% endif %}                
+                {% endif %}                
+
+                
+
+                
+                    {% if  etablissement.users | length == 0 %}
+                        <td title="L établissement doit avoir au moins 1 utilisateur !! ">{{ etablissement.users | length}}  - <i class='glyphicon glyphicon-warning-sign'></td>
+                    {% else %}
+                        <td>{{ etablissement.users | length}}</td>
+                    {% endif %}
+
+                <td>
+                                <a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}"><i class='glyphicon glyphicon-eye-open'></i></a>
+                {{ etablissement.delegationCreai | delegationCreaiIcone | raw }}
+                        {% if etablissement.delegationCreai and app.user.isCreai %}
+                    {% if etablissement.Creai == app.user.Creai %}
+                            <a title="Voir les saisies de 'établissement" href='{{ path("pericles3_homepage_etablissement", {"id":  etablissement.id}) }}'>
+                              <i class='glyphicon glyphicon-thumbs-up'></i>  
+                            </a>
+                    {% endif %}
+                {% endif %}
+                
+                
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+        
+        <div class='alert alert-success'>
+            {{etablissements | length }} établissements affichés
+        </div>

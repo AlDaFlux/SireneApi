@@ -1,0 +1,49 @@
+    {% set path_biblio_create =false%}
+    
+    
+    {% if (type_bibliotheque=='etablissement' and  is_granted('ROLE_RW_BIBLIO')) %}
+        
+        {% if is_granted('ROLE_GESTIONNAIRE') %} 
+            {% set link_lien=path('pericles3_bibliotheque_create_etablissement', {'type': "lien",'id': etablissement.id}   ) %}
+            {% set link_fichier=path('pericles3_bibliotheque_create_etablissement', {'type': "fichier",'id': etablissement.id}   ) %}
+            {% set link_texte=path('pericles3_bibliotheque_create_etablissement', {'type': "texte",'id': etablissement.id}   ) %}
+       {% else %}
+            {% set link_lien=path('pericles3_bibliotheque_create', {'type': "lien"}   ) %}
+            {% set link_fichier=path('pericles3_bibliotheque_create', {'type': "fichier"}   ) %}
+            {% set link_texte=path('pericles3_bibliotheque_create', {'type': "texte"}   ) %}
+       {% endif%}
+       {% set path_biblio_create =true  %}
+    {% elseif (type_bibliotheque=='gestionnaire' and is_granted('ROLE_GESTIONNAIRE') and  is_granted('ROLE_RW_BIBLIO_GESTIONNAIRE')) %} 
+       {% set link_lien=path('pericles3_backoffice_bibliotheque_create_type', {'type': "lien"}   ) %}
+       {% set link_fichier=path('pericles3_backoffice_bibliotheque_create_type', {'type': "fichier"}   ) %}
+       {% set link_texte=path('pericles3_backoffice_bibliotheque_create_type', {'type': "texte"}   ) %}
+       {% set path_biblio_create =true  %}
+       
+    {% endif %}
+    
+    
+    {% if path_biblio_create %}
+        {% if type_menu == 'btns' %}
+        <div class="row">
+            <div class="col-md-4">
+                <a class="btn btn-primary active full-width"href="{{link_lien}}"><i class='glyphicon glyphicon-plus'></i> Ajouter un lien {{ 'lien' | iconeBibliotheque() | raw  }} </a>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-primary active full-width" href="{{ link_fichier}}"><i class='glyphicon glyphicon-plus'></i>Ajouter un fichier {{ 'fichier' | iconeBibliotheque() | raw  }}</a>
+            </div>
+            <div class="col-md-4">  
+                <a class="btn btn-primary active full-width" href="{{link_texte}}"><i class='glyphicon glyphicon-plus'></i> Ajouter un texte {{ 'texte' | iconeBibliotheque() | raw  }}</a>
+            </div>
+        </div>
+        {% else  %}
+            
+              <ul class="nav nav-tabs nav-justified">
+                <li class="{% if type == 'lien' %}active{% endif %}" ><a role="presentation" href="{{link_lien}}#form_biblio"><i class='glyphicon glyphicon-plus'></i> Lien  {{ 'lien' | iconeBibliotheque() | raw  }}</a></li>
+                <li class="{% if type == 'fichier' %}active{% endif %}" ><a role="presentation" href="{{link_fichier}}#form_biblio"><i class='glyphicon glyphicon-plus'></i> Fichier  {{ 'fichier' | iconeBibliotheque() | raw  }}</a></li>
+                <li class="{% if type == 'texte' %}active{% endif %}" ><a role="presentation" href="{{link_texte}}#form_biblio"><i class='glyphicon glyphicon-plus'></i> Texte  {{ 'texte' | iconeBibliotheque() | raw  }}</a></li>
+            </ul>
+    {% endif %}
+            
+            
+    {% endif %}
+        

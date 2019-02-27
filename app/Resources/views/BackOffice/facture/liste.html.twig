@@ -1,0 +1,16 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block out_container  %}
+
+{{ parent() }}    
+
+
+    <h1><a href="{{ path('facture_index') }}">Factures</a></h1>
+    <h2>{{titre}}</h2>
+ 
+        {% include 'BackOffice/facture/inc_menu.html.twig' %}
+        {% include 'BackOffice/facture/inc_list.html.twig' %}
+    
+    
+
+{% endblock %}

@@ -1,0 +1,22 @@
+
+ <table class='table table-bordered table-triable'>
+        <thead>
+            <tr>
+                <th>Etablissement</th>
+                <th>Domaine</th>
+                <th>Commentaire</th>
+                <th>Créer par </th>
+                <th>Créer le </th>
+            </tr>
+        </thead>
+    {% for synthese in syntheses %}
+        <tr>
+            <td>{{synthese.etablissement}}</td>
+            <td>{{synthese.Domaine}}</td>
+            <td>{{synthese}}</td>
+            <td>{{synthese.user}}</td>
+            <td>{{ synthese.dateCreate|date('d-m-Y H:i:s')  }}</td>
+        </tr>
+    {% endfor %}
+</table>
+                          

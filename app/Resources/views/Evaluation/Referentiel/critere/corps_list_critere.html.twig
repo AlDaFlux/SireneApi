@@ -1,0 +1,71 @@
+
+
+
+<p>
+<p>
+
+    <div class="row">
+        <div class="col-md-12 ">
+            <div class="panel panel-primary">            
+                <div class="panel-heading"> <h3 class="panel-title">  Par établissement</h3></div>
+                    
+                    <table class="table">
+                        
+                         <thead> 
+                             <tr> 
+                                 <th>Critère</th>
+                                 <th>Questions</th> 
+                                 <th>Constats</th> 
+                                 <th>Preuves</th> 
+                                 <th title="Objectifs Opérationnels d'Amélioration">Objectifs</th>
+                                 <th colspan="2">Evaluation</th>
+                             </tr> 
+                         </thead>
+                         <tbody> 
+                             
+                        {% set total_note = 0 %}
+                        {% set nb_note = 0 %}
+                             
+                        
+                        {% for critere in criteres %}
+                            <tr>
+                                 <td>     {{critere.etablissement}} </td>
+                                 
+                                <td>   
+                                    <a href=''>
+                                        {{ critere.NbQuestionsRepondues}} / {{ critere.questions | length }}
+                                {% include "Nuts/inc_pastilles_questions.html.twig" with {'questions' : critere.questions } %}
+
+                                        <a/>
+                                </td>
+                                    <td><a href="{{ path('pericles3_critere', {'id': critere.id}) }}#ConstatContainer" >{{critere.NbConstats}}</a></td>
+                                    <td><a href="{{ path('pericles3_critere', {'id': critere.id}) }}#preuves">{{critere.NbPreuves}}</a></td>
+                                    <td><a href="{{ path('pericles3_critere', {'id': critere.id}) }}#ooa">{{critere.NbObjectifsOperationnel}}</td>
+
+                                {% set currentState = critere.getStatus() %}
+                                <td>   <a href="{{ path('pericles3_critere', {'id': critere.id}) }}#CritereNote">  {{critere.note | formatNoteSimple}} </a></td>
+                                <td>  <a href="{{ path('pericles3_critere', {'id': critere.id}) }}#CritereNote">    <img width='32px' src='{{ critere.note | formatNoteNuage }}'></a> </td>
+                                {% set total_note = total_note + critere.note %}
+                                {% set nb_note = nb_note + 1%}
+                            </tr>
+                        {% endfor %}
+                                {% set note_moyenne = total_note / nb_note%}
+                        
+                          <tr>
+                                <th colspan='5'>Moyenne</td> 
+                                <th>  {{ note_moyenne | formatNoteSimple}} </a></td>
+                                <th>  <img width='32px' src='{{ note_moyenne |  round | formatNoteNuage }}'></a> </td>
+                          </tr>
+                        
+                        
+                        
+                        
+                        <tbody> 
+                            
+                     </table> 
+                      
+                   
+                </div>   
+            </div>
+        </div>
+

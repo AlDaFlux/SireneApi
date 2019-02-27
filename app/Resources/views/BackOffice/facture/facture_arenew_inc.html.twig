@@ -1,0 +1,23 @@
+<table class='table table-bordered table-triable_desc'>
+    <thead>
+        <tr>
+            <th>date dernière Emission </th>
+            <th>Num. Facture</th>
+            <th>Etablissement</th>
+            <th>Voir</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for etablissement_facture_afaire in factures %}
+        <tr>
+            <td>{{etablissement_facture_afaire.dateEmission |date('Y-m-d') }}</td>
+            <td title="voir la facture"><a href="{{ path('facture_show', { 'numFacture': etablissement_facture_afaire.numFacture }) }}">{{  etablissement_facture_afaire.numFacture }}</a></td>
+            <td>{{etablissement_facture_afaire.nom}}</td>
+            <td title="voir l'établissement"><a href="{{ path('backoffice_etablissement_view', { 'id': etablissement_facture_afaire.id }) }}"><i class='glyphicon glyphicon-tower'></i></a></td>
+        </tr>
+    {% endfor%}
+     </tbody>
+ </table>
+
+                      
+

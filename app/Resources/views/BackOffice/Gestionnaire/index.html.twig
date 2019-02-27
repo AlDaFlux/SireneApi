@@ -1,0 +1,16 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Gestionnaires</h1>
+      {% if is_granted('ROLE_GESTIONNAIRE') %}
+            {% include 'BackOffice/Gestionnaire/inc_liste.html.twig' %}
+      {% endif %}
+{% endblock %}
+
+
+{% block out_container  %}
+     {% if is_granted('ROLE_SUPER_ADMIN') %}
+            {% include 'BackOffice/Gestionnaire/inc_liste.html.twig' %}
+      {% endif %}
+            
+{% endblock %}

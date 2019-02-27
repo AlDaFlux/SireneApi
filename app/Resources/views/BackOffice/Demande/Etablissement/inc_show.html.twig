@@ -1,0 +1,47 @@
+ 
+    
+    <table class='table table-bordered'>
+        <tbody>
+            <tr>
+                <th>Etablissement</th>
+                <td>{{ demandeEtablissement.etablissementNom }}</td>
+            </tr>
+            <tr>
+                <th>Public</th>
+                <td>{{ demandeEtablissement.referentielPublic.public  }}</td>
+            </tr>
+            <tr>
+                <th>Nom de famille</th>
+                <td>{{ demandeEtablissement.demandeurnom }}</td>
+            </tr>
+            <tr>
+                <th>Prénom</th>
+                <td>{{ demandeEtablissement.demandeurprenom }}</td>
+            </tr>
+            <tr>
+                <th>Saisi par </th>
+                <td>{{ demandeEtablissement.creai }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ demandeEtablissement.email }}</td>
+            </tr>
+            <tr>
+                <th>Finess</th>
+                <td>{{ demandeEtablissement.finessCode}}</td>
+            </tr>
+            
+            <tr>
+                <th>Mode Cotisation : </th>
+                <td>{{ demandeEtablissement.modeCotisation  }}</td>
+            </tr>
+            <tr>
+                <th>Etat</th>
+                <td>{{ demandeEtablissement.etat|  afficheDemandeEtat | raw }}</td>
+            </tr>
+            <th>Commentaires</th>
+                <td>{{ demandeEtablissement.commentaireAncreai | nl2br}}</td>
+            </tr>
+        </tbody>
+    </table>
+ 

@@ -1,0 +1,28 @@
+
+          
+      {% if ReferentielPublic is defined %}
+          <h2>{{ReferentielPublic}}</h2>
+      {% endif %}
+      {% if Departement is defined %}
+          <h2>{{Departement}}</h2>
+      {% endif %}
+      {% if Creai is defined %}
+          <h2>{{Creai}}</h2>
+      {% endif %}
+      {% if reel is defined %}
+        {% if reel  %}
+            <h2>Réels</h2>
+        {% else %}
+            <h2>Tests</h2>
+        {% endif %}
+      {% endif %}
+      
+      {% if modeCotisation is defined %}
+          <h2>Facturation : {{modeCotisation}}</h2>
+      {% endif %}
+      
+      {% if EtablissementCategory is defined %}
+          <h2>{{EtablissementCategory}}</h2>
+          <div class='alert alert-info'>{{EtablissementCategory.commentaire}}</div>
+      {% endif %}
+

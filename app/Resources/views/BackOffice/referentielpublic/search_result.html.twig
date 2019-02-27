@@ -1,0 +1,17 @@
+[{% for ref in results -%}
+{#    {{ {id: ref.id, label: ref.nom , value: ref.nom  }|json_encode|raw }}#}
+
+    {% set lib=''  %}  
+    {% if ref.numero is not empty %}
+        {% set lib=ref.numero ~   ' : '  %}  
+    {% endif  %}  
+
+    {% set lib=lib ~ ref.nom %}  
+    {{ {id: ref.id, label: lib , value: lib }|json_encode|raw }} 
+
+    {# {id: ref.id, label: ref.nom , value: ref.id  }|json_encode|raw }}#}
+    {# use "value" instead of "id" key, if you use jquery-ui #}
+    {%- if not loop.last %},{% endif -%}
+{%- endfor %}]
+
+

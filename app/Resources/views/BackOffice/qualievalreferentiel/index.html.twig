@@ -1,0 +1,43 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1> <a href="{{ path('backoffice_qualieval_index') }}"> Quali Eval</a> </h1>
+    
+    <a class='btn btn-primary' href="{{ path('backoffice_qualieval_arborescence') }}"> Arborescence </a> 
+  
+    <table class='table table-bordered table-triable'>
+        <thead>
+            <th>Numéro</th>
+            <th>Nom</th>
+            <th>Id</th>
+            <th>Adulte</th>
+            <th>Enfant</th>
+        </thead>
+    <tbody>
+            
+    {% for qualiEvalReferentiel in qualiEvalReferentiels %}
+        <tr>
+            <td>{{qualiEvalReferentiel.numero}}</td>
+            <td><a href="{{ path('backoffice_qualieval_show', { 'id': qualiEvalReferentiel.id }) }}">{{qualiEvalReferentiel}}</a></td>
+            <td>{{qualiEvalReferentiel.niveau}}</td>
+            
+                    {% if qualiEvalReferentiel.ReferentielAdulte %}
+                        <td class='alert-success'>{{qualiEvalReferentiel.ReferentielAdulte.numero}} : {{qualiEvalReferentiel.ReferentielAdulte}}</td>
+                    {% else  %}
+                        <td class='alert-danger'><a  class='btn btn-primary' href='{{ path('backoffice_qualieval_link', { 'id': qualiEvalReferentiel.id , 'id_public':35}) }}'>Link</a></td>
+                    {% endif %}
+
+                    {% if qualiEvalReferentiel.ReferentielEnfant %}
+                        <td class='alert-success'>{{qualiEvalReferentiel.ReferentielEnfant.numero}} : {{qualiEvalReferentiel.ReferentielEnfant}}</td>
+                    {% else  %}
+                        <td class='alert-danger'><a class='btn btn-primary' href='{{ path('backoffice_qualieval_link', { 'id': qualiEvalReferentiel.id , 'id_public':34}) }}'>Link</a></td>
+                    {% endif %}
+               
+        </tr>
+            
+    
+    {% endfor %}
+           </tbody>
+                    </table>
+    
+{% endblock %}

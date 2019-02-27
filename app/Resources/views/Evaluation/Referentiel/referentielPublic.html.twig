@@ -1,0 +1,136 @@
+{% extends "Evaluation/layout.html.twig" %}
+ 
+{% block title %}{{ parent() }} - {{ referentielPublic}}{% endblock %}
+
+{% block body %}
+    
+      {{ parent() }}
+  
+      <h1><a href="{{ path('pericles3_referentiel_ref', {'id': referentielPublic.id}) }}">{{ referentielPublic.public}}</a></h1>
+            
+        <div class="row">
+             <div class="col-md-6 ">
+                <div class="panel panel-primary panel_osa">            
+                    <div class="panel-heading"> <h3 class="panel-title">Par établissement</h3> </div>
+                      <div class="panel-body"> 
+                        <canvas id="chartCanvasEtablissements"  ></canvas>
+                </div>
+            </div>
+            </div>
+ 
+             <div class="col-md-6 ">
+                <div class="panel panel-primary panel_osa">            
+                    <div class="panel-heading"> <h3 class="panel-title">Par domaine</h3> </div>
+                      <div class="panel-body"> 
+                        <canvas id="chartCanvasDomaines"  ></canvas>
+                </div>
+            </div>
+        </div>
+        </div> 
+      
+      
+      
+      
+      
+    <div class="row">
+        <div class="col-md-6 ">
+            <div class="panel panel-primary">            
+                <div class="panel-heading"> <h3 class="panel-title">  Par établissement</h3></div>
+                    
+                    <table class="table">
+                        
+                         <thead> 
+                             <tr> 
+                                 <th>Etablissements</th>
+                        
+                                 <th title="">Questions</th>
+                                 <th colspan="2">Evaluation</th>
+                             </tr> 
+                         </thead>
+                         <tbody> 
+                             
+                        {% set total_note = 0 %}
+                        {% set nb_note = 0 %}
+                             
+                        
+                        {% for etablissement in etablissements %}
+                            <tr>
+                                 <td>   <a title='Etablissement'  href="{{ path('pericles3_eval_etablissement', {'id': etablissement.id}) }}">   {{etablissement}}</a> </td>
+                                <td>   
+                                        {{ etablissement.NbQuestionsRepondues}} / {{ referentielPublic.getNbQuestionsCache }}
+                                </td>
+                                
+                                 
+ 
+                                <td>    {{etablissement.getMoyenneNotes | formatNoteSimple}} </a></td>
+                                <td>    <img width='32px' src='{{ etablissement.getMoyenneNotes | formatNoteNuage }}'></a> </td>
+                                {% set total_note = total_note + etablissement.getMoyenneNotes %}
+                                {% set nb_note = nb_note + 1%}
+                            </tr>
+                        {% endfor %}
+                                {% set note_moyenne = total_note / nb_note%}
+                        
+                          <tr>
+                                <th colspan='2'>Moyenne</td> 
+                                <th>  {{ note_moyenne | formatNoteSimple}} </a></td>
+                                <th>  <img width='32px' src='{{ note_moyenne |  round | formatNoteNuage }}'></a> </td>
+                          </tr>
+                        <tbody> 
+                            
+                     </table> 
+                      
+                   
+                </div>   
+            </div>
+                                
+                                
+                                
+                    <div class="col-md-6 ">
+            <div class="panel panel-primary">            
+                <div class="panel-heading"> <h3 class="panel-title">  Par domaine</h3></div>
+                    <table class="table">
+                         <tbody> 
+                            {% for domaine in referentielPublic.ReferentielDomaines %}
+                                <tr>
+                                    <td>     <a href="{{ path('pericles3_domaine_ref', {'id': domaine.id}) }}"> {{domaine.numero}} - {{domaine}} </a></td>
+                                </tr>
+                            {% endfor %} 
+                        <tbody> 
+                     </table> 
+                </div>   
+            </div>            
+                                
+                                
+                            
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+        </div>
+
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+          
+{% endblock %} 
+
+{% block javascripts %}
+    <script type="text/javascript">
+        {% include "Synthese/inc_options_charts.js.twig" %}
+         {{ etablissements | graphMultiDataSet('chartCanvasDomaines') |raw }}
+         {{ etablissements | graph('chartCanvasEtablissements',true,'options_responsive') |raw }}
+    </script>
+{% endblock %}

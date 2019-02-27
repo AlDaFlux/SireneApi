@@ -1,0 +1,51 @@
+
+<div id="CritereQuestions"  class="panel panel-primary">            
+    <div class="panel-heading"> <h3 class="panel-title">Eléments d'appréciation
+        
+            
+        {% if is_granted('ROLE_RW_EVAL') and critere.NbQuestionsRepondues > 0 %}
+        <i title="Effacer toutes les réponses aux questions"  data-invite="Voulez vous éffacer toutes les réponses aux questions ?"
+                                data-url_delete="{{path("pericles3_critere_erase_questions", {"id" : critere.id })}}" 
+                               class='DeleteBoxBefore glyphicon glyphicon-trash redText iconhead'
+                               ></i> 
+        {% endif  %}
+        
+        
+        </h3> </div>
+      <div class="panel-body"> 
+
+            <div id="listQuestions">
+                
+                {% for question in critere.questions | order %}
+                    {% if question.NonConcerne %} 
+                        {% set question_alert='alert alert-info' %}
+                    {% elseif question.reponse %} 
+                        {% set question_alert='alert-success' %}
+                    {% elseif not question.reponse and question.reponse is not null  %} 
+                        {% set question_alert='alert-danger' %}
+                    {% else %} 
+                        {% set question_alert='alert-warning' %}
+                    {% endif %} 
+
+                        <div class='alert {{question_alert}}'>   
+                            {{ question.referentiel.nom }}<br>
+                            {#----{{question.ordre}} #}
+                            
+                                <label class="oui radio-inline"><input type="radio" value="1" name="radQuestion_{{ question.id }}" {% if question.reponse %}   checked="checked" {% endif %}>Oui</label>
+                                <label class="non radio-inline"><input type="radio" value="0" name="radQuestion_{{ question.id }}" {% if not question.reponse and question.reponse is not null  %}    checked="checked" {% endif %}>Non</label>
+                                <label class="nc radio-inline"><input type="radio" value="-1" name="radQuestion_{{ question.id }}" {% if question.NonConcerne %}    checked="checked" {% endif %}>Non Concerné</label>
+                            {% if question.NonConcernable  %}
+                            {% endif %}                        
+                        </div>
+                {% endfor %}
+            </div>
+            <div id="InfoSaveQuestion"></div>
+
+            {% if is_granted('ROLE_RW_EVAL') %}
+                <div align="center"><button id="SaveQuestions" type="button" class="btn btn-primary btn-valider">Valider</button></div>
+            {% else %}
+                <div class='alert alert-danger'>Vous n'avez pas les droits de modifier les critères d'évaluation.</div>
+            {% endif  %}
+
+        </div>    
+    </div>    

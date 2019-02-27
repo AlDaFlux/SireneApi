@@ -1,0 +1,38 @@
+
+{% set notsearchable = false %}
+
+ 
+   <div class="row">
+
+    {% if app.user.creai.NbDemandesInfosNonFinies >0 %}
+ 
+        <div class="col-md-8 ">
+            <div class="panel panel-primary"> 
+                <div class="panel-heading"> <h3 class="panel-title">Demandes d'informations a traiter ! </h3></div>
+                    {% include "BackOffice/Demande/Info/inc_liste.html.twig" with {'demandeInfos' : app.user.creai.DemandesInfosNonFinies} %}
+                <div class="panel-footer">
+                    <a class="btn btn-primary active full-width"  href="{{ path('bo_demande_info_index') }}"><i class='glyphicon glyphicon-list'></i> Voir les demandes d'informations</a>
+                </div>
+            </div>
+        </div>
+                
+    {% endif %} 
+
+        <div class="col-md-4 ">
+            <div class="panel panel-primary"> 
+                <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-king'></i> Demandes de création de gestionnaire {{app.user.creai}}</h3></div>
+                <div class="panel-footer">
+                    <a class="btn btn-warning active full-width"  href="{{ path('demande_gestionnaire_new') }}"><i class='glyphicon glyphicon-plus'></i> Demande de création de gestionnaire </a>
+                <a class="btn btn-primary active full-width"  href="{{ path('backoffice_demande_gestionnaire_index') }}"><i class='glyphicon glyphicon-list'></i> Voir les demandes de creation gestionnaire {{app.user.creai}}</a>
+                </div>
+            </div>
+            <div class="panel panel-primary"> 
+                <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-queen'></i>  Demandes de création d'établissement {{app.user.creai}}</h3></div>
+                    
+                <div class="panel-footer">
+                    <a class="btn btn-warning active full-width"  href="{{ path('demande_etablissement_new') }}"><i class='glyphicon glyphicon-plus'></i> Demande de création d'établissement</a>
+                    <a class="btn btn-primary active full-width"  href="{{ path('backoffice_demande_etablissement_index') }}"><i class='glyphicon glyphicon-list'></i> Voir les demandes de creation d'établissement {{app.user.creai}}</a>
+                </div>
+            </div>
+        </div>
+    </div>

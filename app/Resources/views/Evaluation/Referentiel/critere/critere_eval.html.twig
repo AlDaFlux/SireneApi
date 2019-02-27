@@ -1,0 +1,196 @@
+{% extends "Evaluation/Referentiel/critere/layout.html.twig" %}
+
+
+
+
+{% block title %}{{ parent() }} - {{ critere_referentiel}}{% endblock %}
+
+{% block body %}
+    
+      {{ parent() }}
+  
+      <h2>Evaluation</h2>
+        
+        
+{#            <form method='POST' class='ajax_form' data-zone_to_reload="#result_eval_form" action="{{ path("pericles3_critere_savenote_get", {"id": critere.id}) }}"  > #}
+                <div id="InfoSaveNote"></div>
+                <table id="tableNote" class='table table-bordered'>
+
+                     <tr id="trNoteMiddle">
+                             
+                                <td class="note_description na tdNoteBorder">Etablissement</td>
+                                <td class="note_description na tdNoteBorder">Non applicable</td>
+                                <td class="note_description ne tdNoteBorder">Non évalu&eacute;</td>
+                                <td colspan="3" class="note_description pfaible tdNoteBorder">Point faible à traiter en priorité</td>
+                                <td colspan="2" class="note_description par tdNoteBorder">Point à revoir avec engagement d’amélioration</td>
+                                <td colspan="3" class="note_description pq tdNoteBorder">Point qualité à conserver/améliorer</td>
+                                <td colspan="2" class="note_description pfort tdNoteBorder">Point fort. Elément qualité remarquable</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td class="tdNoteBorder"></td>
+                                <td  class="tdNoteBorder"></td>
+                                <td colspan="3" class="tdNoteBorder"><img src="{{ asset('img/orage.png') }}"/></td>
+                                <td colspan="2" class="tdNoteBorder"><img src="{{ asset('img/pluie.png') }}"/></td>
+                                <td colspan="3" class="tdNoteBorder"><img src="{{ asset('img/eclaircie.png') }}"/></td>
+                                <td colspan="2" class="tdNoteBorder"><img src="{{ asset('img/soleil.png') }}"/></td>
+                            </tr>
+                  {% for critere in  criteres_byref %}
+                            <tr id='ligne1_critere_{{critere.id}}'>
+                                <td rowspan='2'> {{critere.etablissement}}  
+                                    <br>
+                                    {% include "Nuts/inc_pastilles_questions.html.twig" with {'questions' : critere.questions } %}
+                                </td>
+                                
+                                <td id='note-1' class="tdNoteBorder na">      <label id='note-1' class="note_note radio-inline"><i class='glyphicon glyphicon-ban-circle'></i></label></td>
+                                <td id='note0' class="note_note tdNoteBorder ne">      <label  class="note_note_label radio-inline">0</label></td>
+                                <td id='note1' class="note_note pfaible">              <label  class="note_note_label radio-inline">1</label></td>
+                                <td id='note2' class="note_note pfaible">              <label class="note_note_label radio-inline">2</label></td>
+                                <td id='note3'   class="note_note pfaible tdNoteBorder"> <label  class="note_note_label radio-inline">3</label></td>
+                                <td id='note4' class="note_note par" >                 <label class="note_note_label radio-inline">4</label></td>
+                                <td id='note5'  class="note_note par tdNoteBorder">     <label class="note_note_label radio-inline">5</label></td>
+                                <td id='note6' class="note_note pq">                   <label class="note_note_label radio-inline">6</label></td>
+                                <td id='note7' class="note_note pq">                   <label class="note_note_label radio-inline">7</label></td>
+                                <td id='note8'  class="note_note pq tdNoteBorder">      <label class="note_note_label radio-inline">8</label></td>
+                                <td id='note9' class="note_note pfort">                <label class="note_note_label radio-inline">9</label></td>
+                                <td id='note10' class="note_note pfort">               <label class="note_note_label radio-inline">10</label></td>
+                            </tr>
+                            <tr>
+                            
+                                <td colspan="12">
+                                     <div id="group_complete" class="form-group">
+                                         <div class='slider_note' data-id_critere='{{critere.id}}'  data-critere_note='{{critere.note}}'  id="slider_note_critere_{{critere.id}}"></div>
+                                </div>    
+                                </td>
+                            </tr>
+                            
+                        
+                {% endfor %}
+          </table>
+                      
+                        <br><br>    
+                    
+          
+                
+          
+          
+              {% if is_granted('ROLE_RW_EVAL') %}
+                    <form method='POST' >
+                            <input type='hidden' id="change_note" name="change_note" value='true'  />
+                        {% for critere in  criteres_byref %}
+                            <input type='hidden' id="note_{{critere.id}}" name="note_{{critere.id}}" value='{{critere.note}}'  />
+                        {% endfor %}
+                            <div align="center"><button title="L’évaluation du critère sera terminée"  type="submit" class="btn btn-primary btn-valider">Enregistrer les note</button></div>
+                            </form>
+                    {% else %}
+                                <div class='alert alert-danger'>Vous n'avez pas les droits de modifier la note</div>
+            {% endif %}
+                            
+          
+          
+ 
+          
+
+          <hr class='separateur'>
+      
+       
+{% endblock %}
+
+
+{% block javascripts %}
+    <script type="text/javascript">
+        {% include "Synthese/inc_options_charts.js.twig" %}
+ 
+
+    $(".slider_note").each(function() 
+    {
+        var critere_note=$(this).data('critere_note');
+        
+        $(this).slider({
+                       max: 10,
+                       min : -1,
+                       value: critere_note,
+                       step: 1,
+                       change: function(event, ui) 
+                       {
+//                        alert($(this).data('id_critere'));
+                            id_critere=$(this).data('id_critere');
+                        
+                        val_note=$(this).slider( "value" );
+                        
+                         switch(val_note) 
+                            {
+                                    case -1:
+                                            class_c="alert-info";
+                                            note_label="Non applicable";
+                                            class_active="na";
+                                       break;
+                                    case 0:
+                                            class_c="alert-danger";
+                                            note_label="Non évalué";
+                                            class_active="ne";
+                                       break;
+                                    case 1:
+                                    case 2:
+                                    case 3:
+                                            class_c="alert-danger";
+                                            note_label="Point faible à traiter en priorité";
+                                            class_active="pfaible";
+                                       break;
+                                    case 4:
+                                    case 5:
+                                             class_c="alert-warning";
+                                             note_label="Point à revoir avec engagement d’amélioration";
+                                             class_active="par";
+                                        break;
+                                    case 6:
+                                    case 7:
+                                    case 8:
+                                             class_c="alert-warning";
+                                             note_label="Point qualité à conserver/améliorer";
+                                             class_active="pq";
+                                        break;
+                                    case 9:
+                                    case 10:
+                                         class_c="alert-success";
+                                         note_label="Point fort. Elément qualité remarquable";
+                                         class_active="pfort";
+                                    break;
+                            } 
+                             
+            $("#ligne1_critere_" + id_critere +" .note_note").removeClass("note_active");
+            $("#ligne1_critere_" + id_critere +" .note_note_label").removeClass("note_active");
+            $("#ligne1_critere_" + id_critere +" .note_description").removeClass("note_active");
+            
+            $("#ligne1_critere_" + id_critere +" #note"+val_note).addClass("note_active");
+                $("#note_"+id_critere).val(val_note);       
+                       }
+        })
+        });
+                
+          
+            changeNote();
+            
+                
+            function changeNote()
+            {
+//                alert(id_critere);
+                if(notfirst) { $("#btnsubmit_note").switchClass("btn-valider","btn-avalider"); } 
+/*
+            val_note=$( "#slider_note" ).slider( "value" );
+           
+        
+            $(".note_description."+class_active).addClass("note_active");
+            //na ne pfaible par  pq  pfort
+            $("#note_hidden").val(val_note);
+            */
+        }
+                
+
+
+
+  
+    </script>
+
+    
+{% endblock %}

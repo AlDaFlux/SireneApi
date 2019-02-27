@@ -1,0 +1,14 @@
+{# empty Twig template #}
+    {% if criteres_pfaibles | length %}
+          <div class="panel panel-danger pfaible"> 
+                <div class="panel-heading"> <h3 class="panel-title">Points faibles à traiter en priorité</h3> </div>
+                <div class="panel-body"> 
+                    <ul>
+                        {%for critere_pfaible in criteres_pfaibles %}
+                            <li>  
+                                <a class='' href="{{ path('pericles3_critere', {'id': critere_pfaible.id}) }}#0"> {{critere_pfaible.numero}} : {{critere_pfaible}} ({{critere_pfaible.note | formatNoteSimple}})  </a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}

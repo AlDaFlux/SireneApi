@@ -1,0 +1,69 @@
+
+
+<div id='loader_{{etablissement.id}}'>
+        <div class="row" >
+        {% set colspan=6 %}
+
+        {% include "Synthese/inc_synthese_genere.html.twig" 
+                   with {'sub_titre': 'Rapport intégral ' ~ application_name ,
+                        'description_synthese': 'Téléchargez la totalité des saisies effectuées dans le référentiel',
+                        'synthese': 'synthese'
+                            } %}
+      
+
+
+        {%  include "Synthese/inc_synthese_genere.html.twig" 
+                   with {'sub_titre': 'RBPP',
+                        'description_synthese': 'Rbpps',
+                        'synthese': 'synthese_rbpp'
+                            } %}
+                            
+
+        </div>
+        
+        
+        <div class="row" >
+                {% set colspan=6 %}
+            {% if etablissement.ReferentielExterne is not empty %}
+                {% include "Synthese/inc_synthese_genere.html.twig" 
+                           with {'sub_titre': "Rapport d’évaluation interne",
+                                'description_synthese':  etablissement.ReferentielExterne.description,
+                                'synthese': 'synthese_alternative'} %}
+            {% else  %}
+                    {% include "Synthese/inc_synthese_genere.html.twig" 
+                   with {'sub_titre': 'Rapport sans note ' ~ application_name ,
+                        'description_synthese': 'Téléchargez la totalité des saisies effectuées dans le référentiel, sans les notes',
+                        'synthese': 'synthese_sans_note'
+                            } %}
+      
+            {% endif %}
+                {% include "Synthese/inc_synthese_genere.html.twig" 
+                with {'sub_titre': 'Contenu du référentiel','description_synthese': "Accédez à la liste intégrale des items du référentiel",'synthese': 'synthese_referentiel'} %}
+            </div>
+
+        <div class="row" >
+        {% set colspan=6 %}
+                
+        {% include "Synthese/inc_synthese_genere.html.twig" 
+                with {'sub_titre': 'Plan d\'amélioration de la qualité', 'description_synthese': 'Export du plan d\'amélioration de la qualité','synthese': 'synthese_paq'} %}
+
+        {% include "Synthese/inc_synthese_genere.html.twig" 
+                with {'sub_titre': 'Plan d\'amélioration de la qualité - Objectifs Opérationnels ', 'description_synthese': 'Export du plan d\'amélioration de la qualité par Objectif Opérationnel','synthese': 'synthese_paq_o'} %}
+
+             
+        </div>
+    </div>
+                
+                                
+     <div class='graphs graphs_calculate'> 
+        <div class=graph_min_container'>
+            <canvas id="chartEvalGeneraleCanvas_{{etablissement.id}}" height="500" width="500"></canvas>
+                    {% for domaine in etablissement.domaines %}
+                    <canvas class="GraphSynthese GraphSynthese_{{etablissement.id}}" id="chartDomaine{{ domaine.id }}" height="500" width="500"></canvas>
+                {% endfor %}
+        </div>
+    </div>  
+
+                
+                                          
+                                

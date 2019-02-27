@@ -1,0 +1,75 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_host: 127.0.0.1
+    database_port: 3306
+    database_name: arsene
+    database_user: arsene
+    database_password: yroXxSuAPuPMlxuE
+    mailer_transport: mail
+    mailer_host: null
+    mailer_user: null
+    mailer_password: null
+    secret: 6cccb991b13cc65f7c3d2103740d14b847f264de
+    mail_from: info@arsene-evaluation.fr
+    mail_to: info@arsene-evaluation.fr
+    backoffice_pageSize: 10
+    allowedRoles:
+        - ROLE_USER
+        - ROLE_ADMIN
+    app.version: 0.1.0
+    upload.max_file_size: 52428800
+    upload.max_size_total_upload: 41943040
+    upload.max_size_total_upload_gestionnaire: 125829120
+    upload.extensions:
+        - png
+        - gif
+        - jpg
+        - jpeg
+        - txt
+        - html
+        - zip
+        - rar
+        - pdf
+        - doc
+        - docx
+        - xls
+        - xlsx
+    upload.filetype:
+        - image/png
+        - image/gif
+        - image/jpeg
+        - image/pjpeg
+        - text/plain
+        - text/html
+        - application/x-rar-compressed
+        - application/zip
+        - application/x-zip-compressed
+        - application/x-pdf
+        - application/pdf
+        - application/msword
+        - application/vnd.ms-excel
+        - video/mp4
+        - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        - application/octetstream
+        - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+
+#    application_name: AUDITLABO 
+    application_name: ARSENE
+#    application_name: QRISTOF 
+    application_description: 'Application pour la Restitution et la Synthèse En ligne d’une Nouvelle Evaluation interne'
+  
+    creai: false
+  
+  
+    
+    
+    
+    enmaintenace: true
+    domain: arsene-evaluation.fr
+    ganz: false
+    advanced_module_gestionnaire: false
+
+    cache_biblio_directory: '%kernel.project_dir%/web/cache_biblio'
+    patch_eval_directory: '%kernel.project_dir%/web/patchs/evals'
+    

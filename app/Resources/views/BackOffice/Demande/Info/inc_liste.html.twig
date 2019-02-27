@@ -1,0 +1,41 @@
+
+{% if notsearchable is defined %}
+    <table class='table table-bordered table-triable_simple_desc'>
+{% else  %}
+    <table class='table table-bordered table-triable_desc'>
+{% endif %}
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Demandeur</th>
+                <th>Etablissement</th>
+                {% if  is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
+                    <th>Creai</th>
+                {% endif %}
+                <th>Etat</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for demandeInfo in demandeInfos %}
+            <tr class='{{demandeInfo.etat  |  afficheDemandeEtatAlert}}'>
+                <td>{% if demandeInfo.dateDemande %}{{ demandeInfo.dateDemande| hiddenDate('Y-m-d H:i') | raw  }}{% endif %}</td>
+                <td><a href="{{ path('bo_demande_info_show', { 'id': demandeInfo.id }) }}">{{ demandeInfo }}</td>
+                <td>{{ demandeInfo.etablissementService }}</td>
+                    {% if  is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
+                    <td>
+                        {% if demandeInfo.creai is empty %}
+                            <b>ANCREAI<b>
+                        {% else %}
+                            {{ demandeInfo.creai }}
+                        {% endif %}
+                            
+                    </td>
+                    
+                {% endif %}
+                <td>{{ demandeInfo.etat |  afficheDemandeEtat | raw }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+        
+        

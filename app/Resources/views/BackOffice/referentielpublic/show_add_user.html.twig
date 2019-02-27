@@ -1,0 +1,22 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('referentielpublic_index')}}">  Référentiels</a></h1>
+    <h2><a href="{{ path('referentielpublic_show', { 'id': referentielPublic.id }) }}">  {{ referentielPublic }} </a></h2>
+ 
+ 
+        
+    
+        <div class="panel panel-primary">
+            <div class="panel-heading"><h3 class="panel-title">Utilisateurs</h3></div>
+            <div class="panel-body">
+               <table class='table'>
+                    {% for l_user in referentielPublic.users %}
+                        <tr><td><a href='{{ path('backoffice_user_show', {'id': l_user.id}) }}'><i class="icon-user"></i> {{l_user}}</a></li></td></tr>
+                    {% endfor %}
+                 </table>
+            </div>  
+        </div>  
+                    
+                    
+{% endblock %}

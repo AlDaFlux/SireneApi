@@ -1,0 +1,99 @@
+            {% set total = 0  %}
+
+            <table class='table table-bordered table-triable'>
+                <thead> 
+                    <tr>
+                        <td>Etabissement</td>
+                        <td>Montant</td>
+                        <td>DateDebut</td>
+                        <td>DateFin</td>
+                        <td></td>
+                        {% if  is_granted('ROLE_MEGA_ADMIN')  %} <td>  </td>{% endif %}
+                        <td>+</td>
+                        </tr> 
+                </thead> 
+                <tbody> 
+                                
+                    {% for presta  in facture.getFacturePrestas %}
+                        
+                        {% if presta.gestionnaire  %}
+                            <tr class='alert-info'>
+                        {% else  %}
+                            <tr>
+                        {% endif  %}
+                        
+                            <td>{{presta}}</td>
+                            
+                            <td>{{presta.montant}} €</td>
+                            
+                            {% if presta.getDateFiff2 > 100 or presta.getDateFinLointaine %}
+                                {% set class_presta='danger' %}
+                            {% elseif presta.getDateFiff2 > 5 %}
+                                {% set class_presta='warning' %}
+                            {% else %}
+                                {% set class_presta='success' %}
+                            {% endif %}
+                            <td class='alert-{{class_presta}}'>{{presta.DateDebut | date('d/m/Y')}} </td>
+                            <td class='alert-{{class_presta}}'>{{presta.DateFin | date('d/m/Y')}} </td>
+                            {#
+                            <td>{{presta.concerne.firstFacturePresta.dateEmission| date('d/m/Y')}} </td>
+                            #}
+                            
+                            
+                            {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') and facture.notFinalized %}
+                                <td> 
+                                   
+                                     
+<i  data-invite="Voulez-vous supprimer cette prestation ?" class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText btn  btn-danger active full-width'  
+    data-url_delete="{{ path('facture_delete_presta', {'id':presta.id}) }}" >  </i>
+
+                                </td>
+                            {% endif %}
+                            {% if presta.gestionnaire  %}
+                                <td> 
+                                     <a  class='icon' href='{{ path('backoffice_gestionnaire_show', {'id': presta.gestionnaire.id}) }}'>{{'gestionnaire' | get_icon | raw }} </i> 
+                                </td>
+                            {% endif %}
+                            {% if presta.etablissement %}
+                                <td> 
+                                     <a  class='icon' href='{{ path('backoffice_etablissement_view', {'id':presta.etablissement.id}) }}'>{{'etablissement' | get_icon | raw }} </i> 
+                                </td>
+                            {% endif %}
+ 
+                                
+                            {% if  is_granted('ROLE_MEGA_ADMIN')  %}
+                                 <td>  <a href="{{ path('facture_presta_edit', { 'id': presta.id }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a> </td>
+                            {% endif %}
+            
+                            
+
+                            
+                        </tr>
+                    {% set total = total  + presta.montant %}
+                    {% endfor %}
+                    
+                     {% if facture.remise %}
+                        {% set total = total  - facture.MontantRemise%}
+                        <tr class='alert-success'> 
+                            <th>Remise {{facture.remise }}
+                                {% if facture.remiseLibelle %}
+                                    ({{facture.remiseLibelle}})
+                                {% endif %}
+                            </th>
+                            <th>- {{facture.MontantRemise}}€</th>
+                        </tr>
+                    
+                    {% endif %}
+                <tbody> 
+                <tfooter> 
+                        <tr> 
+                            <th>Total : </th>
+                            <th>{{total}} €</th>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            {% if  is_granted('ROLE_MEGA_ADMIN')  %} <td>  </td>{% endif %}
+                            <td> +</td>
+                        </tr>
+                </tfooter> 
+                    </table>

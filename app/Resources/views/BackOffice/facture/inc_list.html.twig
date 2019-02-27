@@ -1,0 +1,129 @@
+{# empty Twig template #}
+
+    {% set total = 0 %}
+ 
+    <table class='table  table-triable'>
+        <thead>
+            <tr>
+                <th>Numfacture</th>
+                <th>PDF</th>
+                <th>Cible Type</th>
+                <th>Cible</th>
+                <th title='Premiere abonnement gestionnaire'>Module <br> Gestionnaire</th>
+        
+                <th>Date Emission</th>
+                <th>Creai</th>
+                 {#
+                <th>Montant (xls)</th>
+                 #}
+                <th>Montant</th>
+                <th>Dernier <br>rappel</th>
+                <th>Payé le</th>
+                <th>Paiement</th>
+                {#
+                <th>Libelle Gestionnaire</th>
+                <th>Neufcent</th>
+                <th>Cinccent Cinquante</th>
+                <th>Ren 300</th>
+                <th>Ren 150</th>
+                #}
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for facture in factures %}
+                {% if facture.getAvoir %}
+                    <tr class='facture-annullee'>
+                        <td class='alert-danger facture-annullee'><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{ facture.numFacture }}</a></td>
+                {% elseif facture.getFinalise %}
+                    <tr>
+                        <td class='alert-info'><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{ facture.numFacture }}</a></td>
+                {% else %}
+                    <tr>
+                        <td class='alert-warning'><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{ facture.numFacture }}</a></td>
+                {% endif %}
+                    
+    
+                {% if facture.HasPDF  %}
+                <td class='alert-success'>
+            {% else  %}
+                <td class='alert-danger'>
+            {% endif %}
+                    {% if facture.HasPDF  %}
+                        <i alt='PDF' class='glyphicon glyphicon-save-file'></i>PDF
+                    {% endif %}
+                </td>
+                
+                
+                <td>
+                    {% if facture.ConcerneTypeLib =='GESTIONNAIRE' %}
+                    <b>{{ facture.ConcerneTypeLib }}</b>
+                    {% else %}
+                        {{ facture.ConcerneTypeLib }}
+                    {% endif %}
+                </td>
+                <td>{% if facture.HasPrestaGestionnaire  %} <i class="glyphicon glyphicon-ok greenText"></i>  {% endif %}</td>
+                
+                
+                
+                {% if facture.Concerne  %}
+                <td class='alert-success'>
+            {% else  %}
+                <td class='alert-danger'>
+            {% endif %}
+                {{ facture.Concerne }}
+                </td>
+                
+                <td>{% if facture.dateEmission %}{{ facture.dateEmission|date('Y-m-d') }}{% endif %}</td>
+                <td>{{ facture.creai }}</td>
+        
+                {#
+                {% if facture.montant != facture.montantTotal %}
+                <td class='alert-danger'>{{ facture.montant }} €</td><td class='alert-danger'>{{ facture.montantTotal }} €</td>
+            {% else %}
+                <td class='alert-success'>{{ facture.montant }} €</td><td class='alert-success'>{{ facture.montantTotal }} €</td>
+            {% endif %}
+            #}
+                 {{ facture.montantTotal | TdCurrency("font-weight-bold") | raw  }} 
+            
+                
+                <td>{% if facture.lastRappel %}{{ facture.lastRappel.dateRappel|date('Y-m-d') }}{% endif %}</td>
+
+                
+                {#
+                <td>{{ facture.libellegestionnaire }}</td>
+                <td>{{ facture.neufcent }}</td>
+                <td>{{ facture.cinccentcinquante }}</td>
+                <td>{{ facture.ren300 }}</td>
+                <td>{{ facture.ren150 }}</td>
+                #}
+                
+                {% if facture.payele %}
+                        <td class='alert-success'>{% if facture.payele %}{{ facture.payele|date('Y-m-d') }}{% endif %}</td>
+                 {% else %}
+                        <td class='alert-danger'>{% if facture.payele %}{{ facture.payele|date('Y-m-d') }}{% endif %}</td>
+                 {% endif %}
+                 
+                 
+                <td>{{ facture.MoyenPaiement }}</td>
+                
+                
+                <td>
+                            <a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}"><i alt='modifier' class='glyphicon glyphicon-eye-open'></i></a>
+                </td>
+                
+                {% set total = total  + facture.montantTotal %}
+            </tr>
+        {% endfor %}
+        
+          <tfoot>
+            <tr>
+                <th colspan='7'> TOTAL :</th>
+                {{ total | ThCurrency("font-weight-bold") | raw  }} 
+                <th colspan='3'></th>
+            </tr>
+        </tfoot>
+        
+        </tbody>
+    </table>
+        

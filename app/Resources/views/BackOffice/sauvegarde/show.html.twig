@@ -1,0 +1,65 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('backoffice_sauvegarde_index') }}">Sauvegarde</a></h1>
+
+    <table class='table table-bordered'>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ sauvegarde.id }}</td>
+            </tr>
+            <tr>
+                <th>Etablissement</th>
+                <td>{{ sauvegarde.etablissement }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ sauvegarde}}</td>
+            </tr>
+            <tr>
+                <th>Datecreate</th>
+                <td>{% if sauvegarde.dateCreate %}{{ sauvegarde.dateCreate|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Note</th>
+                <td>{{ sauvegarde.note }}</td>
+            </tr>
+            <tr>
+                <th>Deletedat</th>
+                <td>{% if sauvegarde.deletedAt %}{{ sauvegarde.deletedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            
+            {% if sauvegarde.ReferentielDesuet %} {% set classee='alert-danger' %} {% else %} {% set classee='alert-success' %}{% endif %}
+           <tr class="{{classee}}">
+                <th>Ref Sauvegarde</th>
+                 <td>{{sauvegarde.referentiel }}
+            </tr>
+           <tr class="{{classee}}">
+                <th>Ref Etab</th>
+                 <td>{{sauvegarde.etablissement.referentielPublic }}
+            </tr>
+            {% if sauvegarde.ReferentielDesuet %} 
+           <tr  class="{{classee}}">
+                <th>Desuet</th>
+                <td>
+                    
+                    {% for patch in sauvegarde.etablissement.referentielPublic.patchCibles %}
+                        {% if patch.source == sauvegarde.referentiel %}
+                            {{patch}} : 
+                        <pre>php bin/console patch:sauvegarde-do --sauvegarde_id={{sauvegarde.id}} --patch_id={{patch.id}}</pre>
+                        <pre>php bin/console sauvegarde:delete --sauvegarde_id={{sauvegarde.id}} </pre>
+                        {% endif  %}
+                    {% endfor %}
+                    
+                        
+                    
+                    <a class='btn btn-danger' href="{{ path('backoffice_sauvegarde_patch', {'id':sauvegarde.id}) }}">Patch</a>
+                </td>
+            </tr>
+            {% endif %} 
+
+        </tbody>
+    </table>
+ 
+{% endblock %}

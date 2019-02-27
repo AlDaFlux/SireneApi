@@ -1,0 +1,29 @@
+ 
+            <h2>Demandes à traiter par les CREAI</h2>
+                <table class='table table-bordered table-triable_simple'>
+                    <thead>
+                        <tr>
+                                <th>Creai</th>
+                                <th>Nb</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for  creai in Creais %}
+                                {% if creai.getNbDemandesInfosNonFinies>5 %}
+                                    <tr class='alert-danger'>
+                                {% elseif creai.getNbDemandesInfosNonFinies>0 %}
+                                    <tr class='alert-warning'>
+                                {% else%}
+                                    <tr class='alert-success'>
+                                {% endif %}
+                                <td><a href='{{ path('bo_demande_info_creai', {'id' :creai.id}) }}'>{{creai }}</a></td>
+                                <td>{{creai.getNbDemandesInfosNonFinies}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                    
+                <a class="btn btn-primary active full-width"  href="{{ path('bo_demande_info_index_all') }}"><i class='glyphicon glyphicon-list '></i>Voir toutes les demandes d'informations</a>
+                
+            
+      

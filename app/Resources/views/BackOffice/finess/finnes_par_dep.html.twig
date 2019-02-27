@@ -1,0 +1,24 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('backoffice_finess_index', {}) }}">FINESS</a></h1>
+    <h2>{{departement}}</h2>
+    
+    <table class='table'>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Nom</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{departement.id}}</td>
+            <td>{{departement}}</td>
+        </tr>
+        </tbody>
+    </table>
+            
+    {% include "BackOffice/finess/inc_liste.html.twig"  with {'finesses': departement.finess}   %} 
+                
+{% endblock %}

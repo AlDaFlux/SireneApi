@@ -1,0 +1,182 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Etablissement{% endblock %}
+
+{% block body %}
+    {% set etablissement = cur_etablissement %}
+        <h1> <a href="{{ path('backoffice_etablissement_view', {'id': etablissement.id})}}">{{etablissement}}</a> </h1>
+        {% if  is_granted('ROLE_MEGA_ADMIN') %}
+            <div class='alert alert-danger'>
+                Vous voulez changer le public de  <b><a href="{{ path('referentielpublic_show', { 'id': ReferentielPublicSource.id })}}" >{{ReferentielPublicSource}}</b></a> à  <b><a href="{{ path('referentielpublic_show', { 'id': ReferentielPublicCible.id })}}" >{{ReferentielPublicCible}}</a></b> 
+            </div>
+        {% endif  %}
+        <h2>Eléments présents dans {{ReferentielPublicSource}} mais non présent dans {{ReferentielPublicCible}} </h2>
+            <table class='table table-bordered table-triable small'>
+                    <thead>
+                        <tr>
+                            <th>Numéro</th>
+                            <th>Type</th>
+                            <th>Public</th>
+                            <th>Nom</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+        {% for element_nouveaux in elements_nouveaux %}
+                <tr> 
+                    <td> {{element_nouveaux.numero}}</td>
+                    <td> {{element_nouveaux.TypeReferentiel}}</td>
+                    <td> {{element_nouveaux.referentielPublic}}</td>
+                    <td> <a href='{{ path('referentielpublic_show_node', {'id_node': element_nouveaux.id, 'id': ReferentielPublicCible.id}) }}'>{{element_nouveaux}}</a></td>
+                </tr> 
+            {% endfor %}
+        </table>
+        
+
+        <h2>Correrspondance</h2>
+        
+<table class='table table-bordered table-triable small'>
+        <thead>
+            <tr>
+                <th>Numéro</th>
+                <th>{{ReferentielPublicSource}}</th>
+                <th>Evaluation</th>
+                <th>{{ReferentielPublicCible}}</th>
+            </tr>
+        </thead>
+  
+        {% set referentielPublic= etablissement.referentielPublic %}
+        <tbody>
+                {% for domaine in etablissement.Domaines | order %}
+                    {% set cible = '' %}
+                    {% if  domaine.referentiel.SourceParent %}
+                            {% set cible = domaine.referentiel.SourceParent %}
+                    {% endif %}
+                   
+
+                    <tr class='dom'>
+                <td>{{ domaine.ordre }}</td>
+                <td><a href='{{ path('referentielpublic_show_node', {'id_node': domaine.referentiel.id, 'id': referentielPublic.id}) }}'>{{ domaine.nom}}</a></td>
+                
+                <td>
+                    <a title="Accèdez à l'évaluation " href="{{ path('pericles3_domaine', {'id': domaine.id}) }}"><i class='glyphicon glyphicon-thumbs-up'></i></a>
+                </td>
+                
+               
+                                    {% if cible is not empty  %}
+                                        <td class='alert-success'>
+                                            <a href='{{ path('referentielpublic_show_node', {'id_node': cible.id, 'id': ReferentielPublicCible.id}) }}'> {{ cible}}</a>
+                                        </td>
+                                    {% else  %}
+                                        <td class='alert-danger'>Le domaine disparaitra avec le nouveau référentiel !!! </td>
+                                    {% endif %}
+ 
+            <tr>
+
+                        {% for dimension  in domaine.dimensions | order  %}
+                            
+
+                                {% set cible = '' %}
+                                {% if  dimension.referentiel.SourceParent %}
+                                        {% set cible = dimension.referentiel.SourceParent %}
+                                {% endif %}
+                   
+
+                        </tr>
+                         <tr class='dim'>
+                                <td>{{ dimension.numero }}</td>
+                                <td><a href='{{ path('referentielpublic_show_node', {'id_node': dimension.id, 'id': referentielPublic.id}) }}'>  {{ dimension.nom}}</a></td>
+                             
+                                     
+                            <td>
+                                <a title="Accèdez à l'évaluation " href="{{ path('pericles3_dimension', {'id': dimension.id}) }}"><i class='glyphicon glyphicon-thumbs-up'></i></a>
+                            </td>
+                            
+                                    {% if cible is not empty  %}
+                                        <td class='alert-success'>
+                                            <a href='{{ path('referentielpublic_show_node', {'id_node': cible.id, 'id': ReferentielPublicCible.id}) }}'> {{ cible}}</a>
+                                        </td>
+                                    {% else  %}
+                                        <td class='alert-danger'>La diménsion disparaitra avec le nouveau référentiel !!! </td>
+                                    {% endif %}
+
+                                
+                            </tr>
+                                {% for critere  in dimension.criteres %}
+                                         {% set cible = '' %}
+                                         
+
+                                {% set cible = '' %}
+                                {% if  critere.referentiel.SourceParent %}
+                                        {% set cible = critere.referentiel.SourceParent %}
+                                {% endif %}
+                                     
+                               
+                                         <tr class='crit'>
+                                        <td>{{ domaine.ordre }}.{{ dimension.ordre }}.{{ critere.ordre }}</td>
+                                        <td><a href='{{ path('referentielpublic_show_node', {'id_node': critere.id, 'id': referentielPublic.id}) }}'>   {{ critere.nom}}</a></td>
+                                  
+                            <td>
+                                <a title="Accèdez à l'évaluation " href="{{ path('pericles3_critere', {'id': critere.id}) }}"><i class='glyphicon glyphicon-thumbs-up'></i></a>
+                            </td>
+                            
+                                 {% if cible is not empty  %}
+                                        <td class='alert-success'>
+                                            <a href='{{ path('referentielpublic_show_node', {'id_node': cible.id, 'id': ReferentielPublicCible.id}) }}'> {{ cible}}</a>
+                                        </td>
+                                    {% else  %}
+                                        <td class='alert-danger'>Le critère disparaitra avec le nouveau référentiel !!! </td>
+                                    {% endif %}
+                                </tr>
+                                
+                                
+                                
+                                {% for question  in critere.questions %}
+                                         {% set cible = '' %}
+                                         
+                                         
+                                {% set cible = '' %}
+                                {% if  question.referentiel.SourceParent %}
+                                        {% set cible = question.referentiel.SourceParent %}
+                                {% endif %}
+                                      
+                                         <tr class='quest'>
+                                        <td>{{ domaine.ordre }}.{{ dimension.ordre }}.{{ critere.ordre }}.{{ question.ordre }}</td>
+                                        <td><a href='{{ path('referentielpublic_show_node', {'id_node': question.id, 'id': referentielPublic.id}) }}'>   {{ question}}</a></td>
+                                  
+                            <td>
+                                <a title="Accèdez à l'évaluation " href="{{ path('pericles3_critere', {'id': question.critere.id}) }}"><i class='glyphicon glyphicon-thumbs-up'></i></a>
+                            </td>
+                            
+                                 {% if cible is not empty  %}
+                                        <td class='alert-success'>
+                                            <a href='{{ path('referentielpublic_show_node', {'id_node': cible.id, 'id': ReferentielPublicCible.id}) }}'> {{ cible}}</a>
+                                        </td>
+                                    {% else  %}
+                                        <td class='alert-danger'>L'élément d'appréciation  disparaitra avec le nouveau référentiel !!! </td>
+                                    {% endif %}
+                                </tr>
+                                
+                                
+                            {% endfor %}
+                                
+                                
+                                
+                            {% endfor %}
+
+                    
+                    {% endfor %}
+
+                       
+                    {% endfor %}
+        </tbody>
+    </table>
+        
+        
+            <a class='btn  btn-danger full-width'  href="{{ path('backoffice_etablissement_patch_filiation_go', { 'id': etablissement.id, 'ref_cible':ReferentielPublicCible.id, 'etape': 0 })}}" > !!! Lancer le patch !! </a>
+
+         
+{% endblock %}
+
+    

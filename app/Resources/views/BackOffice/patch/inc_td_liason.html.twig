@@ -1,0 +1,24 @@
+ {% if patch.aieul %}
+    <td  class='alert-warning'><a href="{{ path('referentielpublic_show', { 'id': patch.aieul.id }) }}">Ancêtre commun : {{patch.aieul}}</a></td>
+{% elseif patch.source.sourceParent == patch.cible  %}
+    <td  class='alert-info'>Père de</td>
+{% elseif patch.cible.sourceParent == patch.source %}
+    <td  class='alert-info'>Fils de </td>
+{% elseif patch.NbPatchsIntermediares %}
+        {% if patch.IntermediareOk %}
+            <td  class='success'>
+        {% else  %}
+            <td  class='danger'>
+        {% endif  %}
+
+            
+            {% for patcthInterRefCible  in patch.PatchsIntermediaresRefCibleOrder %}
+                -> {{patcthInterRefCible}}
+            {% endfor  %}
+                    -> 
+            </td>
+
+{% else %}
+
+    <td  class='danger'>Pas d'ancetres communs</td>
+{% endif  %}

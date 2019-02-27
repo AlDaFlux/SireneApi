@@ -1,0 +1,217 @@
+{% extends "Bibliotheque/layout.html.twig" %}
+
+
+{% block title %}{{ parent() }} - Bibliothèque Liste {% endblock %}
+
+{% block body %}{{ parent() }} 
+
+<table class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+	        <tr>
+	            <th>Titre</th>
+	            <th>Thématique</th>
+	            <th>Mise à jour</th>
+	            <th>Crée par</th>
+	        </tr>
+        </thead>
+        <tbody>
+                        <tr>
+		            <td>{{ bibliotheque.TypeMessage | iconeBibliotheque() | raw  }}
+		            	{% if bibliotheque.TypeMessage =='fichier' %}
+		            		<a target="_blank" href="{{ asset('upload') }}/{{ bibliotheque.getRelativPath }}">{{ bibliotheque.message }}</a>
+		            	{% elseif bibliotheque.TypeMessage =='lien' %}
+		            		<a target="_blank" href="{{ bibliotheque.href }}">{{ bibliotheque.message }}</a>
+                                {% else %}
+		            		{{ bibliotheque.message }}
+		            	{% endif %}
+		            </td>
+		            <td>{{ bibliotheque.thematique }}</td>
+		            <td>{{ bibliotheque.dateUpdate|hiddenDate("d-m-Y") | raw }}</td>
+		            <td>{{ bibliotheque.user}}</td>
+	       		</tr>
+        </tbody>
+</table>
+
+                    <div class="row">
+                        
+                        {% if bibliotheque.etablissement is not empty %}
+                            <div class="col-md-4 ">
+                                <a class="btn btn-primary active full-width"  href="{{ path('pericles3_bibliotheque_etablissement') }}">
+                                    <i class='glyphicon glyphicon-list'></i>Bibliotheque etablissement
+                                </a>
+                            </div>
+                        {% endif  %}
+                        {% if bibliotheque.gestionnaire is not empty %}
+                            <div class="col-md-4 ">
+                                <a class="btn btn-primary active full-width"  href="{{ path('pericles3_bibliotheque_gestionnaire') }}">
+                                    <i class='glyphicon glyphicon-list'></i>Bibliotheque Gestionnaire
+                                </a>
+                            </div>
+                        {% endif  %}
+                        
+                        
+                        
+                
+                                {% if is_granted('ROLE_RW_BIBLIO') or is_granted('ROLE_RW_BIBLIO_GESTIONNAIRE') %}
+                                    {% if bibliotheque.user == app.user or app.user.IsAdmin %}
+
+                        <div class="col-md-4 ">
+                            <a class="btn btn-warning active full-width"  href="{{ path('pericles3_bibliotheque_update', {'id': bibliotheque.id}) }}">
+                                <i class='glyphicon glyphicon-pencil'></i>Modifier
+                            </a>
+                        </div>
+                            {% if bibliotheque.NbPreuves == 0 %}
+                        <div class="col-md-4 ">
+                                <i data-invite="Supprimer l'entrée de la bibliotheque de manière définitive ? ? "
+                                data-url_delete="{{ path('pericles3_bibliotheque_delete', {'id': bibliotheque.id}) }}"  
+                               class='btn btn-danger active full-width DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active '>Supprimer</i> 
+                        </div>
+                            {% endif %}
+
+                                    {% endif %}
+                                {% endif %}
+                                       
+                    </div>
+                        
+
+
+    {% if is_granted('ROLE_RW_BIBLIO_GESTIONNAIRE') and bibliotheque.etablissement  is not empty%}
+        <p><br><p>
+            {% set message_up ="Etes vous sur de vouloir passer cet élément de la bibliothèque établissement à la bibliothèque gestionnaire ? " %}
+            {% set message_up = message_up ~ "<ul> " %}
+            {% set message_up = message_up ~ "<li>Les utilisateurs de l'établissement <b>" ~ bibliotheque.etablissement ~ "</b> ne pourront plus modifier cette entrée " %}
+            {% set message_up = message_up ~ "<li>Les utilisateurs de tous les établissements de <b>" ~ bibliotheque.etablissement.gestionnaire ~ "</b>  auront accès a cette entrée" %}
+            {% set message_up = message_up ~ "</ul> " %}
+            
+        <span  data-fenetre_titre="Bibliothèque" data-btn_lib="Passer dans la biblio gestionnaire" data-invite="{{message_up}}"    data-url_delete="{{ path('pericles3_bibliotheque_uptogestionnaire', {'id': bibliotheque.id}) }}"  class = " DeleteBoxBefore btn btn-primary active full-width">Passer cet élément  de la bibliothèque <b>{{bibliotheque.etablissement}}</b> <br>à la bibliothèque Gestionnaire ({{gestionnaire}})</span>            
+    {% endif %}
+
+    
+              {% set preuve_one_etablissement_ok = false %}
+                {% set preuve_one_etablissement_nom = null  %}
+                {% set preuve_one_etablissement_id = 0  %}
+                      
+                        
+                        
+    {% if bibliotheque.NbPreuves> 0 %}
+        <br>
+        
+        <div class="panel panel-primary"> 
+            <div class="panel-heading"> <h3 class="panel-title">Preuves associées</h3> </div>
+            <div class="panel-body">  
+                
+                
+                
+<table class="table table-striped table-bordered table-triable">
+        <thead>
+	        <tr>
+                    {# if etablissement is not defined #}
+                    {% if bibliotheque.gestionnaire is not empty %}
+        	            <th> Etablissement</th>
+        	            <th> Public</th>
+                    {% endif %}
+                    <th>Origine</th>
+ 
+                    <th class='screen_only'>Accès </th>
+                        
+	            <th>Date</th>
+	            <th>Commentaire</th>
+	        </tr>
+        </thead>
+
+        <tbody>
+        	{# -- On vérifie sit la preuve est lié à un et un seul établissement #}
+        	
+        	{% for preuve in bibliotheque.preuves %}
+        	{% set preuve_link = false  %}
+                        <tr>
+
+                                
+                                
+                            {# -- On vérifie sit la preuve est lié à un et un seul établissement #}
+                            {% if bibliotheque.gestionnaire is not empty %}
+                                {% if preuve_one_etablissement_id == 0 %}
+                                    {% set preuve_one_etablissement_ok = true %}
+                                    {% set preuve_one_etablissement_id = preuve.etablissement.id %}
+                                    {% set preuve_one_etablissement_nom = preuve.etablissement %}
+                                {% elseif preuve_one_etablissement_ok %}
+                                    {% if preuve_one_etablissement_id != preuve.etablissement.id %}
+                                        {% set preuve_one_etablissement_ok = false %}
+                                    {% endif %}
+                                {% endif %}
+                            
+
+                                
+                                
+                                {% if app.user.adroitetablissement(preuve.etablissement) %}
+                                    {%set preuve_link = true %}
+                                    <th> <a href='{{ path('pericles3_bibliotheque_preuves_etablissement', {'id': preuve.etablissement.id}) }}'>{{preuve.etablissement}}</a></th>    
+                                {% else %}
+                                    {%set preuve_link = false %}
+                                    <th> {{preuve.etablissement}}</th>    
+                                {% endif %}
+                                    <th> {{preuve.etablissement.referentielPublic.public}}</th>    
+                            {% else %}
+                                    {%set preuve_link = true %}
+                            {% endif %}
+                                <td>
+                                {% if preuve_link %}
+                                        <a href="{{ path('pericles3_bibliotheque_preuves_source', {'type_preuve': preuve.typePreuve}) }}">{{ preuve.typePreuve | typePreuveLib}}</a>
+                                {% else %}
+                                        {{ preuve.typePreuve | typePreuveLib}}
+                                {% endif %}
+                                    </td>
+
+                                 
+                                
+                            {% if preuve_link %}
+
+                                <td class='screen_only center'>
+                                    {% if preuve.typePreuve =='pdv' %}
+                                        <a title="Accèdez à l'évaluation du domaine {{preuve.domaine}} " href="{{ path('pericles3_domaine', {'id': preuve.domaine.id}) }}"><i class='glyphicon glyphicon-thumbs-up'></i>Dom. {{preuve.domaine.numero}}</a>
+                                    {% elseif preuve.typePreuve =='objectif_operationnel'  %} 
+                                               <a  title="Accèdez à l'objectif opérationnel {{preuve.ObjectifOperationnel}}" href="{{ path('paq_ooa_show', {'id': preuve.ObjectifOperationnel.id}) }}"><i class='glyphicon glyphicon-export'></i></a>
+                                    {% elseif preuve.typePreuve =='critere'  %} 
+                                        <a title="Accèdez à l'évaluation du critère {{preuve.critere}} " href="{{ path('pericles3_critere', {'id': preuve.critere.id}) }}"><i class='glyphicon glyphicon-thumbs-up'>{{preuve.critere.numero}}</i></a>
+                                    {% endif %} 
+                                </td>
+                                {% else %}
+                                       <td class='screen_only center'>  -</td>
+                                {% endif %}
+		            <td>{{ preuve.dateCreate|hiddenDate("d-m-Y") | raw }}</td>
+                              {% if preuve_link %}
+        		            <td>{{preuve.commentaire}}</td>
+                              {% else %}
+                                  <td class='center'>  <i class='glyphicon glyphicon-ban-circle'></i></td>
+                            {% endif %}
+	       		</tr>
+                        
+			{% endfor %}
+        </tbody>
+</table> 
+   
+             
+    
+            </div>
+        </div>
+ 
+                      
+    {% endif %}
+    
+        
+            {% if  preuve_one_etablissement_ok  and is_granted('ROLE_RW_BIBLIO_GESTIONNAIRE')  %}
+     
+        <p><br><p> 
+            {% set message_up ="Etes vous sur de vouloir passer cet élément de la bibliothèque gestionnaire à la bibliothèque établissement ? " %}
+            {% set message_up = message_up ~ "<ul> " %}
+            {% set message_up = message_up ~ "<li>Les utilisateurs de l'établissement <b>" ~ preuve_one_etablissement_nom ~ "</b> pourront  modifier cette entrée " %}
+            {% set message_up = message_up ~ "<li>Les utilisateurs de tous les établissements autre que <b>" ~ preuve_one_etablissement_nom ~ "</b> de <b>" ~ bibliotheque.gestionnaire ~ "</b>  n'auront plus accès a cette entrée" %}
+            {% set message_up = message_up ~ "</ul> " %}
+            <span  data-fenetre_titre="Bibliothèque" data-btn_lib="Passer dans la biblio établissement <b>{{preuve_one_etablissement_nom}}</b>" data-invite="{{message_up}}"    data-url_delete="{{path("pericles3_bibliotheque_downttoetablissement", {'id': bibliotheque.id,'etablissement':preuve_one_etablissement_id})}}"  class = " DeleteBoxBefore btn btn-primary active full-width">Passer cet élément  de la bibliothèque Gestionnaire <b>{{bibliotheque.gestionnaire}}</b> <br>à la bibliothèque Etablissement  <b>{{preuve_one_etablissement_nom}}</b></span>            
+            
+    {% endif %}
+
+  
+          
+
+{% endblock %}

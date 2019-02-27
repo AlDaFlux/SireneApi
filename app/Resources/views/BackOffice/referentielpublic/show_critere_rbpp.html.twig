@@ -1,0 +1,89 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('referentielpublic_show', { 'id': referentielPublic.id }) }}">  {{ referentielPublic.public }} </a></h1>
+
+    <h2>Liste des critères - RBPP</h2>
+    <table class='table table-bordered table-triable small'>
+        <thead>
+            <tr>
+                <th width='10px'>Id</th>
+                <th colspan='2'>Nom</th>
+                <th width='10px'>Rbbpp</th>
+            </tr>
+        </thead>
+  
+        <tbody>
+                {% for domaine in referentielPublic.ReferentielDomaines | order %}
+                    
+                                    <tr>
+                                           <td class='separateur_tab' colspan="4" ></td>
+                                   </tr>  
+            <tr class='dom'>
+                <td>{{ domaine.ordre }}</td>
+                <td colspan="3"><a href='{{ path('referentielpublic_show_node', {'id_node': domaine.id, 'id': referentielPublic.id}) }}'>{{ domaine.nom}}</a></td>
+                   </tr>
+                      
+                   
+            
+                   
+            <tr>
+
+                        {% for dimension  in domaine.children | order  %}
+                            
+                                    <tr>
+                                           <td class='separateur_tab' colspan="4" ></td>
+                                   </tr>  
+                         <tr class='dim'>
+                                <td>{{ domaine.ordre }}.{{ dimension.ordre }}</td>
+                                <td colspan="3"><a href='{{ path('referentielpublic_show_node', {'id_node': dimension.id, 'id': referentielPublic.id}) }}'>  {{ dimension.nom}}</a></td>
+                            </tr>
+                              
+                            <tr>
+                                 
+                                {% for critere  in dimension.children | order %}
+                                    
+                                    <tr>
+                                           <td class='separateur_tab' colspan="4" ></td>
+                                   </tr>  
+                                 <tr>
+                                        <td class='crit'>{{ critere.numero }}</td>
+                                        <td class='crit' colspan="2"><a href='{{ path('referentielpublic_show_node', {'id_node': critere.id, 'id': referentielPublic.id}) }}'>   {{ critere.nom}}</a></td>
+                                        {% if critere.nbRBPP==1 %}
+                                              <td class='alert-success text-center'><i class='glyphicon glyphicon-ok'></i></td>
+                                        {% else  %}
+                                              <td class='alert-warning text-center'><i class='glyphicon glyphicon-remove'></i></td>
+                                        {% endif %}
+                                    </tr>
+                               
+                                   
+                                    <tr>
+                                        {% if critere.nbRBPP==1 %}
+                                              <td colspan="2" ><a href="{{ path('backoffice_bibliotheque_ancreai_show', { 'id': critere.RBPP.id }) }}">{{ critere.RBPP.typeSourceBA }} -  {{ critere.RBPP.datePublication|date('Y-m') }} :  {{critere.RBPP}}    </a></td>
+                                              <td>{{critere.RbpppComment}}</td>
+                                              <td> 
+                                                  <a target='blank' href='{{critere.RBPP.href}}'><i class='glyphicon glyphicon-globe'></i></a>
+                                                 </td>
+                                        {% else  %}
+                                            <td  colspan="4"  class='alert-warning '>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pas de RBPP</td>
+                                        {% endif %}
+                                 </tr>                                        
+            
+                            {% endfor %}
+        
+                    {% endfor %}
+
+                       
+                    {% endfor %}
+        </tbody>
+    </table>
+        
+        
+        
+        
+        
+
+        <a href="{{ path('referentielpublic_index') }}"  class = "btn  btn-link full-width">Retour à la liste</a><ul>
+      
+            
+{% endblock %}

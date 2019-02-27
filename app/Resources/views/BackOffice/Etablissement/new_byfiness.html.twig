@@ -1,0 +1,51 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+  {% block message_flash %}
+{% endblock %}
+
+
+
+{% block body %}
+{% if gestionnaire.nom is defined  %}
+    <h1>  {{gestionnaire.nom}} </h1>
+    <h2>Etablissement - Création</h2>
+ {% else %}
+    <h1>Etablissement - Création</h1>
+ {% endif %}
+ 
+ 
+  <form method="POST" >
+    <input name='num_finess' value='{{num_finess}}'>
+    <input type='submit' value='Vérifier le finess'>
+
+  </form>
+<p>
+    
+{% include "MessageFlash/messageFlash.html.twig" %}
+<p>
+   
+
+{% if finess.raisonSociale is defined  %}
+    {% include "BackOffice/finess/inc_show.html.twig"  %} 
+{% endif %}
+
+   
+<div class='row'>
+     <div class="col-sm-6">
+         {% if gestionnaire.nom is defined   %}
+             <a href="{{ path('backoffice_gestionnaire_add_etablissement_simple', {'id': gestionnaire.id }) }}"  class = "btn  btn-warning full-width">Créer un établissement sans code FINESS</a>
+         {% else %}
+             <a href="{{ path('backoffice_etablissement_new_simple') }}"  class = "btn  btn-warning full-width">Créer un établissement sans code FINESS</a>
+         {% endif %}
+
+
+     </div>
+     <div class="col-sm-6">
+        <a href="{{ path('pericles3_backoffice_etablissement') }}"  class = "btn  btn-link full-width">Retour à la liste</a>
+     </div>
+</div>
+    
+{% endblock %}
+
+ 
+  

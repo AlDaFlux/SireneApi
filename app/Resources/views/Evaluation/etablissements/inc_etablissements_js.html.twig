@@ -1,0 +1,7 @@
+   {% include "Synthese/inc_options_charts.js.twig" %}
+          
+    
+              {% for etablissement in etablissements %}
+                    {% set t= 'chartCanvas_'  ~  etablissement.id %}
+                   {{ etablissement.domaines | order  | graph(t) |raw }}
+            {% endfor %}

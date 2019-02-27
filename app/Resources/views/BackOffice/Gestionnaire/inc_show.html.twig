@@ -1,0 +1,98 @@
+
+    
+{% if gestionnaire.category.id != 1 %}
+    <table class='table table-bordered alert-danger'>
+{% else  %}
+    <table class='table table-bordered'>
+{% endif  %}
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ gestionnaire.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ gestionnaire.nom }}</td>
+            </tr>
+            <tr>
+                <th>Category</th>
+                {% if gestionnaire.category.id == 1 %}
+                    <td><b>{{ gestionnaire.category }}<b></td>
+                {% else  %}
+                    <td  title="Le gestionnaire a plusieurs établissement mais n'a pas souscrit au module gestionnaire et ne bénéficie pas de ces fonctionalité" class='center'><h2>{{ gestionnaire.category }}</h2></td>
+                {% endif  %}
+
+            </tr>
+            {% if is_granted('ROLE_SUPER_ADMIN')   %}
+            <tr>
+                <th>Finess</th>
+                {% if gestionnaire.finess %}
+                                <td class='alert-success'><a href="{{ path('backoffice_gestionnaire_finess_show', { 'id': gestionnaire.finess.codeFiness }) }}">{{ gestionnaire.finess}}</a></td>
+                {% else %}
+                <td class='alert-danger'>
+                        {% if is_granted('ROLE_SUPER_ADMIN_GESTIONNAIRE') %}
+                            <a href='{{ path("backoffice_gestionnaire_linkfiness", {"id":  gestionnaire.id}) }}'>Lier à un finess</a>
+                        {% endif  %}
+                    
+                </td>
+                {% endif  %}
+            </tr>
+                
+            {% endif  %}
+
+            <tr>
+                <th>Adresse</th>
+                <td>{{ gestionnaire.adresse }}</td>
+            </tr>
+            <tr>
+                <th>Codepostal</th>
+                <td>{{ gestionnaire.codePostal }}</td>
+            </tr>
+            <tr>
+                <th>Ville</th>
+                <td>{{ gestionnaire.ville }}</td>
+            </tr>
+            <tr>
+                <th>Tel</th>
+                <td>{{ gestionnaire.tel | telFormat }}</td>
+            </tr>
+            <tr>
+                <th>CREAI</th>
+                <td>{{ gestionnaire.creai}}</td>
+            </tr>
+            
+            <tr>
+                <th>Capacité de stocakge</th>
+                    <td>{{gestionnaire.getStockageGestionnaire}} :  {{gestionnaire.sizeMaxUpload | formatBytes}} </td>            
+            </tr>
+            
+            <tr>
+                <th>Stocakge Utilisé</th>
+                    {% if gestionnaire.sizeMaxUpload  <   gestionnaire | sizeTotalFileUploadGestionnaire %}
+                        <td title='{{gestionnaire | sizeTotalFileUploadGestionnaire | formatBytes}} sur  {{gestionnaire.sizeMaxUpload | formatBytes}} autorisés.' class='alert alert-danger'>    
+                    {% else %}
+                        <td title='{{gestionnaire | sizeTotalFileUploadGestionnaire | formatBytes}} sur  {{gestionnaire.sizeMaxUpload | formatBytes}} autorisés.' class='alert alert-success'>    
+                    {% endif %}
+                            {{gestionnaire | sizeTotalFileUploadGestionnaire  | sizeFileUpladBar(gestionnaire.sizeMaxUpload ) | raw }}
+                            </td> 
+            </tr>
+            <tr>
+                <th>Bibliothèques gestionnaire</th>
+                    <td>{{gestionnaire.getNbBibliotheques}}
+                    
+                        {% if gestionnaire.category.id != 1 and   is_granted('ROLE_MEGA_ADMIN') %}
+                            
+                                <i data-invite="Voulez-vous supprimer définitivement toutes les bibliotheques du gestionnaire ?"
+                                data-url_delete="{{ path('backoffice_gestionnaire_delette_biblio', {'id':gestionnaire.id}) }}" 
+                               class='btn btn-danger full-width DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active full-width'
+                               >Supprimer  </i> 
+                            
+                        {% endif %}
+                            
+                    </td>            
+            </tr>
+            
+                                
+
+        </tbody>
+    </table>

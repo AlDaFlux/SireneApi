@@ -1,0 +1,34 @@
+{% extends "Evaluation/layout.html.twig" %}
+
+     {% set andvaced_gesionnaire = app.debug %} 
+
+     
+{% block title %}{{ parent() }} - Etablissements évalués{% endblock %}
+
+
+{% block legend %}
+    {# include("Nuts/inc_legend.html.twig") #} 
+{% endblock %} 
+
+                
+{% block body %}
+  {{ parent() }}
+    
+
+     
+
+ 
+        {% include "Evaluation/etablissements/inc_etablissements.html.twig" %}
+ 
+        
+ 
+
+     
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        {% include "Synthese/inc_options_charts.js.twig" %}
+        {% include "Evaluation/etablissements/inc_etablissements_js.html.twig" %}
+    </script>          
+{% endblock %}

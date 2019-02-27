@@ -1,0 +1,12 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href='{{ path('backoffice_bibliotheque_ancreai_index') }}'>Bibliotheque ARSENE</a></h1>
+    <h2>{{titre}}</h2>
+     
+                 {% include "BackOffice/bibliothequeancreai/inc_list.html.twig" %}
+
+        
+        
+        <div class='alert alert-danger'>{{bibliothequeAncreais | length}} entrées </div>
+{% endblock %}

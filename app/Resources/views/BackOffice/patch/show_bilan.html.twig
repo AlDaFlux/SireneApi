@@ -1,0 +1,100 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+ 
+{% block body %}
+    <h1><a href="{{ path('patch_index') }}">Patch Bilan</a></h1>
+    {% include ('BackOffice/patch/show_inc.html.twig') %}
+    
+    
+{% endblock %}
+
+
+{% block out_container  %} 
+
+    
+    
+    <h2>Eléments supprimés</h2>
+    
+    <table class='table table-bordered table-triable'>
+        <thead>
+        <tr>
+            <th> Numero </th>
+            <th> Libellé</th>
+            <th> Validé</th>
+        </tr>    
+    </thead>
+    <tbody>
+    {% for patchRef in  ReferentielsSansCible %}
+        {% if patchRef.CompleteAndValide %}
+            <tr class='alert-success'>
+        {% elseif patchRef.Valide %}
+            <tr class='alert-warning'>
+        {% else  %}
+            <tr class='alert-danger'>
+        {% endif  %}
+            <td>{{patchRef.PatcheRefSource.numero}}</td>
+            <td><a href="{{ path('patchreferentiel_show', { 'id': patchRef.id }) }}">{{patchRef.PatcheRefSource}}</a></td>
+            
+             {% if patchRef.valide %}  
+                <td class='alert-success'>
+            {% else %}  
+                <td class='alert-danger'>
+            {% endif  %}  
+        
+                    {% if patchRef.valide %}  
+                        <i title="Validé" class='glyphicon glyphicon-ok greenText'></i> 
+                    {%  else  %}
+                        <i title="A valider"  class='glyphicon glyphicon-warning-sign redText'></i> 
+                    {%  endif %}
+                </td>
+                 
+        </tr>    
+    {% endfor %}
+    </tbody>    
+    </table>    
+    
+    
+    
+    
+    <h2>Eléments nouveaux</h2>
+    
+    <table class='table table-bordered table-triable'>
+        <thead>
+        <tr>
+            <th> Numero </th>
+            <th> Libellé</th>
+            <th> Validé</th>
+        </tr>    
+    </thead>
+    <tbody>
+    {% for patchRef in  ReferentielsSansSource %}
+        {% if patchRef.CompleteAndValide %}
+            <tr class='alert-success'>
+        {% elseif patchRef.Valide %}
+            <tr class='alert-warning'>
+        {% else  %}
+            <tr class='alert-danger'>
+        {% endif  %}
+            <td>{{patchRef.PatcheRefCible.numero}}</td>
+            <td><a href="{{ path('patchreferentiel_show', { 'id': patchRef.id }) }}">{{patchRef.PatcheRefCible}}</a></td>
+            
+             {% if patchRef.valide %}  
+                <td class='alert-success'>
+            {% else %}  
+                <td class='alert-danger'>
+            {% endif  %}  
+        
+                    {% if patchRef.valide %}  
+                        <i title="Validé" class='glyphicon glyphicon-ok greenText'></i> 
+                    {%  else  %}
+                        <i title="A valider"  class='glyphicon glyphicon-warning-sign redText'></i> 
+                    {%  endif %}
+                </td>
+                 
+        </tr>    
+    {% endfor %}
+    </tbody>    
+    </table>    
+      
+    
+{% endblock %}

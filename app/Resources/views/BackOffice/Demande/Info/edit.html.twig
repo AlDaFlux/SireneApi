@@ -1,0 +1,11 @@
+{% extends "BackOffice/Demande/layout.html.twig" %}
+{% block body %}{{ parent() }}
+    
+    <h2>Infos {{application_name}}</h2>
+
+    {{ form_start(edit_form) }}
+        {{ form_widget(edit_form) }}
+        {{ include("Nuts/cancelsave.html.twig") }}
+    {{ form_end(edit_form) }}
+
+{% endblock %}

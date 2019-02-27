@@ -1,0 +1,46 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block out_container  %}
+
+{{ parent() }}    
+
+
+<h1><a href="{{ path('facture_index') }}">Factures</a></h1>
+
+
+
+        {% include 'BackOffice/facture/inc_menu.html.twig' %}
+
+        {% include 'BackOffice/facture/inc_main_row.html.twig' %}
+ 
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+       <div class="row">                   
+                        
+                      
+         <div class="col-md-6">
+            <div class="panel panel-danger">
+              <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-king'></i> {{sommeAPayer}}€ de factures en attente de paiments </h3> </div>
+                  <table class='table table-bordered'>
+                      <tbody>
+                        {% include 'BackOffice/facture/small_factures2.html.twig'  with {'factures' :  factures_a_payer_old } %}
+                      </tbody>
+                  </table>
+              <div class="panel-footer">          <a href="{{ path('facture_apayer') }}" class="btn btn-default ">Voir toutes les facture à payer </a>              </div>
+            </div>
+        </div>
+                      
+                      
+       </div>
+           
+                      
+    
+    
+
+{% endblock %}

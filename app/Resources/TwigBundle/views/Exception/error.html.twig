@@ -1,0 +1,13 @@
+{% extends 'layout.html.twig' %}
+
+    {% block body %}
+            <h1>Erreur {{status_code}}</h1>
+           
+            <div class='alert alert-danger'>
+                  {{status_text}}
+            </div>
+    
+    {% endblock %}
+    
+    
+            

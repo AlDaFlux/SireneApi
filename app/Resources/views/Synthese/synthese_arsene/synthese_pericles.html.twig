@@ -1,0 +1,75 @@
+{% extends "Synthese/layout.html.twig" %}
+
+
+
+{% block body %}
+    {{ parent() }}
+    
+
+
+    
+    <h2>Évaluation générale </h2>
+
+    <div>
+        <div class="GraphSyntheseContainer">
+            <canvas id="chartEvalGeneraleCanvas_{{etablissement.id}}" height="500" width="500"></canvas>
+        </div>
+        
+        <div class="synthese_menu">
+            {% for domaine in etablissement.domaines %}
+                 <a href='{{ path('pericles3_synthese_domaine', {'id': domaine.id}) }}'> 
+                     <span class='numero'> {{ domaine.numero  }} </span> 
+                     <span class='lib'> {{ domaine}} </span>
+                     <span class='note'> {{ domaine.MoyenneNotes | formatNoteSimple}} </span>
+                    </a>
+            {% endfor %}
+        </div>
+    </div> 
+
+            
+        <p>
+        <p>
+            
+<div id='loader_{{etablissement.id}}'>
+        <div class="row" >
+        {% include "Synthese/inc_synthese_genere.html.twig" 
+                   with {'sub_titre': 'Export',
+                        'synthese': 'synthese',
+                            'colspan' : '12'} %}
+        </div>
+</div> 
+                        
+                        
+    <div class='graphs graphs_calculate'> 
+    <div class='graph_min_container'>
+                    {% for domaine in etablissement.domaines %}
+                    <canvas class="GraphSynthese GraphSynthese_{{etablissement.id}}" id="chartDomaine{{ domaine.id }}" height="500" width="500"></canvas>
+                {% endfor %}
+        </div>
+    </div>  
+ 
+                        
+{% endblock %}
+
+
+
+
+{% block javascripts %}
+     
+    <script type="text/javascript">
+      {% include "Synthese/inc_options_charts.js.twig" %}
+
+      {{ etablissement.domaines  | order  | graph('chartEvalGeneraleCanvas_'  ~ etablissement.id) |raw }}
+    
+        {% for domaine in  etablissement.domaines %}
+            {{ domaine.dimensions  | order | graph('chartDomaine' ~ domaine.id) |raw }}
+        {% endfor %}
+    
+      
+        {% set wgraph =true %}
+        {% include "Synthese/inc_javascritp_export.js.twig"   %}
+              
+            
+    </script>
+        
+{% endblock %}

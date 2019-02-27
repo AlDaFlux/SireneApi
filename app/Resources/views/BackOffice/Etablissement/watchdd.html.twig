@@ -1,0 +1,27 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+
+{% block title %}{{ parent() }} - surveillance des disques{% endblock %}
+
+{% block legend %}{{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <h1> <a href="{{ path('backoffice_etablissement_view', { 'id': cur_etablissement.id }) }}"> Etablissement {{cur_etablissement}}</a>  </h1>
+    <h2> Surveillance des disques  </h2>
+
+     {% include "Index/inc_watchdd_global.html.twig" with {'etablissement':cur_etablissement} %}
+
+ {% if  dossiers | length > 0   %}
+
+    {% for dossier in  dossiers %}
+        <h2>{{dossier.name}}</h2>
+          {% include "Index/inc_watchdd.html.twig" with {'etablissement':cur_etablissement} %}
+    {% endfor %}
+
+ {% endif %}
+          
+
+  
+ 
+{% endblock %}

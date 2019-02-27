@@ -1,0 +1,23 @@
+    <table class='critere' width="100%">
+        <tr>
+            <td>
+                {{ critere.numero }} -  {{ critere.nom }}
+            </td>                                                            
+                <td width='250px' style="font-size:1.4em;text-align: right;">
+                    
+                    {{critere.oldNote(Sauvegarde) | formatNoteSimple}} 
+                        
+                    {% set img_note =  critere.oldNote(Sauvegarde) | formatNoteNuage(true) %}
+                    {{ img_note | getImageExport(typeExport) | raw }}
+                    {{ critere.Evolution(Sauvegarde) | get_icon_evol_img(true)  | getImageExport(typeExport)  | raw}} 
+                    
+                    {{critere.note | formatNoteSimple}} 
+                    {% set img_note = critere.note | formatNoteNuage(true) %}
+                    {{ img_note | getImageExport(typeExport) | raw }}
+                </td>
+        </tr>
+    </table>
+                     
+                
+        
+        

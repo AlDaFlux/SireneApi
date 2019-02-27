@@ -1,0 +1,26 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+ 
+
+{% block body %}
+    <h1><a href="{{ path('trash_index') }}">Trash</a></h1>
+   
+    <h2>Sauvegardes</h2>
+     
+    
+         
+            <table class='table table-triable'>
+            {% for sauvegarde in sauvegardes %}
+                {% if sauvegarde.getReferentielDesuet %}
+                    <tr>
+                        <td>{{sauvegarde}}</td>
+                        <td>{{sauvegarde.etablissement}}</td>
+                        <td>{{sauvegarde.referentiel}}</td>
+                        <td>{{sauvegarde.etablissement.referentielPublic}}</td>
+                    </tr>
+                {% endif  %}
+            {% endfor %}
+            </table>
+            
+{% endblock %}
+ 

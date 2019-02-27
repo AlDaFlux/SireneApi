@@ -1,0 +1,20 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Bibliothèque {{application_name}}</h1>
+
+    {% if ReferentielPublic is defined %}
+        <h2>{{ReferentielPublic }}</h2>
+    {% endif  %}
+    
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ include("Nuts/cancelsave.html.twig") }}
+        
+        {{ form_end(form) }}
+        <br>
+   
+        
+        <a class="btn btn-link back_to_list full-width" href="{{ path('backoffice_bibliotheque_ancreai_index') }}">Retour a la liste </a>
+{% endblock %}

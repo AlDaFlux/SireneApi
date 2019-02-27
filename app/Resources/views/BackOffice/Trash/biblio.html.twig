@@ -1,0 +1,80 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+ 
+
+{% block body %}
+
+    <h1><a href="{{ path('trash_index') }}">Trash</a></h1>
+   
+    <h2><a href="{{ path('trash_biblio') }}">Biblio</a></h2>
+                
+{% endblock %}
+
+{% block out_container  %}
+            <h2>fichier vide</h2>
+             <table class='table table-bordered table-triable'>
+                <thead>
+                    <tr>
+                        <th>biblio</th>
+                        <th>date </th>
+                        <th>Etablissement </th>
+                        <th>Gestionnaire</th>
+                    </tr>
+                </thead>
+                <tbody>            {% for biblio in biblios_vide %}
+                 <tr>
+                    <td>  <a href="{{ path('trash_biblio_id', { 'id': biblio.id }) }}"> {{biblio}}</a></td>
+                    <td>{{biblio.dateUpdate | date("Y-m-d")}}</td>
+
+                    {% if biblio.etablissement %}
+                        {% include "BackOffice/Etablissement/inc_td_etablissement.html.twig" with {'etablissement':biblio.etablissement}  %}            
+                        <td>{{biblio.etablissement.gestionnaire}}</td>
+                    {% else  %}
+                        <td> <a href="{{ path('backoffice_gestionnaire_show', { 'id': biblio.gestionnaire.id }) }}">  {{biblio.gestionnaire}}   </a></td>
+                        <td>Oui</td>
+                    {% endif  %}
+                </tr>
+            {% endfor %}
+            </table>
+
+            
+            <h3>fichier manquants</h3>
+            <table class='table table-bordered table-triable'>
+                <thead>
+                            <tr>
+                                <th>biblio</th>
+                                <th></th>
+                                <th>fichier  </th>
+                                <th>date </th>
+                                <th>Etablissement </th>
+                                <th>Gestionnaire</th>
+                            </tr>
+                           
+                </thead>
+                <tbody>
+            {% for biblio in biblios_manquant %}
+                 <tr>
+                    <td><a href="{{ path('trash_biblio_id', { 'id': biblio.id }) }}"> {{biblio}}</a></td>
+                        <td><a href="{{ path('pericles3_bibliotheque_show', { 'id': biblio.id }) }}"><i class='glyphicon glyphicon-eye-open'></i></a></td>
+                    <td>{{biblio.fichier}}</td>
+                    
+                    <td>{{biblio.dateUpdate | date("Y-m-d")}}</td>
+                    
+                    {% if biblio.etablissement %}
+                        {% include "BackOffice/Etablissement/inc_td_etablissement.html.twig" with {'etablissement':biblio.etablissement}  %}            
+                        <td>{{biblio.etablissement.gestionnaire}}</td>
+
+                    {% else  %}
+                        <td> <a href="{{ path('backoffice_gestionnaire_show', { 'id': biblio.gestionnaire.id }) }}">  {{biblio.gestionnaire}}   </a></td>
+                        <td>Oui</td>
+
+                    {% endif  %}
+                    
+                </tr>
+            {% endfor %}
+                </tbody>
+
+            </table>
+
+{% endblock %}
+ 

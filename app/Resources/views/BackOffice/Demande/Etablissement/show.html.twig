@@ -1,0 +1,105 @@
+{% extends "BackOffice/Demande/layout.html.twig" %}
+{% block body %}{{ parent() }}
+    <h2>
+        Etablissement
+    </h2>
+
+{% if demandeEtablissement.demandeGestionnaire is not empty %}
+  <div class="panel panel-danger">
+        <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-king'></i> Demande Gestionnaire </h3> </div>
+            <table class='table table-bordered'>
+                <tbody>
+                    <tr>
+                        <th>Gestionnaire</th>
+                        <td>{{ demandeEtablissement.demandeGestionnaire.GestionnaireNom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Etat</th>
+                        <td>{{ demandeEtablissement.demandeGestionnaire.etat|  afficheDemandeEtat | raw }}</td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+        <a class='btn btn-danger full-width'  href="{{ path('demande_gestionnaire_show', { 'id': demandeEtablissement.demandeGestionnaire.id }) }}">Voir la demande gestionnaire pour traiter les établissements</a>                    
+        <p>
+        <p>
+                        
+{% endif %}
+            
+            
+            {% include "BackOffice/Demande/Etablissement/inc_show.html.twig" %} 
+    
+
+    <p> 
+        
+    {% if  is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}        
+        {% set collnb=4 %}
+    {% else %}
+        {% set collnb=6 %}
+    {% endif %}
+        
+            <div class="row">
+                <div class="col-sm-{{collnb}}">
+                    <a  class='btn btn-link full-width' href="{{ path('backoffice_demande_index') }}"> Retour au menu des demandes</a>
+                </div> 
+                    
+                {% if  not is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}  
+                        {% if demandeEtablissement.etat.id ==1  %}
+                            <div class="col-sm-{{collnb}}">
+                                <a  class='btn btn-warning full-width' href="{{ path('demande_etablissement_edit', { 'id': demandeEtablissement.id }) }}"> Modifier la demande</a>
+                            </div> 
+                        {% endif %}
+                    {% else %}
+                        <div class="col-sm-{{collnb}}">
+                            <a  class='btn btn-warning full-width' href="{{ path('demande_etablissement_editancreai', { 'id': demandeEtablissement.id }) }}"> Modifier la demande</a>
+                        </div> 
+                        <div class="col-sm-{{collnb}}">
+                               <i data-invite="Voulez-vous supprimer définitivement la demande de création d'établissement ? il est conseillé de la passé en traité pour conserver l'historique des demandes."
+                                data-url_delete="{{ path('demande_etablissement_delete_get', {'id':demandeEtablissement.id}) }}" 
+                               class='btn btn-danger full-width DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active full-width'
+                               >Supprimer  </i> 
+                        </div> 
+                    {% endif %}
+                </div> 
+
+
+            
+
+    <li>{{demandeEtablissement.finess}}
+    <li>{{demandeEtablissement.finessCode}}
+        
+        
+        
+{% if demandeEtablissement.finess is not empty %}              
+        {% set finess  = demandeEtablissement.finess %}              
+            
+            <p>
+                <div class='panel panel-primary'><div class='panel-heading '>FINESS </div>
+                        {% include "BackOffice/finess/inc_show.html.twig" %} 
+                </div>
+             
+            
+                {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT') %}
+                
+                {% else %}
+                    {% if demandeEtablissement.creai == app.user.creai %}
+
+
+                        <div class="row">
+                             <div class="col-sm-4">
+                                <a class='btn  btn-warning full-width' href="{{ path('demande_etablissement_edit', { 'id': demandeEtablissement.id }) }}">Modifier la demande</a>
+                             </div>
+                             <div class="col-sm-4">
+                                <a class='btn  btn-danger full-width' href="{{ path('demande_etablissement_delete_get', { 'id': demandeEtablissement.id }) }}">Annuler la demande</a>
+                             </div>
+                             <div class="col-sm-4">
+                                <a class='btn  btn-success full-width' href="{{ path('demande_etablissement_valide', { 'id': demandeEtablissement.id }) }}">Valider la demande</a>
+                             </div>
+                        </div>
+                    
+                {% endif%}
+
+        {% endif%}
+ 
+{% endif %}              
+{% endblock %}

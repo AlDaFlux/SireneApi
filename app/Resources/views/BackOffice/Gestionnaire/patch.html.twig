@@ -1,0 +1,30 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1> Gestionnaire</h1>
+    <h2><a href="{{ path('backoffice_gestionnaire_show', { 'id': gestionnaire.id }) }}"> {{gestionnaire}}</a></h2>
+
+    <h2>Patchs</h2>
+
+     
+    
+{% endblock %}
+
+
+{% block out_container  %}
+     {% include "BackOffice/Etablissement/a_migrer_inc.html.twig" with {'etablissements':gestionnaire.etablissements}  %}
+     
+     {% for etablissement in gestionnaire.etablissements %}
+         <h2>{{etablissement}} - {{etablissement.getReferentielPublic}}</h2>
+         
+            {% if is_granted('ROLE_MEGA_ADMIN') and etablissement.getSwitchableRef   %}
+                       {% include "BackOffice/Etablissement/inc_switch_etablissement.html.twig" %} 
+            {%  endif %}
+
+            {% include "BackOffice/Etablissement/inc_patch_etablissement.html.twig" %} 
+     {% endfor %}
+         
+     
+
+    
+{% endblock %}

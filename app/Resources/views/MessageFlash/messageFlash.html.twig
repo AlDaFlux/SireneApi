@@ -1,0 +1,73 @@
+ 
+
+
+{% set flashSuccess = app.session.flashbag.get('success') %}
+{% if flashSuccess|length > 0 %} 
+	<div class="alert alert-success">
+		<ul>	
+			{% for flash_message in flashSuccess %}
+				<li>{{ flash_message | raw }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endif %}
+
+{% set flashErrors = app.session.flashbag.get('error') %}
+{% if flashErrors|length > 0 %} 
+	<div class="alert alert-danger">
+		<ul>	
+			{% for flash_message in flashErrors %}
+				<li>{{ flash_message | raw }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endif %}
+{% set flashErrors = app.session.flashbag.get('danger') %}
+{% if flashErrors|length > 0 %} 
+	<div class="alert alert-danger">
+		<ul>	
+			{% for flash_message in flashErrors %}
+				<li>{{ flash_message | raw }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endif %}
+
+
+{% set flashErrors = app.session.flashbag.get('debug') %}
+{% if app.debug  and flashErrors|length > 0 %} 
+    <div class="alert alert-warning">
+        <pre>DEBUG</pre>
+        <ul>	
+            {% for flash_message in flashErrors %}
+                <li>{{ flash_message | raw }}</li>
+            {% endfor %}
+        </ul>
+        
+    </div>
+{% endif %}
+
+{% set flashErrors = app.session.flashbag.get('warning') %}
+{% if flashErrors|length > 0 %} 
+	<div class="alert alert-warning">
+		<ul>	
+			{% for flash_message in flashErrors %}
+				<li>{{ flash_message | raw }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endif %}
+
+
+
+
+{% set flashErrors = app.session.flashbag.get('info') %}
+{% if flashErrors|length > 0 %} 
+	<div class="alert alert-info">
+		<ul>	
+			{% for flash_message in flashErrors %}
+				<li>{{ flash_message | raw }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endif %}

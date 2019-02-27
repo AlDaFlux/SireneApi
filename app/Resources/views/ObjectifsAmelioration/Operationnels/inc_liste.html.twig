@@ -1,0 +1,153 @@
+{% if liste_objectif_toreload is not defined %}
+    {% set liste_objectif_toreload='liste_objectifs' %}
+{% endif %}
+    
+    
+
+
+{% if objectifOperationnels | length > 0 %}
+    <table class="small_font table table-striped table-bordered table-triable"  >
+        <thead>
+        <tr>
+            <th class='hidden'>Complete</th>
+            
+            {% if etablissement is not defined %}
+                <th>Etablissement</th>
+            {% endif %}
+            <th>Titre</th>
+            <th>Date de début</th>
+            <th>Date de fin</th>
+            <th title="Nombre de critères associés">Nb Crit.</th>
+            <th title="Nombre de critères associés">Nb Preuves</th>
+ {#           <th>Crée par</th> #}
+            <th>Priorite</th>
+            <th>Piloté Par</th>
+            <th>Avancement</th>
+            <th class="screen_only"></th>
+        </tr>
+        </thead>
+ 
+        <tbody> 
+        {% for objectifOperationnel in objectifOperationnels %}            
+               
+            {% if critere_referentiel is defined  %}
+                {% set critere= critere_referentiel.CritereEtablissement(objectifOperationnel.Etablissement) %} 
+            {% endif  %}
+                   
+            <tr>
+
+                <td class='hidden'>{{ objectifOperationnel.complete}}  </td>
+                
+                  {% if etablissement is not defined %}
+                    <td>
+                        
+                        
+                        <a href="{{ path('paq_ooa_list_etablissement', {'id': objectifOperationnel.etablissement.id}) }}">{{objectifOperationnel.etablissement}}</a></td>
+                {% endif %}
+    
+                <td class='small_font'>
+                    <span class='apercu_oo' data-idoo='{{objectifOperationnel.id}}'>{{ objectifOperationnel }}</span>
+                </td>
+                
+               {{  objectifOperationnel.dateDebut|TdSortableDate("d-m-Y") | raw }}
+                {{  objectifOperationnel.dateFin|TdSortableDate("d-m-Y")  | raw}}
+
+
+                <td>
+                    {% if objectifOperationnel.criteres | length > 1 %}
+                        <span class="label label-primary" title="{{ objectifOperationnel.criteres | length}} critères associés" >{{ objectifOperationnel.criteres | length}} </span>
+                    {% elseif objectifOperationnel.criteres | length == 1  %}
+                        <span class="label label-success" title="{{ objectifOperationnel.criteres | length}} critère associé" >{{ objectifOperationnel.criteres | length}} </span>
+                    {% else  %}
+                        <span class="label label-danger" title="Vous devez associé cet objectif à un critère, ou bien le supprimé" >0 </span>
+                    {% endif  %}
+                </td>
+                <td>
+                    {% if objectifOperationnel.preuves | length > 0 %}
+                        <span class="label label-primary" title="{{ objectifOperationnel.preuves | length}} critère(s) associé(s)" >{{ objectifOperationnel.preuves | length}} </span>
+                    {% else %}
+                        <span class="label label-warning" title="Pas de preuve associé" >0 </span>
+                    {% endif  %}
+                </td>
+        
+{#                <td title="Créer par {{objectifOperationnel.user}} le {{ objectifOperationnel.dateCreate|date('Y-m-d') }}" >{{ objectifOperationnel.user }} </td> #}
+                    
+                    {% if objectifOperationnel.priorité == 1 %}<td class='alert-danger'>
+                    {% elseif objectifOperationnel.priorité == 2 %}<td class='alert-info'>
+                    {% else  %}<td >
+                    {% endif  %}
+
+                    Priorité {{ objectifOperationnel.priorité}}
+                </td>
+                <td>
+                    {{ objectifOperationnel.pilotéPar}}
+                </td>
+                <td>
+                    {{ objectifOperationnel.complete | progressBar | raw }}
+                </td>
+        
+                <td class="screen_only">
+                                       
+                    
+                    <span class='apercu_oo' data-idoo='{{objectifOperationnel.id}}'><i alt='apercu' class='glyphicon glyphicon-eye-open'></i></span>
+                    
+
+                    {% if is_granted('ROLE_RW_PAQ') %}
+                        
+                        <a  title="Modifier l'objectif"  href="{{ path('paq_ooa_edit', { 'id': objectifOperationnel.id }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a><br/>
+                      
+  
+                        
+                        {% if critere  is defined %}
+                            <i  title="Supprimer la liason entre l'objectif opérationnel et le critere"  data-invite="Voulez  supprimer la liason entre ce critère et l'objectif opérationnel ? (cela ne supprimera pas l'objectif lui meme) ?"
+                                           data-url_delete_ajax="{{ path('pericles3_ooa_unlink_critere_ajax', {'id': objectifOperationnel.id,'id_critere': critere.id}) }}" 
+                                            data-zone_to_reload_whithid='#{{liste_objectif_toreload}}'
+                                           class='DeleteBoxBefore glyphicon glyphicon glyphicon-remove iconhead   orangeText active'
+                                           ></i> 
+                        {% elseif objectifOperationnel.criteres | length == 1 %}
+                            <i  title="Supprimer la liason entre l'objectif opérationnel et son critere {{objectifOperationnel.getLonelyCritere}}"  data-invite="Supprimer la liason entre l'objectif opérationnel et son critere {{objectifOperationnel.getLonelyCritere}} ? (cela ne supprimera pas l'objectif lui meme) ?"
+                                           data-url_delete_ajax="{{ path('pericles3_ooa_unlink_critere_ajax', {'id': objectifOperationnel.id,'id_critere': objectifOperationnel.getLonelyCritere.id}) }}" 
+                                            data-zone_to_reload_whithid='#{{liste_objectif_toreload}}'
+                                           class='DeleteBoxBefore glyphicon glyphicon glyphicon-remove iconhead   orangeText active'
+                                           ></i> 
+                        {% endif  %}
+                        
+                        {% if objectifOperationnel.nbPreuves %}
+                                <i title="supression impossible"  data-invite="Voulez ne pouvez pas supprimer l'objectif opérationnel tant que des preuves ({{objectifOperationnel.nbPreuves}}) y sont associés ! "
+                                                 class='CantDeleteBoxBefore glyphicon glyphicon-trash iconhead   orangeText active '
+                                                 ></i>
+                        {% elseif (is_granted('ROLE_ADMIN') or objectifOperationnel.user.id==app.user.id)  %}
+                                        {% if objectifOperationnel.criteres | length < 2 %}
+                                          <i  title="Supprimer l'objectif"  data-invite="Voulez-vous supprimer définitivement l'objectif opérationnel ?"
+                                              data-zone_to_reload_whithid='#{{liste_objectif_toreload}}'
+                                                        
+                                              data-url_delete_ajax="{{ path('paq_ooa_delete_ajax', {'id': objectifOperationnel.id}) }}" 
+                                                         class='DeleteBoxBefore glyphicon glyphicon-trash iconhead   redText active'
+                                                         ></i> 
+
+                                            {% else %}
+                                                  <i title="supression impossible"  data-invite="Voulez ne pouvez pas supprimer l'objectif opérationnel car il est rataché à plusieurs critères ! "
+                                                                   class='CantDeleteBoxBefore glyphicon glyphicon-trash iconhead   orangeText active'
+                                                                   ></i>
+                                            {% endif %}
+                                      {% else %}
+                                            <i title="supression impossible"  data-invite="Voulez ne pouvez pas supprimer l'objectif opérationnel car vous ne l'avez pas crée, et vous n'avez pas les droits administrateurs"
+                                                             class='CantDeleteBoxBefore glyphicon glyphicon-trash iconhead   orangeText active'
+                                                             ></i>
+                                      {% endif %}
+                               
+                        {% endif %}                         
+                </td>
+                
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class='alert alert-warning'>Aucun objectif opérationnel</div>
+{% endif %}
+{% include "MessageFlash/messageFlash.html.twig" %}
+         
+ 
+            

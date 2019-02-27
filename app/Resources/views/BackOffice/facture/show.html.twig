@@ -1,0 +1,152 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+
+{% block out_container  %}
+
+{{ parent() }}    
+
+    <h1><a href="{{ path('facture_index') }}">Factures</a></h1>
+    <h2><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{facture}}</a></h2>
+
+<div class='row'>
+    <div class='col-md-3'>
+        {% if facture.getAvoir  %}
+            <div class='alert alert-danger'>La facture est annulé !!! AVOIR</div>
+            <div class='alert alert-danger'>{% include 'BackOffice/facture/inc_show.html.twig' %}</div>
+        {% elseif facture.Finalise %}
+            <div class='alert alert-success'>La facture est finalisée</div>
+            {% include 'BackOffice/facture/inc_show.html.twig' %}
+        {% else  %}
+            <div class='alert alert-warning'>La facture n'est pas finalisée</div>
+            {% include 'BackOffice/facture/inc_show.html.twig' %}
+        {% endif %}
+
+        
+        {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') %}
+            
+            {% if facture.NotFinalized %}
+                <a class='btn btn-warning' href="{{ path('facture_edit', { 'numFacture': facture.numFacture }) }}">Modifier la facture</a>
+                
+                {% if facture.genere and lastFacture.numFacture == facture.numFacture %}
+                    <a class='btn btn-danger' href="{{ path('facture_delete', { 'numFacture': facture.numFacture }) }}">Supprimer la facture</a>
+                {% endif %}
+                
+            {% else %}
+                <a class='btn btn-danger' href='{{ path('facture_unfinalise', { 'numFacture': facture.numFacture }) }}'>Considérer la facture comme non finalisée !!!! </a>
+            {% endif %}
+        {% endif %}
+        
+        {% if facture.Concerne  %}
+
+            <div class='panel panel-primary'>
+            {% if facture.getConcerneTypeLib =='GESTIONNAIRE'  %}
+        
+                <div class='panel-heading'>Gestionnaire <a href='{{ path('backoffice_gestionnaire_show', { 'id': facture.Concerne.id}) }}'>{{facture.Concerne}}</a></div>        
+                <div class='panel-body'>
+                
+                    {% include 'BackOffice/Gestionnaire/inc_show.html.twig' with {'gestionnaire' : facture.Concerne } %}
+                
+                   {% include "BackOffice/facture/small_factures.html.twig" with {'factures': facture.Concerne.factures} %}                
+                
+                </div> 
+                {% else  %}
+                    <div class='panel-heading'>Etablissement :      <a   href='{{ path('backoffice_etablissement_view', {'id':facture.Concerne.id}) }}'>{{'etablissement' | get_icon | raw }} {{facture.Concerne}}</a></div>        
+                    <div class='panel-body'>
+                    {% include 'BackOffice/Etablissement/inc_show.html.twig' with {'etablissement' : facture.Concerne } %}
+                    {% include "BackOffice/facture/small_factures.html.twig" with {'factures': facture.Concerne.facturesAll} %}                
+                    </div>
+                     
+                {% endif %}
+            </div>
+            
+        
+        {% endif %}
+        
+         
+    </div>
+    <div class='col-md-5'>
+                
+        
+            {# if is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') and facture.Finalise and facture.isLastFacture #}
+            {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') and facture.Finalise and facture.FacturePrestasHasLast%}
+                {% if facture.getPlusdunAn  or facture.getPlusdunAn15jours   %}
+                        <div class='alert alert-danger'>
+                        {% if facture.getPlusdunAn15jours  %}
+                            La facture doit être renouveller très prochainement
+                        {% else %}
+                            La dernière facture à plus d'un an !!! 
+                        {% endif %}
+                        <br><a class='btn btn-danger full-width' href='{{ path('facture_new_fromfacture', { 'numFacture': facture.numFacture }) }}'>
+                            Créer une nouvelle Facture à partir de celle ci ! </a>
+                        </div>
+                {% endif %}
+            
+            {% endif %}
+        
+            
+
+            {% if facture.notFinalized  %}
+                    {% if facture.getConcerneTypeLib =='GESTIONNAIRE'  %}
+                        {% if facture.getConcerne %}
+                                    {% if not facture.HasPrestaGestionnaire and not facture.getConcerne.HasFacturePrestas and facture.concerne.category.id == 1 %}
+                                          {% include 'BackOffice/facture/add/add_gestionnaire_module.html.twig'   %}
+                                    {% endif %}
+                                    {% include 'BackOffice/facture/add/add_gestionnaire_etablissement.html.twig'   %}
+                        {% endif %}
+                    {% else  %}
+                                {% set next_indice = facture.getConcerne.NewFactureRenouvellementIndice %}
+                                    {% if facture.notFinalized  %}
+                                        {% include 'BackOffice/facture/add/add_etablissement_presta.html.twig'   %}
+                                    {% endif %}
+                    {% endif %}
+            {% endif %}
+
+            
+        {% if facture.getConcerne %}
+                    <div class='adresse'>
+                        <h2>{{facture.getConcerne}}</h2>
+                    <br> {{facture.AdresseLigne1}} 
+                    <br> {{ facture.AdresseLigne2}}  
+                    </div>
+        {% endif %}
+                        
+                        
+            <div class='panel panel-primary'>
+                <div class='panel-heading'>Facture</div>        
+                    {% include 'BackOffice/facture/inc_prestas.html.twig' %}
+            </div>
+                        
+                         
+        {% if facture.NotFinalized  %}
+            <a class='btn btn-primary' href='{{ path('facture_show_pdf', { 'numFacture': facture.numFacture }) }}'>Prévisualiser la facture </a>
+            
+            <a class='btn btn-danger' href='{{ path('facture_finalise', { 'numFacture': facture.numFacture }) }}'>Finaliser la facture !!  </a>
+        {% elseif not facture.payele and not facture.getAvoir %}
+            {% include 'BackOffice/facture/add/add_facture_paiement.html.twig' %}
+            
+            {% if facture.rappels | length > 0 %}
+                {% include 'BackOffice/facture/facture_relances.html.twig' with {'rappels': facture.rappels}%}
+            {% else  %}
+                
+                {% include 'BackOffice/facture/add/add_facture_relance.html.twig' %}
+            {% endif %}
+            
+            <p>
+            <span data-btn_lib="AVOIR" data-invite="Attention, si la facture n'a pas été envoyé et que c'est la dernière, vous devez la supprimer. dans le cas contraire, il faut aller manuellement mettre le gestionnaire et/ou les établissements en fin de contrat." data-url_delete="{{ path('facture_avoir', { 'numFacture': facture.numFacture }) }}"  class=" DeleteBoxBefore btn btn-danger large full-width"><i class='glyphicon glyphicon-warning-sign'></i> Déclarer que la facture est annulée (avoir, désactivation des établissements)  <i class='glyphicon glyphicon-warning-sign'></i>   </span>
+            {#path('backoffice_etablissement_patch_todo', {'id': etablissement.id,'patch_id': patch.id }) #}
+        {% endif %}
+        
+        
+    </div>
+                    
+                    
+    <div class='col-md-4'>
+        {% if facture.hasPDF %}
+            <iframe height='1000px' width='100%' src="{{ path('facture_get_pdf', { 'numFacture': facture.numFacture }) }}"></iframe>
+        {% else %}
+            <div class='alert alert-danger'>Pas de fichier pour cette facture</div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

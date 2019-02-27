@@ -1,0 +1,21 @@
+ <p>&nbsp; <p>
+                     <div class='panel panel-danger'>
+                        <div class='panel-heading'><a data-toggle="collapse" href="#collapse_ref_{{etablissement.id}}">Switcher le référentiel !!! </a></div>        
+                        <div  id="collapse_ref_{{etablissement.id}}" class='panel-body panel-collapse collapse list-group'>
+                           
+                                {% for ReferentielPublic in ReferentielsPublicAll %}
+                                        {% if etablissement.ReferentielPublic.id ==  ReferentielPublic.id %}
+                                            <li title='Meme référentiel que la source' class="list-group-item  disabled"> {{ReferentielPublic}}</li>
+                                        {% elseif ReferentielPublic.fini ==  0 %}
+                                                <li title='Le référentiel est en cours de développement' class="list-group-item  disabled"> {{ReferentielPublic}}</li>
+                                        {% elseif ReferentielPublic.Obsolete   %}
+                                                <li  title='Le référentiel est obsolete ! '  class="list-group-item   list-group-item-danger"><a href="{{ path('backoffice_etablissement_change_ref', { 'id': etablissement.id, 'ref_id': ReferentielPublic.id})  }}">{{ReferentielPublic}} {{etablissement.ReferentielPublic.Obsolete}}</a></li>
+                                        {% else %}
+                                                <li class="list-group-item "><a href="{{ path('backoffice_etablissement_change_ref', { 'id': etablissement.id, 'ref_id': ReferentielPublic.id})  }}">{{ReferentielPublic}}</a></li>
+                                        {% endif %}
+                                       
+                                {% endfor %}
+                          
+                        </div>
+                    </div>
+    

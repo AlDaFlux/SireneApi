@@ -1,0 +1,142 @@
+{% extends "ObjectifsAmelioration/Operationnels/layout.html.twig" %}
+
+
+
+{% block title %}{{ parent() }} - Modifier {% endblock %}
+
+{% block body %}{{ parent() }}
+
+        <h3>Modifier l'objectif opérationnel</h3>
+            
+        <div class="row">
+            <div class="col-md-12">
+                <form class='well' action="{{ path("paq_ooa_edit", {"id": objectifOperationnel.id}) }}" method="POST" >
+                    {% include "MessageFlash/messageFlash.html.twig" %}
+                    <h2 class='ooa'>Objectif</h2>
+                      <input type='hidden' name="update" value="true">
+                    <div class="form-group">
+                        <label class="control-label" for="titre">Titre : </label>
+                        <input id="commentaire" name="titre" class="form-control" value="{{objectifOperationnel.titre}}" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label" for="description">Description : </label>
+                        <textarea id="commentaire" name="description" class="form-control" rows="3" >{{objectifOperationnel.description}}</textarea>
+                    </div>
+                        <div class="form-group dt_ooa">
+                            <label class="control-label" for="dateDebut">Date de début : </label>
+                            <input class="form-control datepicker  col-sm-2" type="text" id="dateDebut" name="dateDebut" value="{{ objectifOperationnel.dateDebut is empty ? "" : objectifOperationnel.dateDebut|date("d-m-Y") }}">
+                        </div>
+                        <br>&nbsp;<p>
+                        <div id="group_complete" class="form-group">
+                            <label class="control-label" for="moyens">Complété : <span id="slider_complete_legend">A faire : {{objectifOperationnel.complete}}%</span></label>
+                            <div id="slider_complete"></div>
+                            <input id="complete" name="complete" type="hidden"/>
+                            <hr class='separateur'>
+                            
+                        </div>
+
+                            <br><div class='alert alert-danger hidethis' id='verify_date'><span class="form-control-feedback"></span>Vérifiez bien les dates de début et de fin ! <span class="glyphicon glyphicon-warning-sign"></span></div>
+                            
+                        <div class="form-group dt_ooa  ">
+                            <label class="control-label" for="dateFin">Date de fin : </label>
+                            <input class="form-control datepicker" type="text" id="dateFin" name="dateFin" value="{{ objectifOperationnel.dateFin is empty ? "" : objectifOperationnel.dateFin|date("d-m-Y") }}">
+                        </div>
+                        
+                        <label class="control-label" for="priorite">Priorité: </label>
+                            <label class="radio-inline"><input type="radio" value="1" name="priorite" {% if objectifOperationnel.priorité==1%} checked="checked" {% endif %}>1</label>
+                            <label class="radio-inline"><input type="radio" value="2" name="priorite" {% if objectifOperationnel.priorité==2%} checked="checked" {% endif %}>2</label>
+                            <label class="radio-inline"><input type="radio" value="3" name="priorite" {% if objectifOperationnel.priorité==3%} checked="checked" {% endif %}>3</label>
+                            <p>
+                                
+                        <label class="control-label" for="pilotePar">Piloté par : </label>
+                        <input id="commentaire" name="pilotePar" class="form-control" value="{{objectifOperationnel.pilotéPar}}" />
+                            <p>
+                                
+                                
+                                                                
+                        <label class="control-label" for="moyens">Moyens mobilisés : </label>
+                        <textarea id="moyens" name="moyens" class="form-control" rows="3">{{objectifOperationnel.moyen}}</textarea>
+                        <label class="control-label" for="indicateurs">Indicateurs de suivi/réalisation : </label>
+                        <textarea id="indicateurs" name="indicateurs" class="form-control" rows="3">{{objectifOperationnel.indicateurs}}</textarea>
+
+                    {% include 'Nuts/cancelsave.html.twig'  %}
+                </form>
+            </div>
+            
+ 
+       
+                 
+                 
+                 
+                 
+                 
+                 
+      
+                            
+                  
+</div>
+        
+          {% include "Nuts/inc_modal_delete_preuve.html.twig" %} 
+
+          
+{% endblock %}
+
+
+{% block initjs %}
+    	<script type="text/javascript">
+                
+         $( "#slider_complete" ).slider({
+                       max: 100,
+                        value: {{objectifOperationnel.complete}},
+                        step: 5,
+                    slide: changeComplete,
+                    change: changeComplete
+                });
+                
+                
+                
+        function changeComplete()
+        {
+            val_complete=$( "#slider_complete" ).slider( "value" );
+            if (val_complete===0) 
+            {
+                class_c="alert-danger";
+                complete_label="A faire";
+            }
+            else 
+            {
+                if (val_complete===100) 
+                {
+                    class_c="alert-success";
+                    complete_label="Terminé";
+                    $('.dt_ooa').addClass("has-error has-feedback");
+                    $('#verify_date').show();
+                }
+                else 
+                {
+                    class_c="alert-warning";
+                    complete_label="En cours";
+                }
+            }
+            $("#slider_complete_legend").html(complete_label + " : " + val_complete + "%");
+
+            $("#group_complete").removeClass( "alert-danger alert-warning alert-success" ).addClass(class_c);
+            $("#complete").val(val_complete);
+        }
+         changeComplete();
+
+ 
+
+
+    </script>
+
+{#
+    <script src="{{ asset('js/jquery.form.min.js') }}"></script>
+    <script src="{{ asset('js/upload.js') }}"></script>
+#}
+
+
+{% endblock %}
+ 
+    

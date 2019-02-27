@@ -1,0 +1,34 @@
+{% extends "Synthese/layout.html.twig" %}
+
+{% block body %}
+    {{ parent() }}
+    <h1>Dimension</h1>
+     {% include "Nuts/menu_domaine_transversal.html.twig"  with {'domaine': dimension.domaine} %} 
+    {% include "Nuts/menu_dimension_transversal.html.twig" %} 
+
+    <h2 id="TitreSyntheseGeneral">Évaluation générale <small> {{ dimension.criteres |length }} critères d'évaluation</small></h2>
+    <div>
+        <div class="GraphSyntheseContainer">
+            <canvas id="chartEvalGeneraleCanvas" height="500" width="500"></canvas>
+        </div>
+    
+         
+        <div class="synthese_menu">
+            {% for critere in dimension.criteres | order  %}
+                <a href= '{{ path('pericles3_synthese_critere', {'id': critere.id}) }}'>
+                     <span class='numero'> {{ critere.numero  }} </span> 
+                     <span class='lib'> {{ critere}} </span>
+                     <span class='note'> {{ critere.Note | formatNoteSimple}} </span>
+                    </a>
+            {% endfor %}
+        </div>
+        
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+         {% include "Synthese/inc_options_charts.js.twig" %}
+      {{ dimension.criteres  | order  | graph('chartEvalGeneraleCanvas') |raw }}
+    </script>
+{% endblock %}

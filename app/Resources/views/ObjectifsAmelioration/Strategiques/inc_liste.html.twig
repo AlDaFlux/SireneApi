@@ -1,0 +1,78 @@
+
+    <table class="small_font table table-striped table-bordered table-triable"  >
+        <thead>
+        <tr>
+            <th class='hidden'>Complete</th>
+
+            {% if  etablissement is not defined  %}
+                <th>Etablissement</th>
+            {% endif %}
+            <th>Priorité</th>
+            
+            {% if not domaine is defined %}
+                <th>Domaine</th>
+            {% endif %}
+            
+            <th>Objectifs Stratégiques</th>
+            <th>Date d'échéance</th>
+            <th>Crée par</th>
+            
+            <th class="screen_only"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        {% for ObjectifStrategique in ObjectifsStrategiques %}
+            <tr>
+                <td class='hidden'>{{ ObjectifStrategique.statut|PAQstatut|raw }}</td>
+                
+                
+                {% if   etablissement is not defined  %}
+                    <td><a href="{{ path('paq_osa_list_etablissement', {'id': ObjectifStrategique.etablissement.id}) }}">{{ObjectifStrategique.etablissement}}</a></td>
+                {% endif %}
+    
+                <td>{{ ObjectifStrategique.statut|PAQstatut|raw }}</td>
+                
+
+                
+                {% if not domaine is defined %}
+                <td>
+                       <a href="{{ path('paq_osa_list_filtre_domaine', {'id': ObjectifStrategique.domaine.id}) }}"> 
+                               {{ ObjectifStrategique.domaine.ordre}} - {{ ObjectifStrategique.domaine}}
+                           </a>
+                           </td>
+                {% endif %}
+                <td  class="small_font">
+                    <a href="{{ path('paq_osa_show', {'id': ObjectifStrategique.id}) }}">
+                        {{ ObjectifStrategique.commentaire}}
+                    </a>
+                </td>
+    
+                <td>{{ ObjectifStrategique.dateEcheance is empty ? "" : ObjectifStrategique.dateEcheance|date("d-m-Y") }}</td>
+                <td title="Créer par {{ObjectifStrategique.user}} le {{ ObjectifStrategique.dateCreate|date('Y-m-d') }}" >{{ ObjectifStrategique.user }} </td>
+                
+                
+                <td class="screen_only">
+                    <a title="Voir l'objectif" href="{{ path('paq_osa_show', {'id': ObjectifStrategique.id}) }}"><i alt='modifier' class='glyphicon glyphicon-eye-open'></i></a>
+                        {% if  is_granted('ROLE_RW_PAQ') %}
+                        
+                        {% if  is_granted('ROLE_ADMIN') or ObjectifStrategique.user.id==app.user.id %}
+
+                                <a title="Modifier l'objectif" href="{{ path('paq_osa_edit', {'id': ObjectifStrategique.id}) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a>
+                                <i title="Supprimer l'objectif" data-invite="Voulez-vous supprimer définitivement l'objectif stratégique ?"
+                                            data-url_delete="{{ path('paq_osa_delete_get', {'id': ObjectifStrategique.id}) }}" 
+                                           class='DeleteBoxBefore glyphicon glyphicon-trash iconhead   redText active full-width'
+                                           ></i> 
+                                {% endif %}
+                    
+                    
+                    
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+ 
+        

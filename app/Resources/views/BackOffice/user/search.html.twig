@@ -1,0 +1,23 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Administration{% endblock %}
+{% block out_container  %}
+
+{{ parent() }}
+      <h1><a href="{{ path('backoffice_user_index') }}"> Utilisateurs</a></h1>
+
+    <h2>Recherche : {{occurence}}</h2>
+             <form action="{{path("pericles3_user_search")}}" method="POST"   >
+                        <div class="form-group">
+                          <input type="text" name='occurence' class="form-control" placeholder="Rechercher dans les utilisateurs ">
+                        </div>
+                        <button type="submit" class="btn btn-link full-width"><i class='glyphicon glyphicon-search'></i></button>
+            </form>
+ 
+            {% if users is not empty %}
+                {% set show_affected = true %}
+                {% set read_only = true %}
+                {% include 'BackOffice/user/list.html.twig' %}
+            {% endif %}
+    
+{% endblock %}

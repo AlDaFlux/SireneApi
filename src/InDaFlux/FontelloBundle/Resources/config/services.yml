@@ -1,0 +1,4 @@
+services:
+#    in_da_flux_fontello.example:
+#        class: InDaFlux\FontelloBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

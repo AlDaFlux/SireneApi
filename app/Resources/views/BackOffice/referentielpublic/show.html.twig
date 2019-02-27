@@ -1,0 +1,311 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('referentielpublic_index')}}">  Référentiels</a></h1>
+    <h2><a href="{{ path('referentielpublic_show', { 'id': referentielPublic.id }) }}">  {{ referentielPublic }} </a></h2>
+
+{% endblock %}
+
+{% block out_container %}
+
+    <div class="row">
+
+    <div  class="col-lg-2 col-md-4 col-sm-6">
+    <div class="panel panel-primary">
+        <div class="panel-heading"><h3 class="panel-title">Domaines</h3></div>
+        <div class="panel-body">
+        <table class='table'>
+            {% for domaine in referentielPublic.ReferentielDomaines | order %}
+                <tr><td><a href='{{ path('referentielpublic_show_node', {'id_node': domaine.id, 'id': referentielPublic.id}) }}'> {{ domaine.ordre }} - {{ domaine.nomCourt}}</a>
+                    
+                    
+                        {% if domaine.AVerifier == 'done'  %}
+                            <i title=' Vérifié !' class='glyphicon glyphicon-ok-circle alert-success'></i> 
+                        {% elseif domaine.AVerifier =='doing'  %}
+                            <i title="Cet élément est vérifié, mais pas l'ensemble de ses sous éléments" class='alert-warning glyphicon glyphicon-exclamation-sign'></i> 
+                        {% elseif domaine.AVerifier =='todo'  %}
+                            <i title="A Vérifier ! " class='alert-danger glyphicon glyphicon-exclamation-sign'></i> 
+                        {% endif %}
+                </td></tr>
+            {% endfor %}
+        </table>
+        </div>  
+    </div>  
+    </div>  
+
+ 
+    <div  class="col-lg-2 col-md-4 col-sm-6">
+        <div id='loader'   class="panel panel-primary">
+            <div class="panel-heading"><h3 class="panel-title">Imprimer le référentiel vierge</h3></div>
+            <div class="panel-body link_export">
+                <a  href="javascript:genere_referentiel('doc');" class = "btn  btn-link full-width">(Re)Générer le DOC</a>
+                <a  id='synthese_referentiel_vierge_doc'  class = "lien_synt btn  btn-danger full-width"  target='blank' 
+                    href='{{ path("arsene_refpublic_vierge_getpath", { 'id': referentielPublic.id, 'synthese_extension':'doc'}) }}'>Télécharger le DOC
+                </a>
+                <a  href="javascript:genere_referentiel('pdf');" class = "btn  btn-link full-width">(Re)Générer le PDF</a>
+                <a  id='synthese_referentiel_vierge_pdf'  class = "lien_synt  btn  btn-danger full-width"  target='blank' 
+                    href='{{ path("arsene_refpublic_vierge_getpath", { 'id': referentielPublic.id,'synthese_extension':'pdf'}) }}'>Télécharger le PDF</a> 
+                {% if app.environment =='dev'  %}
+                    <a target='blank' href='{{ path("pericles3_ref_vierge", {'id':referentielPublic.id}) }}'  class ="btn  btn-link full-width" >TestDev</a>  
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+        
+    <div  class="col-lg-2 col-md-4 col-sm-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><h3 class="panel-title">Utilisateurs</h3></div>
+            <div class="panel-body">
+               <table class='table'>
+                    {% for l_user in referentielPublic.users %}
+                        <tr><td><a href='{{ path('backoffice_user_show', {'id': l_user.id}) }}'><i class="icon-user"></i> {{l_user}}</a></li></td></tr>
+                    {% endfor %}
+                 </table>
+                 
+                    {% if is_granted('ROLE_MEGA_ADMIN') %}
+                            <a class="btn btn-warning" href="{{ path('referentielpublic_add_user', { 'id': referentielPublic.id }) }}">ajouter des utilisateurs</a>
+                    {% endif %}
+
+                     
+            </div>  
+        </div>  
+    </div>  
+          <div  class="col-lg-2 col-md-4 col-sm-6">
+    {% if referentielPublic.NbBibliothequesAncreai == 0 %}
+        <div class="panel panel-danger">
+    {% else  %}
+        <div class="panel panel-primary">
+    {% endif  %}
+        <div class="panel-heading"><h3 class="panel-title">Bibliotheque</h3></div>
+        <div class="panel-body">  
+                        <a class="" href="{{ path('backoffice_bibliotheque_ancreai_index_public', { 'id': referentielPublic.id }) }}">
+                            {{ referentielPublic.NbBibliothequesAncreai}} éléments
+                        </a>
+                    
+                </div>  
+            </div>  
+        </div>  
+        {% if is_granted('ROLE_ADMIN_SUPERVISOR') %} 
+            <div  class="col-lg-2 col-md-4 col-sm-6">
+                {%  include ('BackOffice/finesscategorie/inc_categorie_by_public.html.twig') %}
+            </div>  
+            <div  class="col-lg-2 col-md-4 col-sm-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading"><h3 class="panel-title">Patchs</h3></div>
+                     <table class='table'>
+                            {% for patch in referentielPublic.getPatchCibles %}
+                                    <tr><td><a href="{{ path('patch_show', { 'id': patch.id }) }}">{{patch}}</a></td></tr>
+                                {% endfor %}
+                                {% for patch in referentielPublic.getPatchSources %}
+                                    <tr><td><a href="{{ path('patch_show', { 'id': patch.id }) }}">{{patch}}</a></td></tr>
+                                {% endfor %}
+                 </table>
+                    
+                     
+                </div>  
+            </div>  
+            
+        {% endif  %}    
+        
+        </div>  
+
+        
+      
+            
+        
+        
+{% include "MessageFlash/messageFlash.html.twig" %}
+        
+{% if referentielPublic.sourceParent is not empty %}
+        <div class='alert alert-info'> Référentiel source : 
+        <a href="{{ path('referentielpublic_show', { 'id': referentielPublic.sourceParent.id }) }}">  {{ referentielPublic.sourceParent}} </a>
+        <a href="{{ path('referentielpublic_comparaison', { 'id': referentielPublic.id }) }}">  (Comparaison)</a>
+        
+        {% for source in referentielPublic.Aieuls %}
+                <li><b><a href="{{ path('referentielpublic_show', { 'id': source.id })}}" >{{source}}</a> </b> 
+        {% endfor %}
+
+        
+        
+        </div>        
+{% endif %}
+
+
+    
+{% if referentielPublic.SourceChildren | length > 0%}
+  <div class="panel panel-primary">
+        <div class="panel-heading"> <h3 class="panel-title">Sert de source à :  </h3> </div>
+        <div class="panel-body">
+            <ul>
+            {% for source in referentielPublic.SourceChildren %}
+                        <li><b><a href="{{ path('referentielpublic_show', { 'id': source.id })}}" >{{source}}</a> </b> 
+            {% endfor %}
+                    </ul>
+            </div>
+    </div>
+{% endif %}
+
+
+
+
+
+
+            
+{% if referentielPublic.NbEtablissements >0 %}
+    <div class='row'>
+        <div class='col-md-6'>
+            <a class='btn btn-primary full-width' href="{{ path('pericles3_backoffice_etablissement_bybublic', { 'id': referentielPublic.id})  }}">{{ referentielPublic.NbEtablissements }} Etablissements sont  rattachés à ce référentiel</a>
+        </div>
+        <div class='col-md-6'>
+            <a class='btn btn-primary full-width'  title='Voir les évaluation' href="{{ path('pericles3_backoffice_suivi_etablissement_bybublic', { 'id': referentielPublic.id})  }}">Voir le suivi des évaluations</a>
+            </div>
+    </div>
+        
+{% else  %}
+        <div class='alert alert-info'>Aucun établissement n'est rattaché à ce référentiel</div>
+{% endif %}
+<p><br>
+    
+
+                
+        {% if referentielPublic.referentielExterne is not empty %}
+            <div class='alert alert-info'><a href='{{ path('referentiel_externe_show', { 'ref_externe': referentielPublic.referentielExterne.id, 'id': referentielPublic.id}) }}' > Référentiel Externe :  {{referentielPublic.referentielExterne }}</a></div>
+        {% else  %}
+            <div class='alert alert-warning'>Pas de référentiel  externe</div>
+        {% endif %}
+
+          <div class='row'>
+             <div class="col-sm-4">
+                <a class="btn btn-primary active full-width" href="{{ path('referentiel_criteres_show', { 'id': referentielPublic.id }) }}">Voir les criteres</a>
+             </div>
+             <div class="col-sm-4">
+             <a  class="btn btn-primary active full-width" href="{{ path('referentiel_criteres_rbpp_show', { 'id': referentielPublic.id }) }}">Voir les RBPP</a>
+             </div>
+             <div class="col-sm-4">
+                <a class="btn btn-primary active full-width" href="{{ path('referentiel_ouinon_show', { 'id': referentielPublic.id }) }}">Voir les ouinon</a>
+             </div>
+         </div>
+
+    {% if is_granted('ROLE_MEGA_ADMIN') %}
+        <br>
+        <a class='btn  btn-danger full-width'  href="{{ path('referentielpublic_edit', { 'id': referentielPublic.id }) }}">Modifier</a>
+        
+        <br>
+             <i data-invite="Voulez-vous supprimer définitivement le référentiel?"
+                                        data-url_delete="{{ path('delete_referentiel', {'id': referentielPublic.id}) }}" 
+                                       class='DeleteBoxBefore glyphicon glyphicon-trash iconhead btn btn-danger active full-width'
+                                       >Supprimer le reférentiel </i> 
+    {% endif %}
+ 
+        
+        
+        
+    
+    <h2>Liste</h2>
+    <table class='table table-bordered'>
+        <thead>
+            <tr>
+                <th>Ordre</th>
+                <th>Nom</th>
+                <th>---</th>
+            </tr>
+        </thead>
+        
+        
+        <tbody>
+                {% for domaine in referentielPublic.ReferentielDomaines | order %}
+            <tr>
+                <td>{{ domaine.ordre }}</td>
+                <td><a href='{{ path('referentielpublic_show_node', {'id_node': domaine.id, 'id': referentielPublic.id}) }}'>{{ domaine.nom}}</a></td>
+                
+                
+                <td><a href='{{ path('referentielpublic_show_node', {'id_node': domaine.id, 'id': referentielPublic.id}) }}'><i class='glyphicon glyphicon-eye-open'></i></a></td>
+            <tr>
+
+                
+                
+                        {% for dimension  in domaine.children | order  %}
+                         <tr>
+                                <td>{{ domaine.ordre }}.{{ dimension.ordre }}</td>
+                                <td><a href='{{ path('referentielpublic_show_node', {'id_node': dimension.id, 'id': referentielPublic.id}) }}'>|-------> {{ dimension.nom}}</a></td>
+                                <td><a href='{{ path('referentielpublic_show_node', {'id_node': dimension.id, 'id': referentielPublic.id}) }}'><i class='glyphicon glyphicon-eye-open'></i></a></td>
+                            <tr>
+                                {% for critere  in dimension.children | order %}
+                                 <tr>
+                                        <td>{{ domaine.ordre }}.{{ dimension.ordre }}.{{ critere.ordre }}</td>
+                                        <td><a href='{{ path('referentielpublic_show_node', {'id_node': critere.id, 'id': referentielPublic.id}) }}'>|----------->  {{ critere.nom}}</a></td>
+                                        <td><a href='{{ path('referentielpublic_show_node', {'id_node': critere.id, 'id': referentielPublic.id}) }}'><i class='glyphicon glyphicon-eye-open'></i></a></td>
+                                    <tr>
+                                            {% for question  in critere.children | order %}
+                                             <tr>
+                                                    <td>{{ domaine.ordre }}.{{ dimension.ordre }}.{{ critere.ordre }}.{{ question.ordre }}</td>
+                                                    <td><a href='{{ path('referentielpublic_show_node', {'id_node': question.id, 'id': referentielPublic.id}) }}'>|------------------> {{ question.nom}}</a>
+                                                        {# if question.nonconcerne %}
+                                                            [NC]
+                                                        {% endif #}
+
+                                                    </td>
+                                                    <td><a href='{{ path('referentielpublic_show_node', {'id_node': question.id, 'id': referentielPublic.id}) }}'><i class='glyphicon glyphicon-eye-open'></i></a></td>
+                                                <tr>
+                                        {% endfor %}
+                                        
+                            {% endfor %}
+
+                    
+                    {% endfor %}
+
+                       
+                    {% endfor %}
+        </tbody>
+    </table>
+        
+        
+        
+        
+
+        <a href="{{ path('referentielpublic_index') }}"  class = "btn  btn-link full-width">Retour à la liste</a><ul>
+
+      
+            
+{% endblock %}
+
+
+
+
+
+{% block javascripts %}
+    {% set PathDoc = path("pericles3_genere_referentiel", {'id' : referentielPublic.id})  %}
+    <script type="text/javascript">
+        
+
+              $('.lien_synt').hide();
+            
+        
+        function genere_referentiel(extension)
+        {
+            
+            $('#loader').loader('show');
+            var data = {extension:extension,referentiel_id:{{referentielPublic.id}}};
+            $.ajax({
+                type: "POST",
+                url: '{{PathDoc}}',
+                data: data,
+                async :false,
+                dataType: "json",
+                success: function(response) {
+                    $('#loader').loader('hide');
+                   $('#synthese_referentiel_vierge_' + extension).show(500);
+     
+                },  
+                error: function(XMLHttpRequest, textStatus, errorThrown)
+                {
+                    $('#loader').loader('hide');
+                }
+            });
+             
+        }
+</script>
+
+
+{% endblock %}

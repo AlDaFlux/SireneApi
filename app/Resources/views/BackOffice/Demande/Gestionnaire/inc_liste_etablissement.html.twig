@@ -1,0 +1,77 @@
+{# empty Twig template #}
+
+     <div class="">
+     <div class="panel panel-primary">
+        <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-tower'></i> Etablissements </h3> </div>
+   
+    
+            <table class='table table-bordered table-triable_simple'>
+                    <thead>
+                        <tr>
+                            <th>Etablissement</th>
+                            <th>FINESS</th>
+                            <th>Type d'établissement</th>
+                            <th>Public</th> 
+                            <th>Etat</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                
+                
+        {% for demandeEtablissement in demandeEtablissements %}
+            
+                        
+            {% if demandeEtablissement.finess is not empty %}
+                {% set etab  = demandeEtablissement.finess.etablissement %}
+            {% else %}
+                {% set etab  = '' %}
+            {% endif  %}
+
+            {% if etab is not empty and demandeEtablissement.etat.id != 3 %}
+                <tr title="la demande n'est pas terminée mais l'établissement est créer" class='alert-danger'>
+            {% else %}
+                <tr>
+            {% endif  %}
+                <td>
+                        {{ demandeEtablissement.etablissementNom }} 
+                </td>
+                <td>
+                    {{ demandeEtablissement.finess}} 
+
+                {% if etab is not empty %}
+                    <a href="{{ path('backoffice_etablissement_view', { 'id': etab.id }) }}">
+                        <br><small><small><small> {{ etab }}</small></small></small>
+                    </a>
+                {% else %}
+                    <br><small><small><small> {{ etab }}</small></small></small>
+                {% endif  %}
+                </td>
+                 
+                <td>{{ demandeEtablissement.ModeCotisation }}</td>
+                
+                <td>{{ demandeEtablissement.referentielPublic }}</td>
+
+                <td>{{ demandeEtablissement.etat|  afficheDemandeEtat | raw }}</td>
+
+                <td>
+                    {% if  not is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
+                        {% if demandeGestionnaire.etat.id ==1  %}
+                                <a  class='btn btn-warning full-width' href="{{ path('demande_etablissement_edit', { 'id': demandeEtablissement.id }) }}"> Modifier la demande</a>
+                        {% endif %}
+                    {% else %}
+                            <a  class='btn btn-warning full-width' href="{{ path('demande_etablissement_editancreai', { 'id': demandeEtablissement.id }) }}"> Modifier la demande</a>
+                         <i data-invite="Voulez-vous supprimer définitivement la demande de création d'établissement ? il est conseillé de la passé en traité pour conserver l'historique des demandes."
+                                data-url_delete="{{ path('demande_etablissement_delete_get', {'id':demandeEtablissement.id}) }}" 
+                               class='btn btn-danger full-width DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active full-width'
+                               >Supprimer  </i> 
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+        
+    </div>
+    </div>

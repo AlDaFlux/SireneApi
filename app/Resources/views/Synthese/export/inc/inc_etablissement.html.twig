@@ -1,0 +1,31 @@
+
+<h1>{{ etablissement.nom }}</h1>
+
+{% if etablissement.hasLogo %}
+   <div class='logo_etablissement'>
+     {{etablissement.LogoPath | getImageExport(typeExport,0,'200px') | raw }}
+    </div>
+{% endif %}
+    
+<div style="border-bottom: dashed black 1px;">
+    <p><span style="font-weight:bold">Adresse : </span>{{ etablissement.adresse }}</p>
+    <p><span style="font-weight:bold">Code postal : </span>{{ etablissement.codePostal }}</p>
+    <p><span style="font-weight:bold">Ville : </span>{{ etablissement.ville }}</p>
+</div>
+<div style="border-bottom: dashed black 1px;">
+    <p><span style="font-weight:bold">Directeur / Directrice : </span>{{ etablissement.directeur }}</p>
+</div>
+<div style="border-bottom: dashed black 1px;">
+    <p><span style="font-weight:bold">Capacité d'accueil : </span>{{ etablissement.capaciteAcceuil }}</p>
+    <p><span style="font-weight:bold">Hébergement complet : </span>{{ etablissement.hebergementComplet }}</p>
+    <p><span style="font-weight:bold">Accueil du jour : </span>{{ etablissement.acceuilJour }}</p>
+    <p><span style="font-weight:bold">Accueil temporaire : </span>{{ etablissement.accueilTemporaire }}</p>
+    <p><span style="font-weight:bold">Nombre ETP : </span>{{ etablissement.nombreEtb }}</p>
+</div>
+<div style="border-bottom: dashed black 1px;">
+    <p><span style="font-weight:bold">Date du dernier projet d'établissement : </span>{{ etablissement.dateDernierProjet is empty ? "" : etablissement.dateDernierProjet|date("d-m-Y") }}</p>
+    <p><span style="font-weight:bold">Date de la dernière évaluation interne : </span>{{ etablissement.dateDerniereEvaluationInterne is empty ? "" : etablissement.dateDerniereEvaluationInterne|date("d-m-Y") }}</p>
+    <p><span style="font-weight:bold">Date de la dernière évaluation externe : </span>{{ etablissement.dateDerniereEvaluationExterne is empty ? "" : etablissement.dateDerniereEvaluationExterne|date("d-m-Y") }}</p>
+</div>
+
+

@@ -1,0 +1,31 @@
+{% extends "Bibliotheque/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Bibliothèque{% endblock %}
+
+{% block body %}
+         {{ parent() }} 
+         
+         <h2> <a href="{{ path('pericles3_bibliotheque_ancreai') }}" >BIBLIOTHÈQUE {{application_name}}</a></h2>
+    
+    {% set par_source =false %}
+    {% if source is defined %}
+        {% if source is not empty  %}
+            <h3 class='alert alert-success'>{{source}}</h3>
+            {% set par_source =true%}
+        {% endif %}
+    {% endif %}
+    
+        {% if ancreai_bibliotheques|length > 0 %}
+         {% include "Bibliotheque/ancreai_list.html.twig" %} 
+    {% else %}
+        <div class='alert alert-warning'>
+            Bibliothèque Vide 
+             {% if not par_source %}
+                {{source}}
+             {% endif %}
+        </div>
+        {% endif %}
+
+ {% endblock %}
+
+ 

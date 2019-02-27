@@ -1,0 +1,17 @@
+ 
+<fieldset>
+{% for etab in app.user.getEtablissementsByRefPublic(domaine_referentiel.referentielPublic) %}
+    {% set domaine=domaine_referentiel.getDomaineEtablissement(etab) %}
+     
+        <div>
+            {% if domaine.Fini %}
+                <input type="checkbox" id="etab_{{etab.id}}" name="etab_{{etab.id}}" value="{{etab.id}}" checked>
+                <label for="etab_{{etab.id}}">{{etab}}</label>
+            {% else %}
+                <input  disabled type="checkbox" id="etab_{{etab.id}}" name="etab_{{etab.id}}" value="{{etab.id}}">
+                <label class='alert-danger' for="etab_{{etab.id}}">{{etab}} (Evaluation du domaine non terminée)</label>
+            {% endif %}
+        </div>
+{% endfor %}
+</fieldset>
+

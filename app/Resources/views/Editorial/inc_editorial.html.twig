@@ -1,0 +1,26 @@
+{% if short_edito is not defined %}
+    {% set  short_edito = false  %}
+{% endif %}
+    <div class="editorial">
+         <h3><a href='{{ path("pericles3_editorial_show", {'id':editorial.id}) }}'>{{editorial.titre}}</a></h3> 
+            <div class="publie"> Publié le {{editorial.datePublication | date('d/m/Y') }} </div>
+
+            {% if short_edito %} 
+                <div class="text"> {{editorial | limitChar(440) | raw }}</div>
+                {% if editorial  | length > 440 %}
+                    <div class="voirplus"> 
+                        <a href='{{ path("pericles3_editorial_show", {'id':editorial.id}) }}'><i class='glyphicon glyphicon-plus-sign'> </i>  Voir plus</a>
+                    </div>
+                {% endif %} 
+
+            {% else %} 
+                <div class="text"> {{editorial |raw }}</div>
+            {% endif %} 
+            
+    </div> 
+
+
+                    
+                    
+                   
+                    

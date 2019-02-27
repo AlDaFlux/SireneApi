@@ -1,0 +1,17 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Referentiel Externe</h1>
+    {% for referentielExterne in referentielsExterne %}
+        <h2>{{referentielExterne}}</h2>
+        <div class='alert alert-info'>
+            {{referentielExterne.description}}
+            <br><b>        {{referentielExterne.ReferentielExterneNiv1 | length }} items</b>
+        </div>
+        <ul>
+        {% for public in referentielExterne.referentielPublic %}
+            <li><a href='{{path('referentiel_externe_show', {'id':public.id,'ref_externe':referentielExterne.id})}}'>{{public}}</a>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+{% endblock %}

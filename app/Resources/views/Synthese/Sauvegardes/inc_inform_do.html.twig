@@ -1,0 +1,22 @@
+
+{% if  etablissement.LastSauvegardeAgo('%y') >= '1' %}
+                  <div class='alert alert-danger'>
+                      Vous n'avez pas effectué de sauvegardes depuis au moins un an (la dernière remonte à {{etablissement.LastSauvegardeAgo('%y')}} an(s)
+                      {% if etablissement.LastSauvegardeAgo('%M') > '00' %}
+                      et   {{etablissement.LastSauvegardeAgo('%m')}} mois )
+                     {% endif %} )
+                      <br>! Il est conseillée d'en faire au moins une par an ! 
+                  </div>
+                      <a class = "lien_synt  btn  btn-danger full-width"    href="{{ path_sauvegardes_do }}">Effectuer une sauvegarde</a>
+      {% else %} 
+          {% if etablissement.LastSauvegardeAgo('%m') >= '4'%}
+              <a class = "lien_synt  btn  btn-danger full-width"    href="{{ path_sauvegardes_do }}">Effectuer une sauvegarde</a>
+              {% else %}
+                          <div class='alert alert-warning  '><i class='glyphicon glyphicon-warning-sign'></i>
+                      Votre dernière sauvegarde à moins de 3 mois, vous ne pouvez pas en faire une autre.  
+                 </div> 
+             {% endif %} 
+     {% endif %}
+     
+     
+     

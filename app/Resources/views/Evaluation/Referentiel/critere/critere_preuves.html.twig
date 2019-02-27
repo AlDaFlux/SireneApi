@@ -1,0 +1,29 @@
+{% extends "Evaluation/Referentiel/critere/layout.html.twig" %}
+
+
+
+{% block body %}
+    
+      {{ parent() }}
+       
+      <h2>Preuves</h2>
+      
+      
+      {% set is_critere = false %}
+      {% set is_pdv = false %}
+      {% set is_objectif_operationnel = false %}
+      {% set par_type_preuve = true %}
+      {% set access = false %}
+      {% include 'Bibliotheque/preuves_list.html.twig' %}
+
+
+ 
+     {% set referentielPublic = critere_referentiel.referentielPublic  %}
+     {% if is_granted('ROLE_RW_PAQ') %}
+      {% include 'Preuve/inc_add_preuve_gestionnaire.html.twig' with {'linf_add_preuve': path("pericles3_critere_ref_eval_preuve_add", {"id": critere_referentiel.id}) } %}
+    {% endif %}
+     
+
+            
+     
+{% endblock %}

@@ -1,0 +1,18 @@
+{% for domaine in etablissement.domaines| order %}
+    {% if domaine.status==3 %}
+        <a href='{{ path("pericles3_domaine",{"id": domaine.id}) }}'>
+            <i title='{{domaine}} - Terminé' class='icon-circle done'></i>
+        </a>
+    {% elseif domaine.status==1 %}
+        <a href='{{ path("pericles3_domaine",{"id": domaine.id}) }}'>
+            <i title='{{domaine}} - Non commencé' class='icon-circle todo'></i>
+        </a>
+    {% else %}
+        <a href='{{ path("pericles3_domaine",{"id": domaine.id}) }}'>
+            <i title='{{domaine}} - En cours' class='icon-circle doing'></i>
+        </a>
+    {% endif %}
+{% endfor %}
+
+
+

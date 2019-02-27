@@ -1,0 +1,38 @@
+
+
+    <table  class="table table-striped table-bordered table-triable_simple">
+        <thead>
+        <tr>
+            <th class='hidden'>dat</th>
+            <th>Date de sauvegarde</th>
+            {% if is_granted('ROLE_GESTIONNAIRE') and  etablissement is not defined %}
+                <th>Etablissement</th>
+            {% endif %}
+            <th>Utilisateur</th>
+            <th>Note</th>
+            <th class="screen_only"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for sauvegarde in sauvegardes %}
+        <tr>                    
+            <td class='hidden'>{{sauvegarde.dateCreate|date('Y-m-d H:i:s') }}</td>
+{#            <td><a href="{{ path('pericles3_backup_synthese', {'id': sauvegarde.id}) }}">{{sauvegarde}}</a></td> #}
+            <td><a href="{{ path('pericles3_backup_synthese', {'id': sauvegarde.id}) }}">{{sauvegarde.dateCreate|date('d-m-Y') }}</a></td>
+            {% if is_granted('ROLE_GESTIONNAIRE') and  etablissement is not defined %}
+                <td><a href="{{ path('pericles3_sauvegardes_etablissement', {'id': sauvegarde.etablissement.id}) }}">{{sauvegarde.etablissement}}</a></td>
+            {% endif %}
+            <td>{{sauvegarde.user}}</td>
+            <td>{{sauvegarde.note | formatNoteSimple }}</td>
+            <td>
+            {#<a title="Modifier l'objectif" href="{{ path('paq_osa_edit', {'id': ObjectifStrategique.id}) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a>#}
+            <a href="{{ path('pericles3_backup_synthese', {'id': sauvegarde.id}) }}"><i alt='Voir' class='glyphicon glyphicon-eye-open'></i></a>
+            <i title="Supprimer la sauvegarde" data-invite="Voulez-vous supprimer définitivement la sauvegarde du {{sauvegarde.dateCreate|date('d-m-Y') }}"
+                                data-url_delete="{{ path('pericles3_sauvegardes_delete', {'id': sauvegarde.id}) }}" 
+                               class='DeleteBoxBefore glyphicon glyphicon-trash iconhead   redText active full-width' ></i> 
+            </td>
+        </tr>                    
+    {% endfor %}
+    <tbody>
+    </table>

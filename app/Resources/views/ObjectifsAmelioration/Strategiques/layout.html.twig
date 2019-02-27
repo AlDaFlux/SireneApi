@@ -1,0 +1,13 @@
+{% extends "ObjectifsAmelioration/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Liste{% endblock %}
+ 
+    
+{% block body %}
+    {{ parent() }}
+        <h2 class='osa'><a href='{{ path('paq_osa_list') }}'>Objectifs Stratégiques</a></h2>
+        
+         {% include "MessageFlash/messageFlash.html.twig" %}
+ 
+{% endblock %}
+

@@ -1,0 +1,55 @@
+ 
+    <table class='table table-bordered table-triable_desc'>
+        <thead>
+            <tr>
+                <th>Date Création</th>
+                <th>Date de publication</th>
+                <th>Titre</th>
+                <th>Lien</th>
+                <th>Cache</th>
+                <th>Type de source</th>
+                 
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for bibliothequeAncreai in bibliothequeAncreais %}
+            <tr>
+                <td class='small'>{{ bibliothequeAncreai.dateCreate  | hiddenDate | raw }}</td>
+
+                <td>{% if bibliothequeAncreai.datePublication %}{{ bibliothequeAncreai.datePublication|date('Y-m') }}{% endif %}</td>
+                <td>
+                     <a href="{{ path('backoffice_bibliotheque_ancreai_show', { 'id': bibliothequeAncreai.id }) }}">{{ bibliothequeAncreai.titre | limitChar(110)}}</a>
+                </td>
+                <td class='center'>
+                    <a target='blank' href='{{bibliothequeAncreai.href}}'><i class='glyphicon glyphicon-globe'></i></a>
+                </td>
+ 
+                {% if bibliothequeAncreai.cache %}
+                    <td class='alert-success'><a href='/cache_biblio/{{bibliothequeAncreai.cache}}'>{{bibliothequeAncreai.cache}} </a></td>
+                {% else   %}
+                    <td class='alert-danger'></td>
+                {% endif  %}
+               
+                
+
+                <td>{{ bibliothequeAncreai.typeSource }}</td>
+                
+                
+                <td>
+                            <a href="{{ path('backoffice_bibliotheque_ancreai_show', { 'id': bibliothequeAncreai.id }) }}"><i alt='voir' class='glyphicon glyphicon-eye-open'></i></a>
+ 
+            
+                            
+                            {% if is_granted("ROLE_RW_BIBLIO_ARSENE") %}
+                                <a href="{{ path('backoffice_bibliotheque_ancreai_edit', { 'id': bibliothequeAncreai.id }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a>
+                            {% endif  %}
+                </td>
+                               
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+        
+    

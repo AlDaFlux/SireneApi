@@ -1,0 +1,65 @@
+{% if domaine.NbObjectifs > 0 %}
+
+    {# Objectifs Stratégiques D'améliorations #}
+    
+    <div class='orphan_tree osa'>    
+        {% for ObjectifSrategique in domaine.ObjectifsSrategique   %}
+                 <a class="leef_oa leef_osa {{ObjectifSrategique.CSSClasse}}" href="{{ path('paq_osa_show', {'id': ObjectifSrategique.id})}}">
+                     {{ObjectifSrategique}} 
+                 </a>
+        {% endfor %}
+    </div>
+    
+    
+ 
+  
+          {% for Dimension  in domaine.Dimensions  | order%}
+              
+            {% if   Dimension.NbObjectifsOperationnel >0 %}
+                
+                
+                  <div class="arbre_container">
+                <span class="leef leef_dimension leef_arbo">
+                   {{Dimension.Numero}} - {{Dimension}}
+                </span>
+                <div class="branch lv1">
+
+                              {% for Critere in Dimension.Criteres  | order %}
+                                      {% if Critere.NbObjectifsOperationnel > 0 %}
+                                           <div class="entry {% if Dimension.NbCriteresWObjectifsOperationnel == 1 %}sole{% endif %}">
+                                              <span class="leef leef_critere leef_arbo">
+                                                  {{Critere.Numero}} -  {{ Critere   }}
+                                             </span>
+
+
+                                         <div class="branch lv2">
+                                         {% for ObjectifOperationnel in Critere.Objectifs %}
+                                             <div class="entry {% if Critere.NbObjectifsOperationnel == 1 %}sole{% endif %}">
+                                                 <a class="leef leef_oa leef_ooa {{ObjectifOperationnel.CSSClasse}}" href="{{ path('paq_ooa_show', {'id': ObjectifOperationnel.id})}}">
+                                                     {{ ObjectifOperationnel }}
+                                                     </a></div>
+                                         {% endfor %}
+                                         </div>
+
+
+                                     </div>
+
+                                      {% endif %}
+
+
+
+
+
+                               {% endfor %}
+                 
+
+
+                      </div>
+                </div>
+
+            {% endif %}
+       {% endfor %}
+{% else %}
+    {% set none_objectifs = true %}
+    
+{% endif %}

@@ -1,0 +1,18 @@
+ {% if facture.getConcerne.nbEtablissements > 3   %}
+                        <form method="POST" >
+                            <input type="hidden" name='type' value='add_module_gestionnaire_free'>    
+                            <button type="submit" class="btn btn-default btn-danger full-width">Ajouter un module gestionnaire gratuit </button>
+                        </form>
+                    {% else %}
+                        <form method="POST" >
+                            <input type="hidden" name='type' value='add_module_gestionnaire_montant'>    
+                            <input type="hidden" name='montant' value='150'>    
+                            <button type="submit" class="btn btn-default btn-danger full-width">Ajouter un module gestionnaire 150 € </button>
+                        </form>
+                        <form method="POST" >
+                            <input type="hidden" name='type' value='add_module_gestionnaire_montant'>    
+                            <input type="hidden" name='montant' value='300'>    
+                            <button type="submit" class="btn btn-default btn-danger full-width">Ajouter un module gestionnaire 300  € </button>
+                        </form>
+
+                    {% endif %}

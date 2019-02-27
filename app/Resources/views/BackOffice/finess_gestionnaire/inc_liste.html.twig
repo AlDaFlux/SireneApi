@@ -1,0 +1,43 @@
+    <table class='table table-bordered table-triable '>
+        <thead>
+            <tr>
+                <th>Codefiness</th>
+                <th>{{application_name}}</th>
+                <th>Raison sociale</th>
+                <th>Code postal</th>
+                <th>Ville</th>
+                <th>Nb Etablissements</th>
+                {#
+                {% if is_granted('ROLE_MEGA_ADMIN')  %}
+                    <th>Actions</th>
+                {% endif %}
+                #}
+            </tr>
+        </thead>
+        <tbody>
+        {% for finess in finesses %}
+            <tr>
+
+                <td><a href="{{ path('backoffice_gestionnaire_finess_show', { 'id': finess.codeFiness }) }}">{{ finess.codeFiness }}</a></td>
+                 <td>
+                    {% if finess.HaveGestionnaire %}
+                        <i class='glyphicon glyphicon-ok greenText'></i>
+                    {% endif %}
+                </td>
+               <td>{{ finess.raisonSociale }}</td>
+                <td>{{ finess.codePostal }}</td>
+                <td>{{ finess.ville }}</td>
+                <td>{{ finess.NbEtablissements }}</td>
+ {#                
+                <td>
+                {% if is_granted('ROLE_MEGA_ADMIN') and false %}
+                            <a href="{{ path('backoffice_finess_gestionnaire_edit', { 'id': finess.codeFiness }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a>
+                {% endif %}
+                </td>
+                
+#}                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+

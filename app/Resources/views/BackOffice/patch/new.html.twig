@@ -1,0 +1,17 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+ 
+{% block body %}
+    <h1> <a href="{{ path('patch_index') }}">Patch </a></h1>
+    <h2>creation...</h2>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        
+        <input id="intermerdiare"  name="intermerdiare" type="checkbox">Avec des patchs intermerdiares<p>
+            
+        <input type="submit" value="Create" />
+    {{ form_end(form) }}
+
+    
+{% endblock %}

@@ -1,0 +1,118 @@
+
+    <table class='table'>
+        <tbody>
+            <tr>
+                <th>Raison Sociale </th>
+                <td><a href="{{ path('backoffice_finess_show', { 'id': finess.codeFiness }) }}">{{ finess.raisonSociale }}</a></td>
+            </tr>
+            <tr>
+                <th>Code Finess</th>
+                <td>{{ finess.codeFiness }}</td>
+            </tr>
+            <tr>
+                <th>Entité juridique </th>
+                <td><a href="{{ path('backoffice_gestionnaire_finess_show', { 'id': finess.gestionnaire.codeFiness }) }}">{{ finess.gestionnaire }}</a></td>
+            </tr>
+            <tr>
+                <th>Raison Sociale</th>
+                <td>{{ finess.raisonSociale }}</td>
+            </tr>
+            <tr>
+                <th>Complement Adresse</th>
+                <td>{{ finess.complementAdresse }}</td>
+            </tr>
+            <tr>
+                <th>Adresse</th>
+                <td>{{ finess.adresse }}</td>
+            </tr>
+            <tr>
+                <th>Code Postal</th>
+                <td>{{ finess.codePostal }}</td>
+            </tr>
+            <tr>
+                <th>Ville</th>
+                <td>{{ finess.ville }}</td>
+            </tr>
+            <tr>
+                <th>Tel</th>
+                <td>{{ finess.tel }}</td>
+            </tr>
+            <tr>
+                <th>Fax</th>
+                <td>{{ finess.fax }}</td>
+            </tr>
+            <tr>
+                <th>Catégorie</th>
+                 
+                {% if  is_granted('ROLE_ADMIN_SUPERVISOR')  %}
+                    <td><a href="{{ path('backoffice_finess_categorie_show', { 'id': finess.codeCategorie.id }) }}">{{ finess.LibCategorie}}</a></td>
+                {% else  %}
+                    <td>{{ finess.LibCategorie}}</td>
+                {% endif %}
+                
+            </tr>
+            
+            <tr>
+                <th>Capacité d'accueil</th>
+                <td>{{ finess.capaciteTotale1 }}</td>
+            </tr>
+            
+
+            
+            {% if finess.HasPericles %}  
+                    <tr>
+                        <th>Pericles</th>
+                       <td>
+                            Ancien utilisateur Pericles
+                        </td>
+                    </tr>
+            {% if  is_granted('ROLE_ADMIN_SUPERVISOR')  %}  
+                    {% for Pericle in finess.Pericles %}
+                    <tr>
+                        <th>--->  Pericles  </th>
+                       <td>
+                            <a href="{{ path('backoffice_pericles_show', { 'id':  Pericle.id }) }}">{{ Pericle }}
+                        </td>
+                    </tr>
+                    {% endfor %}  
+                {% endif  %}  
+            {% endif  %}  
+            
+
+            
+            <tr class="alert alert-info">
+                <th>Etablissement {{application_name}} </th>
+                <td>
+                    {% if finess.HaveEtablissement %}
+                       
+                        
+                        <a href="{{ path('backoffice_etablissement_view', { 'id':  finess.etablissement.id }) }}">{{  finess.etablissement }}</a></td>
+                    {% else %}
+                        <div class='alert alert-warning full-width'>AUCUN !</div>
+               
+                        
+                         
+                                
+                          {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT') and etablissement is not defined %}
+                                <form method="POST" action="{{ path('backoffice_etablissement_new_byfiness')}}" >
+
+                                    {% if  demandeEtablissement is defined %}
+                                          <input type='hidden'  name='demande_id' value='{{demandeEtablissement.id}}'>
+                                    {% endif %}
+
+                                  <input name='num_finess' value='{{finess.codeFiness}}'>
+                                  <input type='submit' value="Créer l'établissement">
+                                </form>
+                           {#
+                               <a class="btn btn-link full-width"  href="{{ path('backoffice_etablissement_new_byfiness',{'code_finess':finess.codeFiness}) }}"><i class='glyphicon glyphicon-plus'></i>Créer un etablissement {{application_name}} pour {{ finess.raisonSociale }}</a>
+                           #}
+                            {% endif%}
+                        
+                        
+                        
+                        {% endif%}
+                    </td>
+            </tr>
+      
+        </tbody>
+    </table>

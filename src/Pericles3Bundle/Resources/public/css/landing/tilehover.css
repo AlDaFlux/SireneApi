@@ -1,0 +1,51 @@
+
+.separateur
+{
+clear:both;
+}
+
+
+ 
+.figure
+{
+width:100%;
+float:left;
+border-bottom: 2px solid #cccccc;
+}
+
+.figure img
+{
+    width: 20%;
+    float:left;
+}
+
+.tilter_caption
+{
+    padding-left: 10px;
+}
+
+
+
+.figure img:hover
+{
+    
+    filter: blur(0px);
+    -webkit-filter: blur(0px);
+    filter: grayscale(1);
+    -webkit-filter: grayscale(1);
+}
+
+
+/*
+
+.tilter_caption {
+	position: absolute;
+        font-size: 0.4em;
+	top: 10%;
+	padding: 1em;
+        color:#ffffff;
+}
+ 
+*/
+
+

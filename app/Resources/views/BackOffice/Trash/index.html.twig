@@ -1,0 +1,150 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+ 
+
+{% block body %}
+    <h1><a href="{{ path('trash_index') }}">Trash</a></h1>
+    
+    <li><a href="{{ path('trash_etablissement') }}">Etablissements</a></<li>
+    <li><a href="{{ path('trash_etablissement_externe') }}">Etablissements Ref Externe</a></<li>
+    <li><a href="{{ path('trash_etablissement_ref') }}">Etablissements Ref </a></<li>
+    <li><a href="{{ path('trash_trashsauvegarde') }}">trash_trashsauvegarde</a></<li>
+    <li><a href="{{ path('trash_domaines') }}">Domaines</a></<li>
+    <li><a href="{{ path('trash_preuves') }}">Preuves</a></<li>
+    <li><a href="{{ path('trash_biblio') }}">biblio </a></<li>
+   
+  
+        {% if referentielsExternePasBon | length > 0 %}
+            <h2>referentielsExternePasBon</h2>
+            <table  class='table table-bordered'>
+            {% for referentielExternePasBon in referentielsExternePasBon %}
+                <tr class='alert-danger'>
+                    <td>{{referentielExternePasBon.nom}}</td>
+                    <td>{{referentielExternePasBon.id_1}}</td>
+                    <td>{{referentielExternePasBon.nom_1}}</td>
+                    <td>{{referentielExternePasBon.id_2}}</td>
+                    <td>{{referentielExternePasBon.nom_2}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+        
+        
+            
+        
+        
+        
+        
+        
+        
+
+    <h3>Objectifs Stratégiques</h3>
+                {% include "ObjectifsAmelioration/Strategiques/inc_liste.html.twig" %} 
+                
+    <h3>Objectifs Opérationels</h3>
+  
+
+    <table class='table table-triable'>    
+            <thead>
+                <tr>
+                    <th>etablissement</th>
+                    <th>objectifOperationnel</th>
+                    <th>Etablissement</th>
+                    <th>Numero</th>
+                    <th>Critere</th>
+                     {#
+                    <th>Public</th>
+                    <th>Etablissement</th>
+                    <th>Numero</th>
+                    <th>Critere</th>
+                    <th>Public</th>
+                     #}
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+        {% for objectifOperationnel in objectifOperationnels %}
+            {# if objectifOperationnel.id == 6339 #}
+                {% for critere in  objectifOperationnel.criteres  %}
+                    {% if critere.obsolete %}
+                        <tr>
+                            <td>{{objectifOperationnel.etablissement}}</td>
+                            <td>{{objectifOperationnel}}</td>
+                                <td class='alert-warning'>{{critere.etablissement}}</td>
+                            <td class='alert-warning'>{{critere.numero}}</td>
+                            <td class='alert-warning'>{{critere}}</td>
+                            
+ 
+                            
+                        </tr>
+                    {% endif %} 
+                {% endfor %}
+            {# endif #} 
+       {% endfor %}
+                   </tbody>
+    </table>    
+    
+  
+       
+       
+        {% for objectifOperationnel in objectifOperationnels %}
+               {% include 'ObjectifsAmelioration/Operationnels/inc_modal_show.html.twig' %}
+       {% endfor %}
+       
+       {% include "ObjectifsAmelioration/Operationnels/inc_liste.html.twig" %} 
+  
+        
+         {% if  objectifOperationnels | length > 0 %}
+             
+            <div class='alert-danger'>obsolete !!!!
+                <pre>{% for objectifOperationnel in objectifOperationnels %}{% for critere in  objectifOperationnel.criteres  %}{% if critere.obsolete %}
+DELETE FROM `critere_objectif` WHERE `critere_id` =  {{critere.id}} AND  `objectif_operationnel_id` =  {{objectifOperationnel.id}} ;                    {% endif %} 
+{% endfor %}{% endfor %}
+                </pre>
+            </div>
+        {% endif %}
+       
+        
+       
+        {% for objectifOperationnel in objectifOperationnels %}
+               {% include 'ObjectifsAmelioration/Operationnels/inc_modal_show.html.twig' %}
+       {% endfor %}
+       
+       
+    <h3>Synthese domaines</h3>
+    
+    {% include "Evaluation/Domaine/inc_syntheses.html.twig" %}
+
+    
+    <h3>Constats</h3>
+         {% include "Evaluation/Referentiel/critere/inc_constats.html.twig" with {'trash' : true }   %}
+        {% if  constats | length > 0 %}
+             
+            <div class='alert-danger'>obsolete !!!!
+                <pre>
+                  {% for constat in constats %}
+                    DELETE FROM `constat` WHERE `constat`.`id` =  {{constat.id}};
+                  {% endfor %}
+                </pre>
+            </div>
+        {% endif %}
+        
+        
+    <h3>Preuves de qualité</h3>
+         {% include "Bibliotheque/preuves_list.html.twig" %} 
+  {% if  preuves | length > 0 %}
+             
+            <div class='alert-danger'>obsolete !!!!
+                <pre>
+                  {% for preuve in preuves %}
+                    DELETE FROM `preuve` WHERE `preuve`.`id` =  {{preuve.id}};
+                  {% endfor %}
+                </pre>
+            </div>
+        {% endif %}
+    
+    
+    
+{% endblock %}
+ 

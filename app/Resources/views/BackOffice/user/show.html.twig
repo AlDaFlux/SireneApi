@@ -1,0 +1,292 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+
+{% block body %}
+    <h1>{{'user' | get_icon | raw}}  Utilisateur</h1>
+    
+    {% if not app.user.CanSee(user) %}
+        
+        <div class='alert-danger alert'>
+            Vous n'avez pas accès à cet utilisateur
+        </div>
+    {% else  %}
+        
+        
+    
+    <h2>{{ user.username }}</h2>
+
+    
+    <table class='table table-bordered'> 
+        <tbody>
+            {% if user.etablissement is not empty   %}
+            <tr>    
+                <td><a href="{{ path('backoffice_etablissement_view', { 'id': user.etablissement.id }) }}">Etablissement</a></td>
+                <td><a href="{{ path('backoffice_etablissement_view', { 'id': user.etablissement.id }) }}">{{ user.etablissement}}</a></td>
+            </tr>
+            {% endif %}
+            
+            {% if user.gestionnaire is not empty %}
+            <tr>
+                <td><a href="{{ path('backoffice_gestionnaire_show', { 'id': user.gestionnaire.id }) }}">Gestionnaire</a></td>
+                <td><a href="{{ path('backoffice_gestionnaire_show', { 'id': user.gestionnaire.id }) }}">{{ user.gestionnaire.nom }}</a></td>
+            </tr>
+            {% endif %}   
+            
+            {% if user.creai is not empty %}
+            <tr>
+                <td><a href="{{ path('backoffice_creai_show', { 'id': user.creai.id }) }}">Creai</a></td>
+                <td><a href="{{ path('backoffice_creai_show', { 'id': user.creai.id }) }}">{{ user.creai }}</a></td>
+            </tr>
+            {% endif %}   
+            
+            <tr>
+                <th>Login</th>
+                <td>{{ user.username }}</td>
+            </tr>
+                
+
+            {% set showPassword= false %}
+            {% if is_granted('ROLE_MEGA_ADMIN')  or ((is_granted("ROLE_SUPER_ADMIN") or is_granted('ROLE_ADMIN')) and ( user.IsAnEtablissement  or user.IsGestionnaire ))    %}
+                {% if user.ChangedPassword  %}
+                <tr>
+                    <th>Mot de passe</th>
+                    <td><i>Le mot de passe à été changé</i></td>
+                </tr>
+                {% else  %}
+                    {% set showPassword= true %}
+                    
+                    <tr>
+                        <th>Premier Mot de passe</th>
+                        <td>{{ user.FirstPassword }}</td>
+                    </tr>
+                {% endif %}
+            {% endif %}
+   
+            <tr>
+                <th>Etat</th>
+                {% if user.desactive == 0 %}
+                    <td class='alert-success'>{{ user.etat}}</td>
+                {% elseif  user.desactive == 1 %}
+                    <td class='alert-warning'>{{ user.etat}}</td>
+                {% elseif   user.desactive ==-1 %}
+                    <td class='alert-danger'>{{ user.etat}}</td>
+                {% else %}
+                    <td>{{ user.etat}}</td>
+                {% endif %}
+            </tr>
+
+                <tr>
+                <th>Rôle principal</th>
+                <td>
+                     {{user.RolePrincipal | role_principal_lib | raw}}
+                </td>
+            </tr> <tr>
+                <th>Rôles</th>
+                <td>
+                    
+                    {% for role in user.roles %}
+                        
+                        {% if (role !=user.RolePrincipal) %}
+                          {{ role | role_icon | raw  }} 
+                      {% endif %}
+                    {% endfor %}
+            
+      
+                </td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Dernière connection</th>
+                <td>{% if user.dateLastConnect %}{{ user.dateLastConnect|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Date de création</th>
+                <td>{% if user.dateCreate %}{{ user.dateCreate|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Conditions acceptées</th>
+                <td>{{ user.conditionsAcceppted  | reponseGlyphIcone   | raw }}</td>
+            </tr>
+            {% include 'BackOffice/inc_blameable.html.twig' with {'entity' : user}  %}
+            
+            <tr>
+                <th>Saisies</th>
+                    {% if user.getCantDelete %}
+                        <td>
+                            <ul>
+                                <a href='{{ path('backoffice_user_show_saisies', {'id': user.id}) }}'>
+                                    {{ user.GetMessageCantDelete   | raw }}
+                                </a>
+                            </ul>
+                        </td>
+                    {% else  %}
+                        <td class='alert-danger'>
+                            Aucune saisie
+                        </td>
+                        
+                    {% endif %}
+                    
+            </tr>            
+            
+            {% if user.getReferentielsPublic | length > 0 and is_granted('ROLE_MEGA_ADMIN') %}
+                <tr>
+                    <th> Référentiels :</th>
+                    <td>
+                        <ul>
+                            {% for referentiel in user.getReferentielsPublic  %}
+                                {%if referentiel.fini==1 %}
+                                    <li><a class='btn-success' href='{{ path('referentielpublic_show', {'id': referentiel.id}) }}"'>{{referentiel}}</a>
+                                {% else %}
+                                    {% if is_granted('ROLE_MEGA_ADMIN')  %}
+                                        <li><a class='btn-warning' href='{{ path('referentielpublic_show', {'id': referentiel.id}) }}"'>{{referentiel}}</a>
+                                    {% else %}
+                                        <li><span class='btn-warning' href='{{ path('referentielpublic_show', {'id': referentiel.id}) }}"'>{{referentiel}}</span>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor  %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %} 
+
+        </tbody>
+    </table>
+
+            
+            
+    {% if user.getIsAdminPole %}
+        {% if user.NbEtablissementsPole %}
+            {% set class='success' %}
+        {% else %}
+            {% set class='danger' %}
+        {% endif %}
+            <div class="panel panel-{{class}}">
+            <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-king'></i> Poles </h3> </div>
+            
+            
+        {% if user.NbEtablissementsPole %}
+            <div class='alert alert-info'>L 'utilisateur à la visibilité sur {{user.NbEtablissementsPole}} établissements.</div>
+            <ul>
+            {% for etab in user.EtablissementsPole %}
+                 {% if is_granted("ROLE_SUPER_ADMIN_ETABLISSEMENT")  %}
+                    <li> <a href='{{ path('backoffice_etablissement_view', {'id': etab.id}) }}'>{{etab}}</a>
+                {% else  %}
+                    <li> {{etab}}
+                {% endif %}
+            {% endfor %}
+            </ul>
+        {% else %}
+            <div class='alert alert-danger'>L 'utilisateur n'a aucun établissement spécifié, il ne peut donc pas saisir/ consulter {{application_name}}
+            </div>
+        {% endif %}
+
+        {% if is_granted("ROLE_SUPER_ADMIN_UTILISATEUR")  or is_granted('ROLE_ADMIN') %}
+                  <a  href="{{ path('backoffice_user_edit_pole_etablissement', {'id': user.id}) }}" class="btn btn-{{class}} full-width" >Changer les établissements </a>
+        {% endif %}
+        
+        </div>
+
+    {% endif %}
+    
+    
+
+    {% if is_granted("ROLE_SUPER_ADMIN_UTILISATEUR")   or is_granted('ROLE_ADMIN') %}
+        
+        {#
+        <a class="btn btn-danger full-width" href="{{ path('mail_login_user', {'id': user.id}) }}">Envoyer un mail à l'utilisateur avec son login et son mot de passe </a>
+        #}
+        
+        {% if (user.email is not empty and showPassword) and (not (app.user.id == user.id))  %}
+            <a class="btn btn-danger full-width"  href="mailto:{{user.email}}?subject={{application_name}} création de compte&body=Bonjour, votre compte {{application_name}} a été créé.  
+               Vous pouvez vous connecter à l'adresse suivante {{ url('login')}}
+               Votre login : {{user.username}}
+               Votre mot de passe : {{ user.FirstPassword }}
+               ">Envoyer un mail à l'utilisateur avec son login et son mot de passe</a>
+            {% endif  %}
+
+        
+            
+        <p>        <p>
+
+            {% if app.user.id != user.id  and (is_granted('ROLE_MEGA_ADMIN')  or  (app.user.CanModify(user)  and not user.IsSuperAdmin)) %}
+                <a class="btn btn-danger full-width" href="{{ path('backoffice_user_edit_password', {'id': user.id}) }}">Modifier le mot de passe de l'utilisateur</a>
+            {% endif %}
+            {% if app.user.id == user.id  %}
+                <a class="btn btn-danger full-width" href="{{ path('backoffice_user_edit_his_password') }}">Modifier votre mot de passe</a>
+            {% endif %}
+                    <p>        <p>
+                        
+                        
+    {% endif %}
+                  
+    {% if user.IsAnEtablissement %}
+        {% if  is_granted('ROLE_SUPER_ADMIN_UTILISATEUR') or (is_granted('ROLE_ADMIN') and not app.user.isAdminPole and app.user.isGestionnaire ) %}
+
+                     {% if app.user.CanModify(user) %}
+
+                        <a class="btn btn-warning glyphicon glyphicon-pencil full-width" href="{{ path('backoffice_user_uptogestionnaire', { 'id': user.id }) }}">Transformer l'utilisateur en gestionnaire pole</a>
+                    {% endif %}
+        {% endif %}
+    {% endif %}
+                
+      <div class="row">
+            
+                 {% if app.user.CanModify(user) %}
+                 <div class='col-md-6'>
+                    <a class="btn btn-warning glyphicon glyphicon-pencil full-width" href="{{ path('backoffice_user_edit', { 'id': user.id }) }}">Modifier l'utilisateur</a>
+                </div>
+                {% endif %}
+
+                {% if app.user.CanDelete(user) %}
+                    <div class='col-md-6'>
+                        {% if user.CantDelete %}
+                                               <i data-invite="Voulez ne pouvez pas supprimer cette utilisateur car : {{user.MessageCantDelete | raw }}"
+                                                           class='btn btn-warning  full-width  CantDeleteBoxBefore glyphicon glyphicon-trash iconhead  orangeText active '>Supprimer définitivement l'utilisateur</i> 
+                        {% else %}
+                                     <i data-invite="Voulez-vous supprimer définitivement l'utilisateur ?"
+                                        data-url_delete="{{ path('backoffice_user_delete_url', {'id': user.id}) }}" 
+                                       class='btn btn-danger full-width DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active full-width'
+                                       data-zone_to_reload='#liste_user'
+                                       >Supprimer définitivement l'utilisateur</i> 
+                        {% endif %}
+                   </div>
+                {% endif %}
+            </div>
+    <p>
+      <div class="row">
+            <div class='col-md-12'>
+               <a class="btn btn-primary back_to_list full-width" href="{{ path('backoffice_user_index') }}">Retour a la liste </a>
+           </div>
+    </div>
+                
+                
+                {#
+            <div class='row'>           {% if user.IsSuperAdmin %}
+                       <i class='glyphicon glyphicon-ban-circle'></i>
+            {% else %}
+
+                <a href="{{ path('backoffice_user_edit', { 'id': user.id }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i>Modifier l'utilisateur</a>
+                <a  class="back_to_list btn  " href="{{ path('backoffice_user_index') }}">Retour à la liste</a>
+            </div>
+                        
+            <a href="{{ path('backoffice_user_edit', { 'id': user.id }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a>
+
+        
+           {% if user.IsSuperAdmin %}
+                       <i class='glyphicon glyphicon-ban-circle'></i>
+            {% else %}
+                         <i data-invite="Voulez-vous supprimer définitivement l'utilisateur ?"
+                                data-url_delete="{{ path('backoffice_user_delete_url', {'id': user.id}) }}" 
+                               class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active full-width'
+                               data-zone_to_reload='#liste_user'
+                               ></i> 
+            {% endif %}
+                    #}
+                       
+    {% endif %}
+                    
+                                  
+{% endblock %}

@@ -1,0 +1,26 @@
+    {% if  etablissement is defined %}
+        {% if etablissement.sizeMaxUpload  <   etablissement | sizeTotalFileUpload %}
+            <div class='alert alert-danger'>    
+        {% else %}
+                <div class='alert alert-success'>    
+        {% endif %}
+        <a href="{{ path('watchdd_index_etablissement', {'id': etablissement.id}) }}">
+                ({{etablissement }} : {{etablissement | sizeTotalFileUpload | formatBytes}} sur  {{etablissement.sizeMaxUpload | formatBytes}} autorisés).
+                  {{etablissement | sizeTotalFileUpload  | sizeFileUpladBar(etablissement.sizeMaxUpload) | raw }}
+        </a>
+            </div>     
+    {% else %}
+        
+                {% if gestionnaire.sizeMaxUpload  <   gestionnaire | sizeTotalFileUploadGestionnaire %}
+            <div class='alert alert-danger'>    
+        {% else %}
+                <div class='alert alert-success'>    
+        {% endif %}
+        <a href="{{ path('watchdd_index') }}">
+                ({{gestionnaire }} : {{gestionnaire | sizeTotalFileUploadGestionnaire | formatBytes}} sur  {{gestionnaire.sizeMaxUpload | formatBytes}} autorisés).
+                  {{gestionnaire | sizeTotalFileUploadGestionnaire  | sizeFileUpladBar(gestionnaire.sizeMaxUpload) | raw }}
+        </a>
+            </div>    
+ 
+     
+    {% endif %}

@@ -1,0 +1,8 @@
+services:
+    saksimple:
+        class: InDaFlux\SwissArmyKnifeBundle\Utils\SAKSimple
+    indaflux.twig_extension:
+        class: InDaFlux\SwissArmyKnifeBundle\Twig\SAKExtension
+        public: true
+        tags:
+            - { name: twig.extension }

@@ -1,0 +1,34 @@
+{% extends "Bibliotheque/layout.html.twig" %}
+{% block title %}{{ parent() }} - Bibliothèque - Modification{% endblock %}
+{#
+
+OBSOLETE ??
+<div class="well">
+		<form action="{{ path("pericles3_bibliotheque_update", {"id": bibliotheque.id}) }}" method="POST" novalidate>	
+			{# include 'Bibliotheque/formulaire.html.twig' 
+		</form>
+	</div>
+                        
+#}
+
+{% block body %}{{ parent() }}
+ 
+    {#             
+    {{ form_start(edit_form) }}
+
+     include "Bibliotheque/inc_lien_create_biblio.html.twig" with {'type_bibliotheque': 'etablissement','type_menu': 'navtabs'}  
+    
+        {{ form_widget(edit_form) }}
+        {{ include("Nuts/cancelsave.html.twig") }}
+    {{ form_end(edit_form) }}
+
+    #} 
+<br>  		<form id="form_biblio"  method="POST"  enctype="multipart/form-data" >	
+                    {% include "Bibliotheque/formulaire.html.twig" %} 
+
+            </form>
+
+    
+                        
+{% endblock %}
+ 

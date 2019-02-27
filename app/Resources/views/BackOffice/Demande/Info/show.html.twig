@@ -1,0 +1,70 @@
+{% extends "BackOffice/Demande/layout.html.twig" %}
+{% block body %}{{ parent() }}
+    <h2>
+                <a   href="{{ path('bo_demande_info_index') }}">Infos {{application_name}}</a>
+    </h2>
+
+    <table class='table table-bordered'>
+        <tbody>
+            <tr>
+                <th>Nom / Prenom</th>
+                <td>{{ demandeInfo.demandeurNomPrenom }}</td>
+            </tr>
+            <tr>
+                <th>Etablissement / Service </th>
+                <td>{{ demandeInfo.etablissementService }}</td>
+            </tr>
+             {% if demandeInfo.public is not empty %}
+            <tr>
+                <th>Public</th>
+                    <td>{{ demandeInfo.public}}</td>
+            </tr>
+           {% endif %}            <tr>
+                <th>Email</th>
+                <td>{{ demandeInfo.email }}</td>
+            </tr>
+            <tr>
+                <th>Tel</th>
+                <td>{{ demandeInfo.tel }}</td>
+            </tr>
+            <tr>
+                <th>Date de la Demande</th>
+                <td>{% if demandeInfo.dateDemande %}{{ demandeInfo.dateDemande|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+            <th>Etat</th>
+                <td>{{ demandeInfo.etat|  afficheDemandeEtat | raw }}</td>
+            </tr>
+            <tr>
+                <th>Remarques du demandeur</th>
+            <td>{{ demandeInfo.remarques  |  nl2br}}</td>
+            </tr>
+            <th>Commentaires sur la demande</th>
+                <td>{{ demandeInfo.commentaire | nl2br}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+              <div class="row">
+                <div class="col-sm-4">
+                    <a  class='btn btn-link full-width' href="{{ path('backoffice_demande_index') }}"> Retour au menu des demandes</a>
+                </div> 
+                <div class="col-sm-4">
+                        <a class='btn btn-warning full-width' href="{{ path('bo_demande_info_edit', { 'id': demandeInfo.id }) }}">Modifier</a>
+                </div> 
+                <div class="col-sm-4">
+                    
+                    
+                 <i data-invite="Voulez-vous supprimer définitivement la demande d'information ? il est conseillé de la passé en traité pour conserver l'historique des demandes."
+                                data-url_delete="{{ path('bo_demande_info_delete', {'id':demandeInfo.id}) }}" 
+                               class='btn btn-danger full-width DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active full-width'
+                               >Supprimer  </i> 
+                               
+                      
+                </div> 
+            </div> 
+                
+           
+ 
+{% endblock %}

@@ -1,0 +1,44 @@
+
+{% if preuves | length > 0 %}
+    {% for preuve in preuves %}
+    <p class="bubble CommentCore">
+        
+        
+        {% if preuve.bibliotheque %}
+            <a href="{{ path('pericles3_bibliotheque_show', {'id': preuve.bibliotheque.id}) }}"> 
+                {{'biblio' | get_icon | raw }} {{preuve.bibliotheque}}</a>
+                
+                {% if preuve.bibliotheque.TypeMessage =='fichier' %}
+                    <br><a title='Télécharger le fichier' target="_blank" href="{{ asset('upload') }}/{{ preuve.bibliotheque.getRelativPath }}">{{ preuve.fichier | GetIconFile(true) | raw }} {{ preuve.fichier}} </a>
+                {% elseif preuve.bibliotheque.TypeMessage =='lien' %}
+                    <br><a title='Allez à la page' target="_blank" href="{{ preuve.bibliotheque.href }}">{{ preuve.bibliotheque.TypeMessage | iconeBibliotheque() | raw  }}  {{ preuve.bibliotheque.href }}</a>
+                {% endif %}		  
+                {{ preuve.commentaire }}
+        {% else  %}
+        <a href="{{ asset('upload') }}/{{ preuve.getRelativPath }}" target="_blank">
+            {{ preuve.fichier }}</a></p> {{ preuve.commentaire }}
+
+        {% endif %}
+        
+        
+        
+ 
+    
+    <p class="CommentDetail">{{ preuve.user.username }}, {{ preuve.dateCreate|date('d-m-Y H:i:s') }} 
+    
+        {% if is_granted('ROLE_RW_EVAL') and     (is_granted('ROLE_ADMIN') or preuve.user.id==app.user.id) %}
+                <i data-invite="Voulez vous Supprimer définitivement la preuve ? "
+                    data-url_delete_ajax="{{ path('pericles3_preuve_delete_id', {'id':preuve.id}) }}" 
+                   data-zone_to_reload_whithid='#listePreuveContener'
+                   class='DeleteBoxBefore glyphicon glyphicon-trash redText iconhead'
+                   ></i> 
+        {% endif %}
+        </p>
+
+    {% endfor %}
+{% else %}
+    <div class='alert alert-warning'>Aucune preuve</div>
+{% endif %}
+
+
+{% include "MessageFlash/messageFlash.html.twig" %}

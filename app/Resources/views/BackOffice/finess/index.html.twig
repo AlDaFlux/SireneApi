@@ -1,0 +1,35 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>FINESS</h1>
+    <h2>Par département</h2>
+    
+    <table class='table table-bordered table-triable'>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Nom</th>
+            </tr>
+        </thead>
+        
+        
+        <tbody>
+    {% for departement in departements %}
+        <tr>
+            <td>{{departement.id}}</td>
+            <td><a href='{{ path('backoffice_finess_departement',{'id':departement.id}) }}'>{{departement}}</a></td>
+        </tr>
+        
+    {% endfor %}
+        </tbody>
+    </table>   
+         
+         
+    
+    {% if is_granted('ROLE_MEGA_ADMIN') %}
+                <a class='btn btn-danger full-width' href="{{ path('backoffice_finess_new') }}">Entrer manuellement un établissement et ses informations FINESS</a>
+    {% endif %}
+    
+    
+
+{% endblock %}

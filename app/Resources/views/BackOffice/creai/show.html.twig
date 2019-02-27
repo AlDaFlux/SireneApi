@@ -1,0 +1,71 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('backoffice_creai_index') }}">Creai</a></h1>
+    <h2>{{ creai.nom }}</h2>
+ 
+    <table class='table table-bordered'>
+        <tbody>
+            <tr>
+                <th>Nom</th>
+                <td>{{ creai.nom }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ creai.email}}</td>
+            </tr>
+            <tr>
+                <th>Adresse</th>
+                <td>{{ creai.adresse }}</td>
+            </tr>
+            <tr>
+                <th>Codepostal</th>
+                <td>{{ creai.codePostal }}</td>
+            </tr>
+            <tr>
+                <th>Ville</th>
+                <td>{{ creai.ville }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class='row'>
+        <div class="col-sm-6">
+            <a class='btn  btn-link full-width'   href="{{ path('backoffice_creai_index') }}">Retour a la liste</a>
+        </div>
+        {% if  is_granted('ROLE_MEGA_ADMIN') %}
+         <div class="col-sm-6">
+                <a class='btn  btn-warning full-width'    href="{{ path('backoffice_creai_edit', { 'id': creai.id }) }}">Modifier</a>
+          </div>
+        {% endif %}          
+      </div>
+
+          
+    <h2>Départements</h2>
+    <table class='table table-bordered table-triable'>
+           <thead>
+            <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>NbEtablisemnts </th>
+            </tr>
+        </thead>
+        
+        {% for departement in creai.departements %}
+            <tr>
+                <th>{{departement.id}}</th>
+                <td>{{departement}}</td>
+                <td>{{departement.NbEtablissements}}</td>
+            </tr> 
+        {% endfor %}
+    </table>
+    
+    <h2>Conseiller techniques</h2>
+    
+        <div id='liste_user' data-reload_with='{{ path("backoffice_users_creai", {"id":  creai.id}) }}'>
+            {% include "BackOffice/user/list.html.twig" with {'users': creai.users,'show_affected':false} %}
+        </div>
+    
+    
+    
+{% endblock %}

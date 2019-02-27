@@ -1,0 +1,15 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+
+
+{% block body %}
+    <h1>Bibliothèque {{application_name}}</h1>
+
+    {{ form_start(edit_form) }}
+        {{ form_widget(edit_form) }}
+        {{ include("Nuts/cancelsave.html.twig") }}
+    {{ form_end(edit_form) }}
+     <br>
+
+                    <a class="btn btn-link back_to_list full-width" href="{{ path('backoffice_bibliotheque_ancreai_index') }}">Retour a la liste </a>
+{% endblock %}

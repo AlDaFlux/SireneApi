@@ -1,0 +1,130 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Parent <a href="{{ path('referentielpublic_show', { 'id': referentielPublic.sourceParent.id }) }}">  {{ referentielPublic.sourceParent}} </a></h1>
+    <h1>Enfant<a href="{{ path('referentielpublic_show', { 'id': referentielPublic.id }) }}">  {{ referentielPublic }} </a></h1>
+   
+    <a class='btn btn-primary' href="{{ path('referentielpublic_comparaison_criteres', { 'id': referentielPublic.id }) }}">  Criteres </a>
+    <a class='btn btn-primary' href="{{ path('referentielpublic_comparaison_questions', { 'id': referentielPublic.id }) }}">  Questions </a>
+
+    
+
+    
+    {% if is_granted('ROLE_MEGA_ADMIN') %}
+        <a class='btn btn-primary' href="{{ path('referentielpublic_comparaison_autolink', { 'id': referentielPublic.id }) }}">  AutoLink</a>
+    {% endif  %}
+   
+    <p>
+        
+    <ul class='alert alert-info'>
+        <li><b>Eléménts supprimés : </b>  {{refsParentSansEnfant  | length }}
+        <li><b>Eléménts ajoutés : </b> {{refsOrphelins  | length }}
+    </ul>
+    
+
+
+
+    <div class='bilan_block'>
+        {% set tmp_class='alert-danger' %}
+        <h3>Eléments supprimés</h3>
+        {% include 'BackOffice/referentielpublic/comparaison_enfant_pere_inc_table.html.twig' with { 'refs' : refsParentSansEnfant}  %}
+    </div>
+
+    <div class='bilan_block'>
+        <h3>Eléments ajoutés : </h3>
+        {% set tmp_class='alert-success' %}
+        {% include 'BackOffice/referentielpublic/comparaison_enfant_pere_inc_table.html.twig' with { 'refs' : refsOrphelins}  %}
+    </div>
+
+    <table class='table table-bordered table-triable'>
+           <thead>
+            <tr>
+                    <th>Numéro</th>
+                    <th>Nb</th>
+                    <th>Libellé Enfant</th>
+                    <th>Nouveaux</th>
+                    <th>Commun</th>
+                    <th>Suprimé</th>
+                    <th></th>
+                    <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            {% set tmp_class='' %}
+            {% for critere in criteresParents %}
+                
+                {% set modifie = false %}
+
+                <tr>
+                        <td class='{{tmp_class}}'>{{critere.numero}}</td>
+                        <td class='{{tmp_class}}'>{{critere.NbChildren}}</td>
+                        
+                        
+
+                        {% set enfant = critere.SourceChildrenByPublic(referentielPublic) %}
+                        <td class='{{tmp_class}}'>{{ renderDiff(critere, enfant,"word") }}</td>
+                        
+                        
+                        {% set nb = critere.NbElementsApreciationsNouveauxByPublic(referentielPublic) %}
+                        {% if nb == 0 %}
+                            <td class='alert-success infobulle' title="Pas de nouveaux éléments d'apréciations">
+                        {% elseif nb < 2   %}
+                        {% set modifie = true %}
+                            <td class='alert-warning infobulle' title="{{nb}} nouveaux éléments d'apréciations">
+                        {% else  %}
+                            {% set modifie = true %}
+                            <td class='alert-danger infobulle' title="{{nb}} nouveaux éléments d'apréciations">
+                        {% endif%}
+                            {{nb}} <i class='glyphicon glyphicon-asterisk'></i></td>    
+                        
+                        
+                        {% set nb = critere.NbElementsApreciationsCommunsByPublic(referentielPublic)%}
+                        {% set pourc = ((nb *100) /critere.NbChildren)  %}
+                        
+                        {% if nb == critere.NbChildren %}
+                            <td class='alert-success infobulle' title="Tous éléments d'apréciations du critère père sont présent">
+                        {% elseif pourc > 85  %}
+                            {% set modifie = true %}
+                            <td class='alert-warning infobulle' title="Seulement {{nb}} éléments d'apréciations en commun (sur {{critere.NbChildren}})">
+                        {% else %}
+                            {% set modifie = true %}
+                            <td class='alert-danger infobulle'  title="Seulement {{nb}} éléments d'apréciations en commun (sur {{critere.NbChildren}})">
+                        {% endif%}
+                            {{nb}} <i   class='glyphicon glyphicon-ok-sign'></i>
+                        </td>    
+                        
+                        
+                        
+                        {% set nb = critere.NbElementsApreciationsEnlevesByPublic(referentielPublic) %}
+                        {% if nb == 0 %}
+                            <td class='alert-success infobulle' title="{{nb}} éléments d'apréciations suprimmés">
+                        {% elseif nb < 2   %}
+                            <td class='alert-warning infobulle' title="{{nb}} éléments d'apréciations suprimmés">
+                            {% set modifie = true %}
+                        {% else  %}
+                            <td class='alert-danger infobulle' title="{{nb}} éléments d'apréciations suprimmés">
+                            {% set modifie = true %}
+                        {% endif%}
+                        {{nb}} <i class='glyphicon glyphicon glyphicon-trash'></i></td>    
+
+                        <td>{% if modifie == true %} Modifié {% endif %}   </td>
+
+                        <td>  <a title='Voir le critere' href='{{ path('referentielpublic_show_node', {'id_node': critere.id, 'id': critere.ReferentielPublic.id}) }}'><i class='glyphicon glyphicon-eye-open '></i></a>
+                          <a title="Comparer les élments d'apréciations du critere avec ceux de son parent " href='{{ path('referentielpublic_comparaison_critere_one', {'id': referentielPublic.id,'critere': critere.id }) }}'><i class='glyphicon glyphicon-resize-horizontal'></i></a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    
+ 
+{% endblock %}
+
+
+{% block initjs %}
+    <script type="text/javascript">
+        window.scrollBy(0,500); // horizontal and vertical scroll increments
+    </script>
+{% endblock %}

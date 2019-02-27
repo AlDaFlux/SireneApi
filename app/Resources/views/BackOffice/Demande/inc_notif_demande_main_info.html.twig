@@ -1,0 +1,6 @@
+        {% if app.user.isCreai %}
+            {% set demandes_en_cours = app.user.creai.NbDemandesInfosNonFinies %}
+            {% set demandes_atraiter = app.user.creai.NbDemandesInfosAtraiter %}
+            {{ demandes_en_cours | NotifDemandes(demandes_atraiter,' d’informations') | raw }}
+        {% endif %}                                                                                          
+ 

@@ -1,0 +1,294 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+
+{% set nbPrestas  = facture.getFacturePrestas | length %}
+
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{facture}}</title>
+    
+<style>
+    .adresses
+    {
+        width:50%;
+        float:right;
+    }
+    .left_up
+    {
+        width:40%;
+        float:left;
+    }
+    
+    
+{% if nbPrestas < 14 %}
+
+    #piedPagePrint {
+        margin-top:12px;
+        display: block;
+        position: fixed;
+        bottom: 0;
+        right: 0;
+    }
+    {% endif  %}
+
+
+    
+    
+.info_complementaire_etab
+{
+    font-size: 0.75em;
+}
+
+
+    
+
+    .separateur
+    {
+        width:0;
+        clear:both;
+    }
+
+    .reception
+    {
+        padding:1em;
+    }
+
+    .tabfact , .fact
+    {
+        width:100%;
+        border-collapse: collapse;
+         
+    }
+    .tabfact .entente
+    {
+        text-align: center;
+    }
+    
+    .tabfact td , .tabfact .th
+    {
+        
+        margin: 0;
+        padding:3px;
+        border: 2px solid #000000;
+    }
+    
+
+    .loi1901
+    {
+        width:50%;
+        float:left;
+        font-size:0.8em;
+    }
+    
+    .declar
+    {
+        text-align:right;
+        width:50%;
+        float:right;
+        font-size:0.8em;
+    }
+    
+        
+    .remise
+    {
+        background-color: #D0E4FD;
+    }
+     .module_gestionnaire
+    {
+        background-color: #dfdfdf;
+    }
+    
+    .total
+    {
+        background-color: #dddddd;
+    }
+    
+    
+    
+    .rib
+    {
+        padding:10px;
+        margin-bottom:3px;
+        border: 3px solid #000000;
+    }
+    
+    
+    .montant
+    {
+        text-align:right;
+    }
+
+    .fact
+    {
+        text-align:center;
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+
+    .fact td
+    {
+        padding: 2px;
+    }
+    
+    .facture_titre
+    {
+        font-size:2em;
+        background-color: #D0E4FD;
+    }
+      
+    
+    .facture_num
+    {
+        font-size:1.7em;
+        background-color: #669fac;
+    }
+    
+    .facture_date
+    {
+        font-size:1.7em;
+    }
+        
+    
+   
+
+    
+    .adresse_cible
+    {
+        padding:20px;
+        border: 2px solid #000000;
+        font-size:1.3em;
+        margin-bottom: 15px;
+    }
+    
+    
+</style>
+    
+</head>
+<body> 
+        
+ {% set img_note = '/img/creai-aquitaine-logo.png' %}
+
+ <div class='left_up'>
+      
+ {{ img_note | getImageExport("PDF") | raw }}
+
+  <table class='fact'>
+  <tr class='facture_titre'><td>FACTURE</td></tr>
+  <tr class='facture_num'><td>{{facture.NumFactureFormate}}</td></tr>
+  <tr class='facture_date'><td>Le {{facture.dateEmission |date('d/m/Y')}}</td></tr>
+  </table> 
+</div> 
+  
+  
+<div class='adresses'>
+ CREAI Aquitaine
+<br>CS 81487 – Espace Rodesse
+<br>103 TER, rue Belleville, 33063 Bordeaux
+   
+<br>Tél : 05 57 01 36 50 - Fax : 05 57 01 36 99
+<br>info@creai-aquitaine.org 
+  
+  
+  
+  
+  
+  
+          <div class='adresse_cible'>
+              {{facture.getConcerne}}
+              <br>{{facture.AdresseLigne1}}
+              <br>{{facture.AdresseLigne2}}
+          </div>
+  
+  
+</div>
+  <hr class='separateur'>      
+      {% set total = 0  %}
+      
+      
+  <table class='tabfact'>
+      <tr class='entente'><td  colspan='2'>PRESTATION</td></tr> 
+      <tr class='entente'><td  colspan='2'>{{application_name}} <br>{{application_description}}</td></tr>
+
+ 
+                    {% for presta  in facture.getFacturePrestas %}
+                        {% if presta.gestionnaire %} 
+                            <tr class='module_gestionnaire'> 
+                                <td>{{presta}}
+                                    <div class='info_complementaire_etab'>
+                                        {{presta.RenouvellementLib}}
+                                        {{presta.ValiditeDateLib}}
+                                    </div>
+                                </td>
+
+                        {% elseif presta.etablissement %} 
+                            <tr> 
+                                <td>{{presta.etablissement}}
+                                    <div class='info_complementaire_etab'>
+                                        {{presta.etablissement.finess}}
+                                       
+                                        {{presta.RenouvellementLib}}
+                                        {{presta.ValiditeDateLib}}
+                                            
+                                    </div>
+                                    
+                                </td>
+                       
+                        {% endif %} 
+                            
+                            
+                            <td class='montant'>{{presta.MontantLib}}</td>
+                            
+                             
+                            
+
+                            
+                        </tr>
+                    {% set total = total  + presta.montant %}
+                    {% endfor %}
+                    
+                     {% if facture.remise %}
+                        {% set total = total  - facture.MontantRemise %}
+                        <tr class='remise'> 
+                            <td>Remise {{facture.remise }}
+                                {% if facture.remiseLibelle %}
+                                    ({{facture.remiseLibelle}})
+                                {% endif %}
+                            </td>
+                            <td class='montant'>- {{facture.MontantRemise}}€</td>
+                        </tr>
+                    
+                    {% endif %}
+                        <tr class='total'> 
+                            <td>Total : </td>
+                            <td class='montant'>{{total}} €</td>
+                         </tr>
+
+
+  </table>      
+ <hr class='separateur'>      
+  
+
+ <div class='reception'> En votre aimable règlement à réception.</div>
+   
+    <div class='rib'>
+ 
+{#      <br>IBAN : FR76 4255 9000 0421 0209 6450 749  #}
+      <br>IBAN : FR76 1333 5003 0108 9726 6378 571 
+      <br>BIC : CEPAFRPP333 
+    </div>
+ 
+
+<div id='piedPagePrint'>
+    <div class='loi1901'>
+     Association Loi 1901 
+     <br>Siret : ???
+     <br>Code APE : ???
+    </div>
+
+    <div class='declar'>
+         Déclaration d'activité en tant <br>que prestataire de formation  : <b>???????????????<b>
+    </div>
+</div> 
+      

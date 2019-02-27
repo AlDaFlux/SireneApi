@@ -1,0 +1,32 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('backoffice_finess_index', {}) }}">FINESS</a></h1>
+
+    
+        {% include "BackOffice/finess/inc_show.html.twig"  %} 
+         
+                        
+<div class='row'>
+     <div class="col-sm-6">
+         <a class="btn btn-primary active full-width" href='{{ path('backoffice_finess_departement',{'id':finess.departement.id}) }}'>Liste {{finess.departement}}</a>
+     </div>
+     <div class="col-sm-6"> 
+         <a class="btn btn-primary active full-width" href="{{ path('backoffice_finess_index') }}">Choisir un departement</a>
+     </div>
+</div>
+     <p>
+        
+        {% if is_granted('ROLE_MEGA_ADMIN') %}
+ 
+        <div class='row'>
+             <div class="col-sm-6">
+                <a class="btn btn-warning active full-width" href="{{ path('backoffice_finess_edit', { 'id': finess.id }) }}">Edit</a>
+         </div>
+         <div class="col-sm-6">
+         </div>
+         </div>
+        
+        {% endif %}
+                
+{% endblock %}

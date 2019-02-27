@@ -1,0 +1,16 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>Editorial</h1>
+    {% include 'Nuts/inc_presentation_arsene.html.twig' %}
+       <div class="row">
+            <div class="col-md-6">
+                <a class="btn btn-primary full-width" href='backoffice_bibliotheque_ancreai_index'>Retour</a>  
+            </div>
+            {% if is_granted("ROLE_RW_BIBLIO_ARSENE") %}
+                <div class="col-md-6">
+                   <a class="btn btn-warning full-width" href="{{ path('backoffice_editorial_edit_first') }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i>Modifier</a>
+                </div>
+            {% endif  %}
+        </div>
+{% endblock %}

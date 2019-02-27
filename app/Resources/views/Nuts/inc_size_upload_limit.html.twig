@@ -1,0 +1,11 @@
+{# empty Twig template #}
+<div class='alert alert-danger'>
+    vous ne pouvez plus Uploader de fichier, vous  avez atteinds la taille maximum 
+    {% if  etablissement is defined %}
+        ({{etablissement }} : {{etablissement | sizeTotalFileUpload | formatBytes}} sur  {{etablissement.sizeMaxUpload | formatBytes}} autorisés).
+    {% else %}
+        ({{gestionnaire }} : {{gestionnaire | sizeTotalFileUploadGestionnaire | formatBytes}} sur  {{gestionnaire.sizeMaxUpload | formatBytes}} autorisés).
+    {% endif %}
+    
+    
+</div>

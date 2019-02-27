@@ -1,0 +1,103 @@
+{% extends "Synthese/layout.html.twig" %}
+
+{% set critere=critereBackup.critereOriginal %}
+{% set dateSince=critereBackup.Sauvegarde.dateCreate%}
+
+
+
+
+{% block body %}
+    {{ parent() }}
+         <h1> <a href='{{ path('pericles3_backup_synthese', {'id': critereBackup.Sauvegarde.id}) }}'>{{critereBackup.Sauvegarde}}</a></h1>
+    <h2>Critère</h2>
+     
+     {% include "Nuts/menu_domaine_transversal.html.twig"  with {'domaine': critereBackup.dimension.domaine} %} 
+     {% include "Nuts/menu_dimension_transversal.html.twig"  with {'dimension': critereBackup.dimension} %} 
+     {% include "Nuts/menu_critere_transversal.html.twig"  with {'critere': critereBackup } %} 
+
+     <h2>Evaluation </h2>
+        {% if critere.note %}
+            
+            <div class="row">
+                <div class="col-md-8">    
+                        
+                    
+                    <img src='{{  critereBackup.note | formatNoteNuage | raw }}'> 
+                    <span class='eval_note'>{{critereBackup.note | formatNoteSimple}} </span>
+                    <br>{{ critereBackup.Sauvegarde.dateCreate|date('m/Y') }}
+                    
+                </div>
+                <div class="col-md-1">    
+                    <span class='eval_note'>{{ critereBackup.Evolution | get_icon_evol | raw}}</span>
+                </div>
+                <div class="col-md-3">    
+                    <img src='{{  critere.note | formatNoteNuage | raw }}'> 
+                    <span class='eval_note'>{{critere.note | formatNoteSimple}} </span>
+                    <br>{{ "now"|date("m/Y") }}
+                    
+                </div>
+            </div>
+                   
+                   
+        {% else %}
+            <div class="alert alert-warning">Vous n'avez pas évalué ce critère</div>
+         {% endif %}
+         
+         
+         
+    
+         
+         
+        <h2>Eléments d'appréciation </h2>
+          {% if critereBackup.critereOriginal.NbQuestionsRepondues > 0 %}
+
+                <ul>
+                {% for question in critereBackup.questions %}
+                    {% if question.questionOriginal.repondu %}
+                        {% if question.Evolution  %}
+                            <li class='reponse_evolution'>
+                        {% else %}
+                            <li class='reponse_non_evolution'>
+                        {% endif %}
+                                {{question.QuestionOriginal.reponse | reponseGlyphIcone | raw}} {{question.ReponseLib}} 
+                            </li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+        {% else %}
+            <div class="alert alert-warning">Vous n'avez pas renseignés les éléménts d'appréciation pour ce critère</div>
+        {% endif %}
+          
+        
+        
+   
+        {% if critere.ConstatsSince(dateSince)  | length > 0 %}
+        <h2>Constats et analyses</h2>
+                <ul>
+                   {% for constats in critere.ConstatsSince(dateSince)  %}
+                        <li>{{ constats }}</li>
+                {% endfor %}
+                </ul>
+        {% endif %}
+ 
+        {% if critere.preuvesSince(dateSince) | length > 0 %}
+        <h2>Preuves</h2>
+                <ul>
+                   {% for preuve in critere.preuvesSince(dateSince) %}
+                        <li>{{ preuve }}</li>
+                {% endfor %}
+                </ul>
+        {% endif %}
+        
+    
+      {% if critere.objectifsSince(dateSince) | length > 0 %}
+        <h2>Objectifs Opérationnels d'Amélioration</h2>
+                <ul>
+                   {% for objectif in critere.objectifsSince(dateSince) %}
+                        <li>{{ objectif }} - {{ objectif.DateDebut|date('Y-m-d') }}-->{{ objectif.DateFin|date('Y-m-d') }}</li>
+                {% endfor %}
+                </ul>
+        {% endif %}
+                          
+   
+{% endblock %}

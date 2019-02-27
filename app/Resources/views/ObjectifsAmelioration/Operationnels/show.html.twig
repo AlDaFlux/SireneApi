@@ -1,0 +1,164 @@
+{% extends "ObjectifsAmelioration/Operationnels/layout.html.twig" %}
+
+
+{% block body %}{{ parent() }} 
+ 
+            <div class="well">
+                <h2 class='ooa'>{{ objectifOperationnel.Titre}}</h2>
+                    
+                
+                    {% if objectifOperationnel.Complete > 0 %} 
+                    <p> {{ objectifOperationnel.Complete | progressBar | raw }}</p>
+                    {% else  %} 
+                        <div class='alert alert-warning'> Objectif non commencé ! (0%)</div>
+                    {% endif %} 
+
+                    {% set flashSuccess = app.session.flashbag.get('fafini') %}
+                    
+                    {% if flashSuccess|length > 0 %} 
+                        <div class="alert alert-success">
+                           La fiche action est maintenant terminée ! 
+                        </div>
+                        <div class="alert alert-warning">
+                            
+                            {% if objectifOperationnel.criteres|length > 1 %} 
+                                <h2><i class='glyphicon glyphicon-exclamation-sign redAlertText'></i>Mettez à jour les critères liés à cet objectif opérationnel</h2>
+                            {% else %}
+                                <h2><i class='glyphicon glyphicon-exclamation-sign redAlertText'></i>Mettez à jour le critère lié à cet objectif opérationnel</h2>
+                            {% endif %} 
+                            
+                            {% for critere in objectifOperationnel.criteres %}
+                                    <br><strong>Critère : </strong><a class="alert-link" href="{{ path('pericles3_critere', {'id': critere.id}) }}#0">
+                                         {{critere.Dimension.Domaine}} /  {{critere.Dimension}} /  {{critere}}  
+                                    </a>
+                                    <hr>
+                            {% endfor%}
+       
+                        </div>
+                    {% endif %}
+                    
+    
+                       
+          
+        <div class="row">
+
+             <div class="col-md-6 ">
+                <div class="panel panel-primary panel_ooa">            
+                    <div class="panel-heading"> <h3 class="panel-title">Infos</h3> </div>
+                      <div class="panel-body"> 
+                            {% include "ObjectifsAmelioration/Operationnels/inc_infos.html.twig" %} 
+                            
+
+                            {% if is_granted('ROLE_RW_PAQ') %}
+                                <a  class="btn oa btn-primary active full-width" href="{{ path('paq_ooa_edit', {'id': objectifOperationnel.id}) }}">
+                                    <i alt='modifier' class='glyphicon glyphicon-pencil'></i>Modifier les infos de l'objectif 
+                                </a>
+                            {% endif %}    
+            
+                            
+                     </div>  
+                </div>
+            </div>     
+                        
+            <div class="col-md-6 ">
+                <div class="panel panel-primary panel_ooa">
+                    <div class="panel-heading"> <h3 class="panel-title">Portefeuille de preuves</h3> </div>
+                     <div class="panel-body"> 
+                          
+                         
+                    
+                        <div id="CriterePreuves">
+ 
+                        {% set preuves = objectifOperationnel.preuves %}
+                        <div id="listePreuveContener" data-reload_with='{{ path("pericles3_preuves_ooa_minlist", {"id": objectifOperationnel.id}) }}'>
+                            {% include "Preuve/list_min_preuve.html.twig" %} 
+                        </div>
+                           
+                         {% if is_granted('ROLE_RW_PAQ') %}  
+                             
+                        {% set preuve_parent= '<input type="hidden" name="objectif_operationnel_id" value="' ~ objectifOperationnel.id ~ '">' %}
+                        {% include "Preuve/inc_add_preuve.html.twig" %} 
+                           {% endif %}    
+                                
+                        </div> 
+                
+                
+                        
+                        </div>
+                </div>
+            </div>                    
+        </div>
+      <div class="row">
+          
+                      <div class="col-md-12 ">
+                <div class="panel panel-primary panel_ooa">
+                    <div class="panel-heading"> <h3 class="panel-title">Critères</h3> </div>
+                        <div class="panel-body"> 
+                            
+                            
+                            
+        <div id='liste_critere_assoc'  data-reload_with='{{ path("pericles3_ooa_liste_critere", {"id": objectifOperationnel.id}) }}' >
+            {% include "ObjectifsAmelioration/Operationnels/list_criteres.html.twig" %} 
+        </div>  
+        
+        
+                                
+            {% if is_granted('ROLE_RW_PAQ') %}  
+                             
+            <h4>Associer un nouveau critère</h4>
+            
+            <form class='ajax_form' data-zone_to_reload='#liste_critere_assoc'  action="{{ path("pericles3_ooa_link_critere", {"id": objectifOperationnel.id}) }}" method="POST" >
+                  <select id='add_critere' name='add_critere' class='form-control'>
+                        {% for critere in criteres_liste %}
+                        <option value={{critere.id}}>{{ critere.numero}} -  {{ critere}} </option>
+                        {% endfor %}
+                  </select>
+                 
+                   <div align="center">
+                       <br>
+                   <input  type="submit"  class="btn oa btn-primary" id="submit-btn" value="Associer le critère" />
+                   </div>
+            </form>   
+            {% endif %}    
+                                
+                                
+                        </div>
+                </div>
+            </div>
+        </div>
+    
+      <div class="row">
+            {% if is_granted('ROLE_RW_PAQ') %}
+      
+            <div class='col-md-6'>
+                <a class="col-md-4 btn btn-primary oa active full-width" href="{{ path('paq_ooa_list') }}"><i class='glyphicon glyphicon-th-list'></i>Retour a la liste </a>
+            </div>
+            <div class='col-md-6'>
+                
+                
+                {% if objectifOperationnel.nbPreuves %}
+                      <i data-invite="Voulez ne pouvez pas supprimer l'objectif opérationnel tant que des preuves y sont associés?"
+                                       class='CantDeleteBoxBefore glyphicon glyphicon-trash iconhead btn btn-danger active full-width'
+                                       >Supprimer l'objectif </i> 
+                {% else %}
+                    <i data-invite="Voulez-vous supprimer définitivement l'objectif opérationnel ?"
+                                        data-url_delete="{{ path('paq_ooa_delete_get', {'id': objectifOperationnel.id}) }}" 
+                                       class='DeleteBoxBefore glyphicon glyphicon-trash iconhead btn btn-danger active full-width'
+                                       >Supprimer l'objectif</i> 
+                {% endif %}
+                    
+            
+            </div>
+            {% else %}
+                <div class='col-md-12'>
+                    <a class="btn btn-primary oa active full-width" href="{{ path('paq_ooa_list') }}"><i class='glyphicon glyphicon-th-list'></i>Retour a la liste </a>
+                </div>                                   
+            {% endif %}                       
+                               
+                               
+                               
+    </div>                              
+    </div>
+          
+
+{% endblock %}

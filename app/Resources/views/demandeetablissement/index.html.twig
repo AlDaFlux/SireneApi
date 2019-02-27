@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>DemandeEtablissement list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Demandeur_nom</th>
+                <th>Demandeur_prenom</th>
+                <th>Email</th>
+                <th>Commentaireancreai</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for demandeEtablissement in demandeEtablissements %}
+            <tr>
+                <td><a href="{{ path('demande_etablissement_show', { 'id': demandeEtablissement.id }) }}">{{ demandeEtablissement.id }}</a></td>
+                <td>{{ demandeEtablissement.demandeurnom }}</td>
+                <td>{{ demandeEtablissement.demandeurprenom }}</td>
+                <td>{{ demandeEtablissement.email }}</td>
+                <td>{{ demandeEtablissement.commentaireAncreai }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('demande_etablissement_show', { 'id': demandeEtablissement.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('demande_etablissement_edit', { 'id': demandeEtablissement.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('demande_etablissement_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

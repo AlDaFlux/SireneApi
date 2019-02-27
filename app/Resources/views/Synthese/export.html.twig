@@ -1,0 +1,75 @@
+{% extends "Synthese/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Synthèse{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    
+           
+{% if is_granted('ROLE_GESTIONNAIRE')  %}
+        
+    {%for etablissement in app.user.etablissements %} 
+        <h2>{{etablissement }}</h2>
+        
+            {% include "Synthese/inc_syntheses_genere.html.twig"   %}
+    {% endfor %}
+        
+{% else  %}
+    
+   {% include "Synthese/inc_syntheses_genere.html.twig"   %}
+{% endif  %}
+    
+    
+    
+    
+    
+    <p>
+    <p>
+    <p>  
+ 
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        
+    {% include "Synthese/inc_options_charts.js.twig"   %}
+
+    {% set wgraph =true %}
+
+        {% if is_granted('ROLE_GESTIONNAIRE')  %}
+            {%for etablissement in app.user.etablissements %} 
+
+                {{ etablissement.domaines  | order | graph('chartEvalGeneraleCanvas_'  ~ etablissement.id ) |raw }}
+                  {% for domaine in  etablissement.domaines %}
+                      {{ domaine.dimensions  | order | graph('chartDomaine' ~ domaine.id) |raw }}
+                  {% endfor %}
+            {% endfor %}
+        {% else %} 
+              {{ etablissement.domaines  | order | graph('chartEvalGeneraleCanvas_'  ~ etablissement.id ) |raw }}
+                {% for domaine in  etablissement.domaines %}
+                    {{ domaine.dimensions | order  | graph('chartDomaine' ~ domaine.id) |raw }}
+                {% endfor %}
+        {% endif %} 
+    
+
+
+
+        {% include "Synthese/inc_javascritp_export.js.twig"   %}
+    </script> 
+         
+{% endblock %}
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+

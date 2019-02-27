@@ -1,0 +1,15 @@
+ 
+            
+         <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-3">
+{#                <a class="btn btn-primary " href='{{ retour_page }}'>Retour</a>  #}
+                <a class="btn btn-primary " href='{{ app.request.headers.get('referer')|default('/') }}'>Retour</a>  
+            </div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3">
+                <button type="submit" id="Valider" class=" btn btn-primary">
+                Valider
+                </button>
+            </div>
+        </div>

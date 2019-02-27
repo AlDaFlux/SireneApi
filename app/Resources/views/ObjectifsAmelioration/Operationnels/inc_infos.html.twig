@@ -1,0 +1,9 @@
+
+    <p><span class="gras">Description : </span>{{objectifOperationnel.description  | nl2br}}</p>
+    <p><span class="gras">Date de début : </span>{{ objectifOperationnel.dateDebut is empty ? "" : objectifOperationnel.dateDebut|date("d-m-Y") }}</p>
+    <p><span class="gras">Date de fin : </span>{{ objectifOperationnel.dateFin is empty ? "" : objectifOperationnel.dateFin|date("d-m-Y") }}</p>
+    <p><span class="gras">Priorité : </span>{{objectifOperationnel.priorité }}</p>
+    <p><span class="gras">Moyens mobilisés :  </span>{{objectifOperationnel.moyen}}</p>
+    <p><span class="gras">Indicateurs de suivi/réalisation : </span>{{objectifOperationnel.indicateurs}}</p>
+     <p><span class="gras">Pilote par : </span>{{objectifOperationnel.pilotéPar }}</p>
+    <p><span class="gras">Créé le : </span>{{objectifOperationnel.dateCreate|date('d-m-Y H:i:s')}} <span class="gras"> par  </span>{{objectifOperationnel.user}}</p>

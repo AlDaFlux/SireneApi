@@ -1,0 +1,115 @@
+{% set titre_synthese= 'RBPP' %}
+{% set referentielPublic = etablissement.ReferentielPublic  %}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+    <meta charset="UTF-8">
+    <TITLE>{{titre_synthese}}</TITLE>
+    {% include "Synthese/export/inc/export.css.html.twig" %}
+</HEAD>
+<BODY> 
+
+{#    "/img/header_doc.jpg" | getImageExport(typeExport,"100%") | raw #}
+
+<div class='main_titre'>{{titre_synthese}}<br></div>
+
+<h2 class='center'>{{referentielPublic.public}}</h2>
+
+
+<div class='date_eval'>
+export du {{ 'now'|date('d-m-Y  H:i') }}
+</div>
+ 
+ 
+ <ol>
+{% for rbpp in referentielPublic.getBibliothequesAncreaiLinked  %}
+    
+    
+    <h2>{{rbpp}} ({{rbpp.datePublication|date('m-Y') }}) <a href='{{rbpp.href}}' target='blank'>&para; </a></h2>
+    <ul>
+        {% for CritereRef in rbpp.CriteresByRefPublic(referentielPublic)  %}
+               
+                {% set critere=  CritereRef.getCritereEtablissement(etablissement) %}
+                
+                 {% set currentState = critere.getStatus() %}
+            <table class='critere' width="100%">
+                <tr>
+                     <td width="10%">
+                            {{ critere.numero }} 
+                    </td>  
+                <td width="10%">
+                        {% set img_note = critere.note | formatNoteNuage %}
+                        {{ img_note | getImageExport(typeExport) | raw }}
+                    </td>
+                    <td width="10%">
+                            {{critere.note | formatNoteSimple}} 
+                    </td>  
+                   
+                   
+                    <td>
+                            {{ critere.nom }}
+                    </td>  
+                    <td width="10%">
+                            {% if currentState==3 %}
+                                <span style="color:green">Terminé</span>
+                            {% else %}
+                                <span style="color:{% if currentState==3 %}green{% elseif currentState==2 %}orange{% elseif currentState==1 %}#777777{% endif %};">{% if currentState==3 %}[Terminé]{% elseif currentState==2 %}[En cours]{% elseif currentState==1 %}[Non démarré]{% endif %}</span>
+                            {% endif %}
+                    </td>  
+
+                    </tr>
+                </table>            
+                {% set currentState = critere.getStatus() %}
+             
+                  
+                
+       {% endfor %}
+    </ul>
+    
+    
+{% endfor %}
+
+    {#
+           <li> {{CritereRef.numero}} : {{CritereRef}} ({{CritereRef.referentielPublic }})
+    
+        {{rbpp.href}}
+    {{dump(rbpp.referentielPublics)}}
+    
+
+            
+            CriteresEtablissement
+            
+            
+            {% set critere = Criterereferentiel.criteres %}
+            <li> ++{{critere.note}}
+         
+            {# 
+            {{dump(Criterereferentiel)}}
+            {{dump(critere)}}
+      {% endfor %}
+        #}
+            
+        {# include "Synthese/export/inc/inc_critere_complet.html.twig" #}
+
+  
+    
+    
+ </ol>
+
+
+            
+            
+            
+        
+        
+                    
+            
+             
+ </BODY>
+</HTML>
+
+
+
+

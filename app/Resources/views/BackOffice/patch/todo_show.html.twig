@@ -1,0 +1,65 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+
+
+{% block body %}
+
+     <h1><a href="{{ path('patch_index') }}">Patch</a></h1>
+     <h2><a href='{{ path('backoffice_patch_todo_index') }}'>Patch To Do</a></h2>
+      
+
+     <table class='table'>
+        <tbody>
+            <tr>
+                <th>Etablissement</th>
+                <td> <a href="{{ path('backoffice_etablissement_view', { 'id': patchToDo.etablissement.id }) }}">{{ patchToDo.etablissement}}</a></td>
+            </tr>
+            <tr>
+                <th>Patch</th>
+                <td><a href="{{ path('patch_show', { 'id': patchToDo.patch.id }) }}">{{ patchToDo.patch}}</a></td>
+            </tr>
+            <tr>
+                <th>Etat</th>
+                <td class='{{patchToDo.EtatClass}}'>{{ patchToDo.Etat}}</td>
+            </tr>
+            <tr>
+                <th>Date debut patch</th>
+                <td>{% if patchToDo.dateDebutPatch %}{{ patchToDo.dateDebutPatch  |date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Date fin patch</th>
+                <td>{% if patchToDo.dateFinPatch %}{{ patchToDo.dateFinPatch  |date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            {% if patchToDo.fini %}
+            <tr>
+                <th>Duree</th>
+                <td>{{ patchToDo.duree }}</td>
+            </tr>
+                
+            {% endif  %}
+                
+                
+            
+            
+            <tr>
+                <th>Created by</th>
+                <td>{{ patchToDo.createdBy }}</td>
+            </tr>
+            <tr>
+                <th>Updated by</th>
+                <td>{{ patchToDo.updatedBy }}</td>
+            </tr>
+            
+            
+            
+        </tbody>
+    </table>
+ 
+            <div>
+                <i data-invite="Voulez-vous supprimer le patch automatique."
+                                data-url_delete="{{ path('backoffice_patch_todo_delete', {'id':patchToDo.id}) }}" 
+                               class='btn btn-danger full-width DeleteBoxBefore glyphicon glyphicon-trash iconhead'
+                               >Supprimer le patch automatise!!!</i> 
+                                </div>
+                                
+{% endblock %}

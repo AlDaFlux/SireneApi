@@ -1,0 +1,6 @@
+services:
+    in_da_flux_table_triable.twig_extension:
+        class: InDaFlux\TableTriableBundle\Twig\TableTriableExtension
+        public: true
+        tags:
+            - { name: twig.extension }

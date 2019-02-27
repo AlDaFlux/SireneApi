@@ -1,0 +1,26 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+
+{% block body %}
+    
+    
+    <h1>{{filename}}</h1>
+             
+    <form action="{{path("backoffice_admin_watchdd_searchfile")}}"  method="POST">
+    <div class="form-group">    
+        <input type="text" name='filename' value='invit carnaval 2018. ime.docx' class="form-control" placeholder="Rechercher un fichier">
+    </div>
+    <button type="submit" class="btn btn-default">Rechercher</button>
+</form>
+
+    <h2>Bibliotheques</h2>
+    {% include "Bibliotheque/inc_liste.html.twig" %}
+    <h2>Preuves</h2>
+    {% include "Bibliotheque/preuves_list.html.twig" %}
+    
+    {{dump(locations)}}
+    
+    
+    
+    
+{% endblock %}

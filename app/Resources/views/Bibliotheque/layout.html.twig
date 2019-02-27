@@ -1,0 +1,211 @@
+{% extends "::layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Bibliothèque{% endblock %}
+{% block message_flash %}
+{% endblock %}
+
+	
+{% block body %}{{ parent() }}
+
+    <h1><a href='{{ path("pericles3_bibliotheque") }}'>BIBLIOTHÈQUE</a>
+        {% if is_granted('ROLE_GESTIONNAIRE') and etablissement is defined %}
+             -> <a title='Etablissement'  href="{{ path('pericles3_bibliotheque_etablissement_id', {'id': etablissement.id}) }}"> <i class='glyphicon glyphicon-queen'></i>  {{etablissement}}</a>
+        {% endif %}
+
+    </h1>
+        
+    
+    
+    
+     
+     <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a title='BIBLIOTHÈQUE' class="navbar-brand" href="{{ path('pericles3_bibliotheque') }}"><i class='glyphicon glyphicon-book'></i> </a>
+    </div> 
+    
+      
+    
+    
+    
+        
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        
+        <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              {{application_name}}<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+                <li><a href="{{ path('pericles3_bibliotheque_ancreai')}}"><i class='glyphicon glyphicon-th-list'></i>Tous</a></li>
+                <li role="separator" class="divider"></li>
+                    {% for source in BibliothequeAncreaiTypeSources %}
+                        <li><a href="{{ path('pericles3_bibliotheque_ancreai_source', {'id': source.id}) }}"><i class='glyphicon glyphicon-book'></i>{{source}}</a></li>
+                    {% endfor %}
+                
+            {% if is_granted('ROLE_GESTIONNAIRE') %}
+                <li role="separator" class="divider"></li>
+                    {% for ref in app.user.GestionnaireReferentielsPublic %}
+                         <li><a href="{{ path('pericles3_bibliotheque_ancreai_public', {'id': ref.id}) }}"><i class='glyphicon glyphicon-book'></i>{{ref }}</a></li> 
+                    {% endfor %}
+                
+            {% endif %}
+                
+          </ul>
+        </li>
+        </ul>
+
+          
+        {% if gestionnaire  is defined %}
+            <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class='glyphicon glyphicon-king'></i>  Gestionnaire<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{{ path('pericles3_bibliotheque_gestionnaire') }}"><i class='glyphicon glyphicon-th-list'></i>Liste</a></li>
+              </ul>
+            </li>
+            </ul> 
+        {% endif %} 
+        
+        
+        
+        
+        
+        {% if  is_granted('ROLE_GESTIONNAIRE') %}
+                    <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                 <i class='glyphicon glyphicon-queen'></i> Bibliothèques  établissement<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                        <li><a href="{{ path('pericles3_bibliotheque_etablissement') }}"><i class='glyphicon glyphicon-th-list'></i>Tous</a></li>
+                            <li role="separator" class="divider"></li>
+
+                      {% for etablissement in app.user.etablissements %}
+                      <li>
+                          <a href="{{ path('pericles3_bibliotheque_etablissement_id', {'id': etablissement.id}) }}"><i class='glyphicon glyphicon-queen'></i> 
+                              
+                              {% if etablissement.NbBibliotheques > 0 %} 
+                                        <span class="label label-primary">  {{etablissement.NbBibliotheques }} </span> 
+                              {% else  %} 
+                                        <span class="label label-default">  {{etablissement.NbBibliotheques }} </span> 
+                              {% endif  %} 
+                              
+                              {{etablissement}}</a>
+                            
+                      </li>
+                      {% endfor %}
+                </ul>
+              </li>
+              </ul>
+            {% else %} 
+                    <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class='glyphicon glyphicon-queen'></i>  Etablissement<span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <li><a href="{{ path('pericles3_bibliotheque_etablissement') }}"><i class='glyphicon glyphicon-th-list'></i>Liste</a></li>
+                            <li role="separator" class="divider"></li>
+                              {% if is_granted('ROLE_RW_BIBLIO') %}
+                              
+                                    <li><a href="{{ path('pericles3_bibliotheque_create', {'type': "lien"}) }}"><i class='glyphicon glyphicon-plus'></i> Lien </a></li>
+                                    <li><a href="{{ path('pericles3_bibliotheque_create', {'type': "fichier"}) }}"><i class='glyphicon glyphicon-plus'></i> Fichier </a></li>
+                                    <li><a href="{{ path('pericles3_bibliotheque_create', {'type': "texte"}) }}"><i class='glyphicon glyphicon-plus'></i> Texte </a></li>
+                              {% endif %}
+                      </ul>
+                    </li>
+                    </ul>
+            {% endif %} 
+        
+
+          
+          
+          
+          
+          
+          
+          
+          
+ 
+        <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              Preuves<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+              
+            <li><a href="{{ path('pericles3_bibliotheque_preuves') }}"><i class='glyphicon glyphicon-th-list'></i>Liste</a></li>
+
+            {% if app.user.hasOneEtablissement %}
+                    <li><a href="{{ path('pericles3_bibliotheque_preuves_biblio') }}"><i class='glyphicon glyphicon-th-list'></i>Migrer les preuves vers la bibliotheque - -</a></li>
+            {% else %}            
+                {% if  etablissement is defined %}
+                    <li><a href="{{ path('pericles3_bibliotheque_preuves_biblio_etab', {"id":etablissement.id}) }}"><i class='glyphicon glyphicon-th-list'></i>Migrer les preuves vers la bibliotheque +</a></li>
+               {% endif %}            
+            {% endif %}
+            
+            
+                <li role="separator" class="divider"></li>
+                
+
+                {% if  is_granted('ROLE_GESTIONNAIRE') %}
+                      {% for etablissement in app.user.etablissements %}
+                          <li><a href="{{ path('pericles3_bibliotheque_preuves_etablissement', {'id': etablissement.id}) }}"><i class='glyphicon glyphicon-queen'></i> 
+                                {% if etablissement.NbPreuves > 0 %} 
+                                        <span class="label label-primary">  {{etablissement.NbPreuves }} </span> 
+                              {% else  %} 
+                                        <span class="label label-default">  {{etablissement.NbPreuves}} </span> 
+                              {% endif  %} 
+                              
+
+                              {{etablissement}}</a></li>
+                      {% endfor %}
+                {% endif %}
+                    <li role="separator" class="divider"></li>
+
+                
+                
+            <li><a href="{{ path('pericles3_bibliotheque_preuves_source', {'type_preuve': "objectif_operationnel"}) }}"><i class='glyphicon glyphicon-th-list'></i>PAQ</a></li>
+                <li role="separator" class="divider"></li>
+                
+            <li><a href="{{ path('pericles3_bibliotheque_preuves_source', {'type_preuve': "critere"}) }}"><i class='glyphicon glyphicon-th-list'></i>Evaluation</a></li>
+
+            {% if domaines is defined %}
+                 {% for domaine in domaines %}
+                    <li><a href="{{ path('pericles3_bibliotheque_preuves_domaine', {'id': domaine.id}) }}"><i class='glyphicon glyphicon-book'></i> - {{domaine}}</li>
+                {% endfor %}
+           {% endif %}            
+                <li role="separator" class="divider"></li>
+                 <li><a href="{{ path('pericles3_bibliotheque_preuves_source', {'type_preuve': "pdv"}) }}"><i class='glyphicon glyphicon-th-list'></i>Point de vue de l'usager</a></li>                 
+          </ul>
+        </li>
+        
+      
+        
+        
+        </ul>
+          
+          
+          
+           
+      <ul class="nav navbar-nav navbar-right">
+        {% if  not is_granted('ROLE_GESTIONNAIRE') %}
+            <li title='Rechercher dans les Bibliothèques ' class='print_this_page'><a href="{{ path('pericles3_bibliotheque_search')}}"><i class='glyphicon glyphicon-search' ></i></a></li>
+        {% endif %}
+            <li title='Imprimer cette page' class='print_this_page'><a href="#" OnClick="javascript:window.print()"><i class='glyphicon glyphicon-print' ></i></a></li>
+      </ul>
+    
+   
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+                
+{% include "MessageFlash/messageFlash.html.twig" %}
+                
+{% endblock %}
+ 
+

@@ -1,0 +1,549 @@
+{% set granted = true %}
+{% if app.user is not empty %}
+    {% if app.user.Desactive %}
+            {% set granted = false %}
+            {% set granted_explanation = " <div class='alert alert-danger'>
+                        L'utilisateur  <b>" ~ app.user  ~ "</b> n'a plus accès a " ~ application_name ~ ".
+                    </div>
+                    <div class='alert alert-warning'>
+                    Veuillez prendre contact avec les administrateurs : <a href='mailto:info@arsene-evaluation.fr'>info@arsene-evaluation.fr</a>
+                    </div>
+                
+                <p>&nbsp;
+                <p>&nbsp;
+                <p>&nbsp;
+                <p>&nbsp;
+                <p>&nbsp;
+                <p>&nbsp; "%}
+            
+            
+    {% endif %}
+{% endif %}
+{% if not app.debug and enmaintenace == 'true' %}
+        {% set granted = false %}
+            {% set granted_explanation = " <div class='alert alert-danger'>
+                    Accès impossible
+                    </div>
+                    <div class='alert alert-warning'>
+                        Le site arsene est en maintenance   
+                    </div>
+                
+                <p>&nbsp;
+                <p>&nbsp;
+                <p>&nbsp;
+                <p>&nbsp;
+                <p>&nbsp;
+                <p>&nbsp; "%}
+                
+{% endif %}
+{% if domaine is defined %}
+    {% set currentDomaineId = domaine.id %}
+    {% set currentDomaine = domaine %}
+    
+{% elseif dimension is defined  %}
+    {% set currentDomaineId = dimension.domaine.id %}
+    {% set currentDomaine = dimension.domaine %}
+{% elseif critere is defined  %}
+    {% set currentDomaineId = critere.dimension.domaine.id %}
+    {% set currentDomaine = critere.dimension.domaine %}
+{% elseif ObjectifStrategique is defined  %}
+    {% set currentDomaineId = ObjectifStrategique.domaine.id %}
+    {% set currentDomaine = ObjectifStrategique.domaine %}
+{% else  %}
+    {% set currentDomaineId = 0%}
+{% endif %}
+
+{% if etablissement is not defined %}
+        {% if domaine is defined %}
+              {% set etablissement = domaine.etablissement %}
+        {% elseif dimension is defined  %}
+            {% set etablissement = dimension.domaine.etablissement %}
+        {% elseif critere is defined  %}
+             {% set etablissement = critere.dimension.domaine.etablissement %}
+             
+        {% elseif objectifOperationnel is defined  %}
+             {% set etablissement = objectifOperationnel.etablissement %}
+        {% elseif ObjectifStrategique is defined  %}
+             {% set etablissement = ObjectifStrategique.etablissement %}
+        {% elseif DomaineExterne is defined  %}
+             {% set etablissement = DomaineExterne.etablissement %}
+        {% elseif Sauvegarde is defined  %}
+             {% set etablissement = Sauvegarde.etablissement %}
+        {% elseif bibliotheque is defined  %}
+            
+            {% if bibliotheque.etablissement is not empty %}
+                 {% set etablissement = bibliotheque.etablissement %}
+            {% endif %}
+             
+{% endif %}
+{% if etablissement is not defined and  app.user is defined and app.user is not null %}
+        {% if app.user.etablissement is not null %}
+            {% set etablissement=app.user.etablissement %}
+        {% endif%}
+
+    {% endif%}
+{% endif%}
+{% if etablissement is defined  and etablissement %}
+    {% if app.user.adroitetablissement(etablissement)  %}
+        {% set domaines =   etablissement.domaines %}
+    {% else  %}
+                {% set granted = false %}
+            {% set granted_explanation = " <div class='alert alert-danger'>
+                        L'utilisateur ARSENE  <b>" ~ app.user  ~ "</b>  n'a pas les droits d'accés a cette page.
+                    </div>
+                <p>&nbsp;
+                <p>&nbsp;
+                <p>&nbsp; "%}
+    {% endif%}
+{% endif%}
+{% if app.user %}
+    {% if app.user.gestionnaire is defined  and app.user.gestionnaire is not null %}
+          {% set gestionnaire=app.user.gestionnaire %}
+    {% elseif etablissement is defined %}
+        {% if etablissement.gestionnaire  %}
+            {% set  gestionnaire=etablissement.gestionnaire %}
+        {% endif%}
+    {% endif%}
+{% endif%}
+{% set wrongRef=false  %}
+{% if currentDomaineId > 0 %}
+    {% if  currentDomaine.ReferentielPublic !=  etablissement.referentielPublic %}
+        {% set wrongRef=true %}
+        
+    {% endif %}
+{% endif %}
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="/favicon.ico">
+        <title>{% block title %}  {{application_name}} {% endblock %}</title>
+
+        <!-- Latest compiled and minified CSS -->
+        {#<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"> #}
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  
+ 
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+
+         
+        
+        {% stylesheets 
+            '@Pericles3Bundle/Resources/public/css/main.css' 
+            '@Pericles3Bundle/Resources/public/css/navbar.css' 
+            '@InDaFluxTableTriableBundle/Resources/public/css/*' 
+            '@InDaFluxJQueryUIBundle/Resources/public/jquery-ui.css' 
+            '@InDaFluxFontelloBundle/Resources/public/css/*' 
+        %}
+        
+                <link href="{{asset_url}}" type="text/css" rel="stylesheet" />
+        {% endstylesheets %}
+        
+
+        <link href="{{asset('/css/' ~ application_name | lower ~ '.css' )}}" type="text/css" rel="stylesheet" />
+
+        
+        
+        
+
+        {% if app.environment =='dev'  %}
+            {% stylesheets  '@Pericles3Bundle/Resources/public/css/dev.css'    %}
+                    <link href="{{asset_url}}" type="text/css" rel="stylesheet" />
+            {% endstylesheets %}
+        
+        {% endif  %}
+        
+        {% stylesheets  'bundles/indafluxjquerygantt/css/style.css'  filter='cssrewrite'  %}
+        
+                <link href="{{asset_url}}" type="text/css" rel="stylesheet" />
+        {% endstylesheets %}
+
+            
+        
+
+        {% if wrongRef %}
+            {% stylesheets '@Pericles3Bundle/Resources/public/css/wrongref.css' %}
+                        <link href="{{asset_url}}" type="text/css" rel="stylesheet" />
+            {% endstylesheets %}
+        {% endif  %}
+        
+            {% stylesheets '@Pericles3Bundle/Resources/public/css/print.css' %}
+                        <link href="{{asset_url}}" type="text/css" rel="stylesheet"  media="print" />
+            {% endstylesheets %}
+        
+           
+        <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
+        <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+            
+        
+{#        <script src="{{ asset('/bundles/indafluxjquerygantt/js/jquery.min.js') }}"></script> #}
+
+
+        
+        
+{#
+
+ <link href="{{ asset('css/dataTables.bootstrap.min.css') }}" type="text/css" rel="stylesheet" /> 
+       
+
+        <link href="{{ asset('/bundles/indafluxtabletriablecapitalize/css/dataTables.bootstrap.min.css') }}" type="text/css" rel="stylesheet">
+#}
+  
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        {% block stylesheets %}
+        {% endblock %}
+    </head>
+    <body id="body">    
+ 
+        
+        
+                        {% block large_header %}
+
+				<div id="large-header" class="large-header">
+					<canvas id="demo-canvas"></canvas>
+					<div class="main-title">
+
+                                            <a href="{{  path("pericles3_homepage", {}) }}" alt="Accueil" title="Accueil">
+                                                <img src='{{ asset('img/logo-' ~ application_name ~ '.png') | lower }}'>
+                                            </a>
+                                            {% if etablissement is defined  %}
+                                                {% if etablissement.public is defined  %}
+                                                        <div class="thin">{{ etablissement.public }}</div>
+                                                {% endif %}
+                                            {% endif %}
+                                            
+                                              {% if app.user %}
+                                                    {% if app.user.creai %}
+                                                        <div class="thin">{{ app.user.creai }}</div>
+                                                    {% endif %}
+                                                {% endif %}
+                                        </div>
+                                            
+                                            
+                                            {% if app.user %}
+                                                <div id='btns_header' class='screen_only'>
+                                                        <div class='ctrl'>
+                                                            <a href="{{ path("arsene_user_profile", {}) }}">
+                                                                <i class="icon-user"></i><span class='btn_txt'>{{ app.user.username }}</span>
+                                                            </a>
+                                                        </div>
+                                                        <div class='ctrl'>
+                                                            <a href="{{ path("login_logout", {}) }}">
+                                                                <i class="icon-power unlog"></i><span class='btn_txt'>D&eacute;connexion</span>
+                                                            </a>
+                                                   
+                                                        </div>
+                                                </div>
+                                            {% endif %}
+ 				</div>
+                                                            			
+		         {% endblock %}
+
+                            
+        
+        
+        {% if app.user %}
+            {% if app.user.gestionnaire %}
+                <div class="gestionnaire_titre">
+                    <a href="{{  path("pericles3_homepage", {}) }}" alt="Accueil" title="Accueil">   {{ app.user.gestionnaire }}</a>
+                </div>
+                        
+                    {% set path = app.request.server.get("REQUEST_URI") %}
+                    <ul class="nav nav-tabs nav-justified screen_only fond_white">
+                        
+                        {% if is_granted('ROLE_ADMIN')   %}
+                                <li role="presentation" class="{% if path starts with '/eval' %}active{% endif %}" ><a title="Interface d'administration" href="{{ path("pericles3_backoffice", {}) }}" ><i class='glyphicon glyphicon-wrench'></i>Administration</a></li> 
+                                
+                       {% endif %}
+                        <li role="presentation" class="{% if path starts with '/eval' %}active{% endif %}" ><a title='intégrez les résultats de vos investigations' href="{{ path("pericles3_evaluation", {}) }}" ><i class='glyphicon glyphicon-thumbs-up'></i> Evaluation</a></li> 
+                        <li role="presentation" class="{% if path starts with '/paq' %}active{% endif %}"><a title='suivez la réalisation de votre PAQ' href="{{ path("pericles3_paq", {}) }}"><i class='glyphicon glyphicon-export'></i> Plan d'Amélioration de la Qualité</a></li> 
+                        <li role="presentation" class="{% if path starts with '/bibliotheques' %}active{% endif %}"><a title='une gestion automatisée des références qualité' href="{{ path("pericles3_bibliotheque", {}) }}"> <i class='glyphicon glyphicon-book'></i> Bibliotheque</a></li>
+                        <li role="presentation" class="{% if path starts with '/syntheses' %}active{% endif %}"><a title='production automatisée de rapports' href="{{ path("pericles3_synthese", {}) }}"><i class='glyphicon glyphicon-stats'></i> Synthèse</a></li>
+                    </ul>
+                {% if etablissement is defined %}
+                    {% set etab_titre = '<div class="etablissement_titre">' %}
+                    {% set etab_titre = etab_titre ~ '<a href="' ~ path('pericles3_homepage_etablissement', {'id': etablissement.id}) ~ '">'  ~ etablissement ~ '</a></div>' %}
+                {% endif %}
+            {% else %}
+                {% if etablissement is defined %}
+                    {% if app.user.isCreai %}
+                        <div class="etablissement_titre">
+                            <a href="{{ path('pericles3_homepage_etablissement', {'id': etablissement.id}) }}" alt="Accueil" title="Accueil - {{ etablissement }}">  {{ etablissement }}</a>
+                        </div>
+                    {% else %}
+                        <div class="etablissement_titre">
+                            <a href="{{  path("pericles3_homepage", {}) }}" alt="Accueil" title="Accueil">  {{ etablissement }}</a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+        
+        
+
+        
+        
+
+        <div id="mainContainer">
+                
+            {% if granted  %}
+                {% block menu %}
+                    {% if app.user %}
+                            {% if app.user.etablissement or  app.user.gestionnaire or app.user.creai%}
+                                {% include "Nuts/menu_main.html.twig"  %} 
+                            {% endif %}
+                            
+                    {% endif %}
+                {% endblock %} 
+		 <div class='legend'>
+                {% block legend %}
+                {% endblock %} 
+                </div>
+                        <div id="bodyContainer">
+
+                        {% if wrongRef %}
+                            <div class='alert alert-danger'> Vous êtes sur l'ancien référentiel  <b>{{currentDomaine.ReferentielPublic}}</b> au lieu d'etre sur <b>{{etablissement.referentielPublic}}</b> ! </div>
+                        {% endif %}
+                                     
+                        {% block message_flash %}
+                            {% include "MessageFlash/messageFlash.html.twig" %}
+                        {% endblock %}
+
+                        {% block body %}
+                        {% endblock %}
+
+                        {% include "Nuts/inc_modal_delete.html.twig" %} 
+
+            {% else %}
+                <h1> {{application_name}} </h1>
+                   {{granted_explanation | raw }}
+            {% endif %}
+
+                
+    
+               {% include "Nuts/inc_footer.html.twig" %} 
+            
+            </div>
+        </div>
+               
+               
+            <div class='out_container'>
+                {% block out_container  %}
+                    <div id='modals_ajax'></div>
+                {% endblock %}
+            </div>
+
+            <div id='modals_ajax'></div>
+            
+            
+
+               
+        <footer class="footer screen_only">
+            <a href="{{ path("pericles3_mentions") }}"><i class='glyphicon glyphicon-info-sign'></i> Mentions légales</a>
+             {% if is_granted('ROLE_USER') %}
+                     - <a href="mailto:info@arsene-evaluation.fr"><i class='glyphicon glyphicon-envelope'></i> Contact</a>
+            {% endif %}
+
+             {% if is_granted('ROLE_ADMIN')   %}
+                     - <a href="{{ path("pericles3_backoffice", {}) }}"><i class='glyphicon glyphicon-wrench'></i>Administration</a>
+            {% endif %}
+        </footer>
+
+
+{#         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> #}
+{#        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> #}
+
+
+        <!-- Latest compiled and minified JavaScript -->
+{#        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> #}
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    
+{#        <script src="{{ asset('js/main.js')}}?aszs"></script> #}
+{#        <script src="{{ asset('js/spaceheader.js') }}"></script> 
+        
+        
+        <script src="{{ asset('js/jquery.loading.js') }}"></script>
+        <script src="{{ asset('lib/jquery-ui-1.11.4/jquery-ui.min.js') }}"></script>
+        
+#}
+        
+        <!-- ICI -->
+        
+        
+{#             '@InDaFluxTableTriableBundle/Resources/public/js/tableExtension.js'  #}
+{#
+            '@InDaFluxTableTriableBundle/Resources/public/js/jszip.js' 
+            '@InDaFluxTableTriableBundle/Resources/public/js/pdfmake.js' 
+#}
+        {% javascripts 
+
+       '@InDaFluxTableTriableBundle/Resources/public/js/jszip.js' 
+            '@InDaFluxTableTriableBundle/Resources/public/js/pdfmake.js' 
+            '@InDaFluxTableTriableBundle/Resources/public/js/vfs_fonts.js' 
+            '@InDaFluxTableTriableBundle/Resources/public/js/jquery.dataTables.min.js' 
+            '@InDaFluxTableTriableBundle/Resources/public/js/dataTables.buttons.js' 
+            '@InDaFluxTableTriableBundle/Resources/public/js/buttons.print.js' 
+            '@InDaFluxTableTriableBundle/Resources/public/js/buttons.html5.js' 
+            '@InDaFluxTableTriableBundle/Resources/public/js/buttons.bootstrap.js' 
+            '@InDaFluxTableTriableBundle/Resources/public/js/dataTables.bootstrap.js' 
+            '@InDaFluxTableTriableBundle/Resources/public/js/tableExtension.js' 
+            '@Pericles3Bundle/Resources/public/js/*' 
+
+        %}
+                 <script   src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    
+        {# '@InDaFluxJQueryUIBundle/Resources/public/jquery-ui.min.js' juste avant dernier  #}
+
+
+        <script src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+                     
+        <script src="{{ asset('bundles/indafluxjquerygantt/js/jquery.fn.gantt.js') }}"></script>
+        
+          
+        {% block chartjsversion %}
+            {#             <script src="{{ asset('bundles/chartjs/js/Chart.min.js') }}"></script> #}
+            <script src="{{ asset('bundles/pericles3/js/chart/Chart.min.js') }}"></script> 
+        {% endblock %}
+             
+
+        <script src="{{ asset('bundles/pugxautocompleter/js/autocompleter-jqueryui.js') }}"></script> 
+ {#       <script src="{{ asset('bundles/pugxautocompleter/js/autocompleter-select2.js') }}"></script>#}
+        
+        
+        
+        
+        
+        
+        
+    	<script type="text/javascript">
+            
+      $('[data-toggle="popover"]').popover({title: "Aide",html: true,  trigger: "hover"});   
+      
+      
+  
+ $(".type_fichier_preuve").change(function(){
+        if ($(this).val() == 2) 
+        {
+                $("#choose_new_file").show();
+                $("#choose_existing_file").hide();
+                $("#choose_bibli_etablissement").hide();
+                $("#choose_bibli_gestionnaire").hide();
+                
+        } 
+        if ($(this).val() == 1) 
+        {
+                $("#choose_new_file").hide();
+                $("#choose_existing_file").show();
+                $("#choose_bibli_etablissement").hide();
+                $("#choose_bibli_gestionnaire").hide();
+        }
+        if ($(this).val() == 3) 
+        {
+                $("#choose_new_file").hide();
+                $("#choose_existing_file").hide();
+                $("#choose_bibli_etablissement").show();
+                $("#choose_bibli_gestionnaire").hide();
+        }
+        if ($(this).val() == 4) 
+        {
+                $("#choose_new_file").hide();
+                $("#choose_existing_file").hide();
+                $("#choose_bibli_etablissement").hide();
+                $("#choose_bibli_gestionnaire").show();
+        }
+        if ($(this).val() == 0) 
+        {
+                $("#choose_new_file").hide();
+                $("#choose_existing_file").hide();
+                $("#choose_bibli_etablissement").hide();
+                $("#choose_bibli_gestionnaire").hide();
+        }});
+
+    $(".hidethis").hide();
+    
+            
+    $(".datepicker").datepicker({
+            altField: "#datepicker",
+            closeText: 'Fermer',
+            prevText: 'Précédent',
+            nextText: 'Suivant',
+            currentText: 'Aujourd\'hui',
+            monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+            monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+            dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+            dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+            dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+            weekHeader: 'Sem.',
+            dateFormat: 'dd-mm-yy'
+        }); 
+            
+        $("form input.date").datepicker({
+            altField: "#datepicker",
+            closeText: 'Fermer',
+            prevText: 'Précédent',
+            nextText: 'Suivant',
+            currentText: 'Aujourd\'hui',
+            monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+            monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+            dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+            dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+            dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+            weekHeader: 'Sem.',
+            dateFormat: 'dd-mm-yy',
+            firstDay:1
+        });
+        
+  
+    
+            
+        /* Bibliotheuqe**/
+	$(".typeMessage").change(function(){
+				if ($(this).val() == 1) {
+	   				$("#message").show();
+	   				$("#lien").hide();
+	   			} else {
+	   				$("#message").hide();
+	   				$("#lien").show();
+	   			}
+			});
+                  
+       $('#body').on('click', '.apercu_oo', function() {
+           
+            var id_oo=$(this).data('idoo');
+            if(! document.getElementById('oo_'+$(this).data('idoo')))
+            {
+                $.post( "{{path("paq_ooa_modal_ajax")}}", { id_objectif: id_oo})
+                    .done(function( data ) {
+                    $('#modals_ajax').append(data);
+                    $('#oo_'+id_oo).modal('show');
+                });
+   
+            }
+            else
+            {
+                  $('#oo_'+$(this).data('idoo')).modal('show');
+            }
+       });
+            
+                  
+    
+        </script>
+         
+            
+        {% block javascripts %}
+
+        {% endblock %}
+        {% block initjs %}
+
+        {% endblock %}
+    </body>
+</html>

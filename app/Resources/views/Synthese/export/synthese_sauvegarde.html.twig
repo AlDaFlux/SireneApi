@@ -1,0 +1,91 @@
+{% set titre_synthese= 'Evolution  ' ~ Sauvegarde  ~ ' ->  '  ~  "now"|date("d/m/Y")  %}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+    <meta charset="UTF-8">
+    <TITLE>{{titre_synthese}}</TITLE>
+    {% include "Synthese/export/inc/export.css.html.twig" %}
+</HEAD>
+<BODY> 
+
+    
+    {% include "Synthese/export/inc/page_de_garde.html.twig" %}
+   
+     
+
+
+<h1>Evaluation résumé </h1>
+<h2>Comparaison avec la sauvegarde      {{Sauvegarde}}</h2>
+{% include "Synthese/export/inc/inc_menu_domaine.html.twig" %}
+
+      
+
+<h3>Cotation moyenne des {{ etablissement.domaines|length }} domaines d'évaluation (10 points maximum)</h3>
+<div class='graph_big'>
+        {% set img_note = '/upload/st01/etablissement_' ~ etablissement.id ~ '/synthese/graphs/general_backup_' ~ Sauvegarde.id ~ '.jpg' %}
+        {{ img_note | getImageExport(typeExport) | raw }}
+</div>
+         
+{% for domaine in etablissement.domaines %}
+    <h1><a id="domaine_{{domaine.ordre}}" name="domaine_{{domaine.ordre}}">Evaluation : Domaine {{ domaine.ordre}}. {{ domaine}}</a></h1>
+
+    <div class='graph_big'>
+        {% set img_note = '/upload/st01/etablissement_' ~ etablissement.id ~ '/synthese/graphs/' ~ domaine.id ~ '_backup_' ~ Sauvegarde.id  ~ '.jpg' %}
+        {{ img_note | getImageExport(typeExport) | raw }}
+    </div>
+
+    
+    
+    <div class='sub_menu_doc'>
+        {% for dimension in domaine.Dimensions | order %} 
+            {# <li><a href="#dimension_{{dimension.id}}">{{ dimension.numero }} - {{ dimension.nom }}</a></li>  #}
+             <li>{{ dimension.numero }} - {{ dimension.nom }}</li>  
+        {% endfor %}
+    </div>
+    
+    
+     
+    
+    
+    
+        {% for dimension in domaine.Dimensions  | order %}
+            <h2 id="dimension_{{dimension.id}}" name="dimension_{{dimension.id}}" >Dimension {{ domaine.ordre }}.{{ dimension.ordre }} <small>{{ dimension.nom }}</small></h2>
+
+
+            {% for critere in dimension.criteres | order %}
+                {% include "Synthese/export/inc/inc_critere_sauvegarde_fromcritere.html.twig" %}
+            {% endfor %}
+
+            
+            
+        <br>
+        {% endfor %}
+        
+        
+        
+        
+  
+        
+    <h1><a>PAQ : Domaine {{ domaine.ordre}}. {{ domaine}}</a></h1>
+         {% include "Synthese/export/inc/inc_paq_domaine.html.twig" with {'domaine':  domaine } %}
+        
+{% endfor %}
+
+
+
+            
+            
+            
+        
+        
+                    
+            
+             
+ </BODY>
+</HTML>
+
+
+
+

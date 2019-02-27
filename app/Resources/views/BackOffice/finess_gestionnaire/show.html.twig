@@ -1,0 +1,31 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('backoffice_finess_gestionnaire_index', {}) }}">FINESS GESTIONNAIRE</a></h1>
+
+    
+        {% include "BackOffice/finess_gestionnaire/inc_show.html.twig"  %} 
+        
+        
+      
+{% endblock %}
+
+    
+{% block out_container  %}  
+        {% include "BackOffice/finess/inc_liste.html.twig"  with {'finesses': finess.etablissements}   %} 
+
+         
+        
+        {% if is_granted('ROLE_MEGA_ADMIN') and false %}
+ 
+        <div class='row'>
+             <div class="col-sm-6">
+                <a class="btn btn-warning active full-width" href="{{ path('backoffice_finess_edit', { 'id': finess.id }) }}">Edit</a>
+         </div>
+         <div class="col-sm-6">
+         </div>
+         </div>
+        
+        {% endif %}
+                
+{% endblock %}

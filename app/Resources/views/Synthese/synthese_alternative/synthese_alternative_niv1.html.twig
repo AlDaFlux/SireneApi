@@ -1,0 +1,23 @@
+{% extends "Synthese/layout.html.twig" %}
+
+
+{% block title %}{{ parent() }} - Synthèse {% endblock %}
+
+
+{% block body %}
+    {{ parent() }}
+    
+    <h1>Synthèse  <a href="{{ path('pericles3_synthese_alternatif') }}">{{etablissement.ReferentielExterne}}  </a></h1>
+  
+    
+    
+    <h2> {{DomaineExterne}} : {{DomaineExterne.getMoyenneNotes | formatNoteSimple }} </h2>
+ 
+            <ol>
+            {% for critere in DomaineExterne.criteres  %}
+                <li>{{critere}}  : <b>{{critere.Note | formatNoteSimple}}</b></li>
+                {{critere.Note | formatNoteBar | raw }}
+            {% endfor %}
+            </ol> 
+    
+{% endblock %} 

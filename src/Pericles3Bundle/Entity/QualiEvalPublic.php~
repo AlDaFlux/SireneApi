@@ -1,0 +1,30 @@
+<?php
+
+namespace Pericles3Bundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Bibliotheque
+ *
+ * @ORM\Entity
+ */
+class QualiEvalPublic
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+    
+    /**
+    * @ORM\OneToOne(targetEntity="Pericles3Bundle\Entity\ReferentielPublic")
+    */
+    private $referentielPublic;
+    
+    
+ 
+}

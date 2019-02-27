@@ -1,0 +1,134 @@
+{% extends "ObjectifsAmelioration/layout.html.twig" %}
+
+
+{% block body %}
+    {{ parent() }}
+     
+    {% if ObjectifsStrategiques is not empty %}
+            
+                
+        <div class="row">
+     
+            <div class="col-md-8  ">
+                <div class="panel panel-primary panel_osa"> 
+                    <div class="panel-heading"> <h3 class="panel-title">Derniers Objectifs Stratégiques d'Amélioration</h3> </div>
+                    <div class="panel-body table-responsive "> 
+                         {% include "ObjectifsAmelioration/Strategiques/inc_liste.html.twig" %} 
+                         <a href="{{ path('paq_osa_list') }}"  class = "btn  btn-link oa full-width">Voir les {{etablissement.objectifsStrategique| length}}  Objectifs Stratégiques</a>
+                    </div>
+                </div>
+            </div>
+ 
+            <div class="screen_only col-md-4 ">
+                <div class="panel panel-primary panel_osa"> 
+                    <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-tree-deciduous'></i><a href="{{ path('pericles3_paq_organigramme') }}">Qualigramme</a></h3> </div>
+                               <a  href="{{ path('pericles3_paq_organigramme') }}"> <img src="{{ asset('img/qualigramme.png')}}"/></a>
+                    </div>
+                </div>
+            </div>
+ 
+    {% else %}
+            <div class='alert alert-warning'>
+                Vous n'avez aucun Objectif Stratégique
+            </div>
+            <a class="btn btn-primary active full-width" href="{{ path('paq_osa_new', {'id': etablissement.id}) }}"><i class='glyphicon glyphicon-plus'></i>Créer un Objectif Stratégique</a>
+    {% endif %}
+   
+     
+     
+    <p>
+
+        
+    {% if objectifOperationnels is not empty %}
+        
+     {% for objectifOperationnel in objectifOperationnels %}
+            {% include 'ObjectifsAmelioration/Operationnels/inc_modal_show.html.twig' %}
+    {% endfor %}
+    
+    
+            <div class="panel panel-primary panel_ooa"> 
+                <div class="panel-heading"> <h3 class="panel-title">Derniers Objectifs Opérationnels d'Amélioration</h3> </div>
+                <div class="panel-body"> 
+                      <div id='liste_objectifs '  data-reload_with='{{ path("pericles3_ooa_liste_inc_last") }}'>
+                        {% include "ObjectifsAmelioration/Operationnels/inc_liste.html.twig" %} 
+                      </div>
+                     <a href="{{ path('paq_ooa_list') }}"  class = "btn  btn-link oa full-width">Voir les {{etablissement.objectifsOperationnel| length}}  Objectifs Opérationnels </a>
+                </div>
+                </div>
+            
+      {% else %}
+            <div class='alert alert-warning'>
+                Vous n'avez aucun Objectif Opérationnel
+            </div>
+            <a class="btn btn-primary active full-width" href="{{ path('paq_ooa_new') }}"><i class='glyphicon glyphicon-plus'></i>Créer un Objectif Opérationnel</a>
+    {% endif %}
+   
+            
+    {% if objectifOperationnelsOrphan is not empty %}
+         
+        <div class="row">
+     
+            <div class="col-md-12 ">
+                <div class="panel panel-danger"> 
+                <div class="panel-heading"> <h3 class="panel-title">++ Objectifs Opérationnels sans critère</h3> </div>
+                <div class="panel-body"> 
+                    <div class='alert alert-warning'>
+                        Chaque objectif opérationnel doit être lié à au moin un critère pour apparaitre dans les synthèses
+                        , veuillez procéder à l'association ou bien supprimer l'objectif.
+                    </div>
+                    
+                    {% set objectifOperationnels = objectifOperationnelsOrphan %}
+                    
+                       
+                            {% for objectifOperationnel in objectifOperationnels %}
+                               {% include 'ObjectifsAmelioration/Operationnels/inc_modal_show.html.twig' %}
+                            {% endfor %}
+                   
+                        <div id='liste_objectifs_orphans' data-reload_with='{{ path("pericles3_ooa_liste_orphans") }}'>
+                            {% include "ObjectifsAmelioration/Operationnels/inc_liste.html.twig" with {'liste_objectif_toreload' : 'liste_objectifs_orphans'} %} 
+                        </div>
+                </div>
+            </div>
+                </div>
+            </div>
+                        
+                        
+                        
+                        
+    {% endif %}
+    
+    
+     {% if objectifOperationnels is not empty %}
+    
+         <h2>Exports</h2>
+        <div class="row" >
+        {% set colspan=6 %}
+                
+        {% include "Synthese/inc_synthese_genere.html.twig" 
+                with {'sub_titre': 'Plan d\'amélioration de la qualité', 'description_synthese': 'Export du plan d\'amélioration de la qualité','synthese': 'synthese_paq'} %}
+
+        {% include "Synthese/inc_synthese_genere.html.twig" 
+                with {'sub_titre': 'Plan d\'amélioration de la qualité - Objectifs Opérationnels ', 'description_synthese': 'Export du plan d\'amélioration de la qualité par Objectif Opérationnel','synthese': 'synthese_paq_o'} %}
+
+             
+        </div>
+                          
+    {% endif %}
+    
+    
+{% endblock %}
+ 
+        
+        
+
+{% block javascripts %}
+    <script type="text/javascript">
+        
+    {% set wgraph =false %}
+        {% include "Synthese/inc_javascritp_export.js.twig"   %}
+    </script> 
+         
+{% endblock %}
+
+ 
+     

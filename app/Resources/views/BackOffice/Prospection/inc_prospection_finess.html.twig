@@ -1,0 +1,54 @@
+ 
+<table class='table  table-triable'>
+        <thead>
+            <tr>
+                <th>Codefiness</th>
+                <th>{{application_name}}</th>
+                <th>Raisonsociale</th>
+                <th>gestionnaire</th>
+                <th>Catégorie</th>
+                <th>Codepostal</th>
+                <th>Ville</th>
+                <th>Public cible</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for finess in finesses %}
+            <tr>
+
+                <td><a href="{{ path('backoffice_finess_show', { 'id': finess.codeFiness }) }}">{{ finess.codeFiness }}</a></td>
+                <td>
+                    {% if finess.HaveEtablissement %}
+                        <i class='glyphicon glyphicon-ok greenText'></i>
+                    {% endif %}
+                </td>
+                <td>{{ finess.raisonSociale }}</td>
+                <td>
+                     {%  if finess.Gestionnaire is not empty    %}
+                         <a href="{{ path('backoffice_gestionnaire_show', { 'id': finess.gestionnaire.gestionnaire.id }) }}"> 
+                            {{ 'gestionnaire' | get_icon | raw }}  {{ finess.gestionnaire.gestionnaire }}
+                        </a>
+                    {% endif  %}
+                </td>
+                <td>{{ finess.LibCategorie}}</td>
+                <td>{{ finess.codePostal }}</td>
+                <td>{{ finess.ville }}</td>
+                <td> {{ finess.ReferentielPublicDefaut }}  </td>            
+                <td>
+                {% if cur_etablissement is defined %}
+                    {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT') and not finess.HaveEtablissement %}
+                        <a class='btn btn-danger' href='{{ path('backoffice_etablissement_linkfiness_go', { 'id':etablissement.id,'finess' : finess.codeFiness }) }}'>Lier le finess à l'établissement </a>
+                    {% endif %}
+                {% endif %}
+                    {% if is_granted('ROLE_MEGA_ADMIN')  %}
+                                <a href="{{ path('backoffice_finess_edit', { 'id': finess.codeFiness }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a>
+                    {% endif %}
+                </td>
+                
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+ 

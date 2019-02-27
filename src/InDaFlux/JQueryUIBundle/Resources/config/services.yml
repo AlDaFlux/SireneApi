@@ -1,0 +1,4 @@
+services:
+#    in_da_flux_j_query_ui.example:
+#        class: InDaFlux\JQueryUIBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

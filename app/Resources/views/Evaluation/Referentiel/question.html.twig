@@ -1,0 +1,191 @@
+{% extends "Evaluation/layout.html.twig" %}
+
+
+
+{% block title %}{{ parent() }} - {{ question_referentiel}}{% endblock %}
+
+{% block body %}
+    
+      {{ parent() }}
+      <h1><a href="{{ path('pericles3_referentiel_ref', {'id': question_referentiel.referentielPublic.id}) }}">{{ question_referentiel.referentielPublic}}</a></h1>
+      <h2><a href="{{ path('pericles3_domaine_ref', {'id': question_referentiel.parent.parent.parent.id}) }}">{{ question_referentiel.parent.parent.parent.ordre}} - {{ question_referentiel.parent.parent.parent}}</a></h2>
+      
+    <div id="CritereGlobalListContainer">
+
+      {% include "Evaluation/Referentiel/list_dimension.html.twig" with 
+            {'dimensions' :question_referentiel.parent.parent.parent.getChildren | order
+                ,'current_dimension_ref_id' : question_referentiel.parent.parent.id
+                } %}
+
+    {% include "Evaluation/Referentiel/list_critere.html.twig" with 
+        {'criteres' : question_referentiel.parent.parent.getChildren | order
+                ,'current_critere_ref_id' : question_referentiel.parent.id} %}
+        
+    {% include "Evaluation/Referentiel/list_questions.html.twig" with 
+        {'questions' : question_referentiel.parent.getChildren | order
+            ,'current_question_ref_id' : question_referentiel.id} %}
+        
+      <hr class='separateur'>
+      
+    </div> 
+      
+    <h2><a href="{{ path('pericles3_question_ref', {'id': question_referentiel.id}) }}">{{ question_referentiel.ordre}} - {{ question_referentiel}}</a></h2>
+ 
+    <table id='questions' class='table table-bordered table-triable'>
+              
+                     {% if is_granted('ROLE_RW_EVAL') %}
+                <tr>   
+                    <td>Cochez tout </td>
+                        <td>   
+                                <label class="to_all oui radio-inline"><input type="radio" value="1" name="radQuestion_yesno" >Oui</label>
+                                <label class="to_all non radio-inline"><input type="radio" value="0" name="radQuestion_yesno" >Non</label>
+                                <label class="to_all nc radio-inline"><input  type="radio" value="-1" name="radQuestion_yesno">Non Concerné</label>
+                        </td>
+                </tr>   
+            {% endif %}
+                    
+           {% for question in questions_byref %}
+                {% if question.NonConcerne %} 
+                    {% set question_alert='alert alert-info' %}
+                {% elseif question.reponse %} 
+                    {% set question_alert='alert-success' %}
+                {% elseif not question.reponse and question.reponse is not null  %} 
+                    {% set question_alert='alert-danger' %}
+                {% else %} 
+                    {% set question_alert='alert-warning' %}
+                {% endif %} 
+
+                    
+                <tr class='ligne_questions alert {{question_alert}}'>   
+                    <td>{{question.etablissement}}</td>
+                     {% if is_granted('ROLE_RW_EVAL') %}
+                        <td>   
+                                <label class="oui radio-inline"><input  class="radio-reponse radio-oui" data-id_question='{{ question.id }}' type="radio" value="1" name="radQuestion_{{ question.id }}" {% if question.reponse %}   checked="checked" {% endif %}>Oui</label>
+                                <label class="non radio-inline"><input  class="radio-reponse radio-non"  data-id_question='{{ question.id }}'  type="radio" value="0" name="radQuestion_{{ question.id }}" {% if not question.reponse and question.reponse is not null  %}    checked="checked" {% endif %}>Non</label>
+                                <label class="nc radio-inline"><input  class="radio-reponse radio-nc"  data-id_question='{{ question.id }}' type="radio" value="-1" name="radQuestion_{{ question.id }}" {% if question.NonConcerne %}    checked="checked" {% endif %}>Non Concerné</label>
+                        </td>
+                     {% else  %}
+                            <td>  {{question.reponseLib}}</td>
+                         
+                     {% endif %}
+                    
+                </tr>   
+            {% endfor %}
+    </table>
+    
+      <div id="InfoSaveQuestion"></div>
+
+            {% if is_granted('ROLE_RW_EVAL')   %}
+                
+                <div align="center">
+                    <a class='btn btn-danger' id='btn_annulle_all' href="{{ path('pericles3_question_ref', {'id': question_referentiel.id}) }}">Annuler</a>
+                    <button id="SaveQuestions" type="button" class="btn btn-primary btn-valider">Valider</button>
+                </div>
+            {% else %}
+                <div class='alert alert-danger'>Vous n'avez pas les droits de modifier les critères d'évaluation.</div>
+            {% endif  %}
+
+
+{% endblock %}      
+
+
+
+{% block javascripts %}
+
+     	<script type="text/javascript">
+ 
+ 
+        $('#btn_annulle_all').hide();
+        
+        $(".to_all.oui ").click(function(){
+            $('#btn_annulle_all').show();
+        
+            $(".radio-oui").prop( "checked" , true );
+            $(".ligne_questions").removeClass( "alert-warning alert-danger alert-info" ).addClass("alert-success" );
+            $("#SaveQuestions").switchClass("btn-valider","btn-avalider");
+        });
+        
+        $(".to_all.non ").click(function(){
+            $('#btn_annulle_all').show();
+            $(".radio-non").prop( "checked" , true );
+            $(".ligne_questions").removeClass( "alert-warning alert-success alert-info" ).addClass("alert-danger" );
+            $("#SaveQuestions").switchClass("btn-valider","btn-avalider");
+        });
+        
+        $(".to_all.nc ").click(function(){
+            $('#btn_annulle_all').show();
+            $(".radio-nc").prop( "checked" , true );
+            $(".ligne_questions").removeClass( "alert-warning alert-success alert-danger" ).addClass("alert-info" );
+            $("#SaveQuestions").switchClass("btn-valider","btn-avalider");
+        });
+        
+ 
+        $(".oui").click(function(){
+            $(this).parent().removeClass( "alert-warning alert-danger alert-info" ).addClass("alert-success" );
+            $("#SaveQuestions").switchClass("btn-valider","btn-avalider");
+            $('#btn_annulle_all').show();
+        });
+        
+        
+        $(".non").click(function(){
+            $(this).parent().removeClass( "alert-warning alert-success alert-info").addClass("alert-danger" );
+            $("#SaveQuestions").switchClass("btn-valider","btn-avalider");
+            $('#btn_annulle_all').show();
+        });
+        
+        $(".nc").click(function(){
+            $(this).parent().removeClass( "alert-warning alert-succes alert-danger").addClass("alert-info" );
+            $("#SaveQuestions").switchClass("btn-valider","btn-avalider");
+            $('#btn_annulle_all').show();
+        });
+        
+         
+
+        $("#SaveQuestions").click(function(){
+
+            $('#btn_annulle_all').hide();
+            $('#questions').loader('show');
+            var listQuestionsChecked = [];
+            $('.radio-reponse').each(function () {
+                if (this.checked) {
+                    listQuestionsChecked.push({idQuestion : $(this).data("id_question"),reponse : this.value});
+                }
+            });
+            var data = {idCritere : $('#hdnCritereId').val(),listQuestionsChecked : listQuestionsChecked};
+
+            $.ajax({
+                type: "POST",
+                url: '{{ path("pericles3_savequestions", {"id": question_referentiel.id })}}',
+                data: data,
+                dataType: "json",
+                success: function(response) {
+                    $('#questions').loader('hide');
+                    if(response)
+                        $("#InfoSaveQuestion").html(getBootstrapAlert("Succès!","Les éléments d'appréciation ont bien été enregistrés!","alert-success"));
+                    else
+                        $("#InfoSaveQuestion").html(getBootstrapAlert("Erreur!","une erreur est survenue lors de l'enregistrement des es éléments d'appréciation...","alert-danger"));
+
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown)
+                {
+                    $('#CritereQuestions').loader('hide');
+                    $("#InfoSaveQuestion").html(getBootstrapAlert("Erreur Ajax!","une erreur est survenue lors de l'enregistrement des es éléments d'appréciation...","alert-danger"));
+                }
+            });
+
+        });
+        
+     
+      
+ 
+    </script>
+
+
+
+    <script src="{{ asset('js/jquery.form.min.js') }}"></script>
+ 
+
+
+
+
+{% endblock %}

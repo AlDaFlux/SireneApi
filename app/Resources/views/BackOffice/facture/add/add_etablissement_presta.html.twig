@@ -1,0 +1,19 @@
+             <div class='panel panel-primary'>
+                            <div class='panel-heading'><a data-toggle="collapse" href="#collapse1">Ajouter une presta {{facture.getConcerne}}</a></div>        
+                                <div id="collapse1" class='panel-collapse collapse'>
+                                    {%  if (facture.getConcerne.NbFacturePrestas == 0  or facture.getConcerne.LastFacturePresta.montant == 0 )  %}
+                                        
+                                            {% if facture.getConcerne.MontantFirst == -999999 %}
+                                                {% include 'BackOffice/facture/inc_add_etablissement.html.twig' with {'montant' : 550 , 'etab' : facture.getConcerne ,'version':0} %}
+                                                {% include 'BackOffice/facture/inc_add_etablissement.html.twig' with {'montant' : 900 ,'etab' : facture.getConcerne , 'version':0 } %}
+                                            {% else %}
+                                                {% include 'BackOffice/facture/inc_add_etablissement.html.twig' with {'montant' : facture.getConcerne.MontantFirst,'etab' : facture.getConcerne , 'version':0 } %}
+                                            {% endif %}                                        
+                                    {% else %}
+                                        
+                                        
+                                            {% include 'BackOffice/facture/inc_add_etablissement.html.twig' with {'montant' : facture.getConcerne.MontantRenew ,'etab' : facture.getConcerne , 'version':next_indice} %}
+                                    {% endif %}
+                            </div>
+                        </div>
+ 

@@ -1,0 +1,63 @@
+{% extends "Evaluation/layout.html.twig" %}
+
+
+
+{% block title %}{{ parent() }} - {{ dimension_referentiel}}{% endblock %}
+
+{% block body %}
+    
+      {{ parent() }}
+    
+      <h1><a href="{{ path('pericles3_referentiel_ref', {'id': dimension_referentiel.referentielPublic.id}) }}">{{ dimension_referentiel.referentielPublic.public}}</a></h1>
+
+      <h2><a href="{{ path('pericles3_domaine_ref', {'id': dimension_referentiel.parent.id}) }}">{{ dimension_referentiel.parent.ordre}} - {{ dimension_referentiel.parent}}</a></h2>
+   <div id="CritereGlobalListContainer">
+      {% include "Evaluation/Referentiel/list_dimension.html.twig" with 
+            {'dimensions' : dimension_referentiel.parent.getChildren  | order
+                ,'current_dimension_ref_id' : dimension_referentiel.id
+                } %}
+
+    {% include "Evaluation/Referentiel/list_critere.html.twig" with 
+        {'criteres' : dimension_referentiel.getChildren  | order } %}
+        
+      <hr class='separateur'>
+      
+    </div> 
+        
+                    
+        <div class="row">
+             <div class="col-md-6 ">
+                <div class="panel panel-primary panel_osa">            
+                    <div class="panel-heading"> <h3 class="panel-title">Critère</h3> </div>
+                      <div class="panel-body"> 
+                        <canvas id="chartCanvasCrit"  height="600" width="800"></canvas>
+                </div>
+            </div>
+        </div>
+             <div class="col-md-6 ">
+                <div class="panel panel-primary panel_osa">            
+                    <div class="panel-heading"> <h3 class="panel-title">Etablissement</h3> </div>
+                      <div class="panel-body"> 
+                        <canvas id="chartCanvasEtablissements"  height="600" width="800"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+         
+
+      
+          
+{% endblock %}
+
+
+{% block javascripts %}
+    <script type="text/javascript">
+        {% include "Synthese/inc_options_charts.js.twig" %}
+         {{ dimensions_byref | graphMultiDataSet('chartCanvasCrit') |raw }}
+         {{ dimensions_byref | graph('chartCanvasEtablissements',true,'options_responsive') |raw }}
+    </script>
+{% endblock %}
+
+
+
+

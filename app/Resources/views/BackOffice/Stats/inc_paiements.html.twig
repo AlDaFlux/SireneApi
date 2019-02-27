@@ -1,0 +1,32 @@
+
+ <table class='table table-bordered'>
+     <thead>
+         <th>Paiement</th>
+         <th>Premier abonnement</th>
+         <th>Renouvellement</th>
+         <th>Total</th>
+     </thead>
+     <tbody>
+         
+         <tr>
+             <th>Payées</th>
+             <td class='text-right'  style="color:#ffffff;background-color:#4c4ca6;">{{factureesPayees| currency | raw}}</td>
+             <td class='text-right'  style="background-color:#ffae4c;">{{factureesRenPayees | currency | raw}}</td>
+             <td class='text-right alert-success' >{{ (factureesPayees + factureesRenPayees) | currency | raw}}</td>
+         </tr>
+         <tr>
+             <th>En attente de paiement</th>
+             <td class='text-right'  style="background-color:#79e9de;">{{factureesNonPayees| currency | raw}}</td>
+             <td class='text-right'  style="background-color:#fba69c;"> {{factureesRenNonPayees| currency | raw}}</td>
+             <td class='text-right alert-danger' >{{ (factureesNonPayees + factureesRenNonPayees) | currency | raw}}</td>
+         </tr>
+         
+         <tr>
+             <th>Total </th>
+             <td class='text-right'  style="background-color:#639BC2;">{{ (factureesPayees + factureesNonPayees) | currency | raw}}</td>
+             <td class='text-right'  style="background-color:#FDAA74;">{{ (factureesRenPayees + factureesRenNonPayees) | currency | raw}}</td>
+             <td class='text-right'  style="color:#ffffff;background-color:#007699;">{{ (SommeFacturee) | currency | raw}}</td>
+         </tr>
+     </tbody>
+ </table>
+     

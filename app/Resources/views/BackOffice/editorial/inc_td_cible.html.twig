@@ -1,0 +1,18 @@
+
+                {% if editorial.EtablissementGestionnaire == 0 %}
+                    <td class='alert-success'>Tous (Etablissement / Gestionnaire /  CT )
+                {% elseif editorial.EtablissementGestionnaire == 1 %}
+                    <td class='alert-info'>ARSENE (Etablissement / Gestionnaire )
+                {% elseif editorial.EtablissementGestionnaire == 2 %}
+                    <td class='alert-info'>Etablissement
+                {% elseif editorial.EtablissementGestionnaire == 3 %}
+                    <td class='alert-info'>Gestionnaire
+                {% elseif editorial.EtablissementGestionnaire == 4 %}
+                    <td class='alert-warning'>CT
+                {% endif  %}    
+                    </td>
+
+                    
+                    
+                   
+                    
