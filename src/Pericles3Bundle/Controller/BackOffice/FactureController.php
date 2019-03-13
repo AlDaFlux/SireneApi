@@ -34,6 +34,8 @@ class FactureController extends Controller
         $factures = $em->getRepository('Pericles3Bundle:Facture')->findAll();
         $factures_a_echeances = $em->getRepository('Pericles3Bundle:Facture')->ProchainesFacturesAEcheances();
         $factures_a_payer_old = $em->getRepository('Pericles3Bundle:Facture')->findNonPayeeOld();
+        $factures_non_finalisees = $em->getRepository('Pericles3Bundle:Facture')->findNonFinalisee();
+        
 //        $factures_a_payer_vielles = $em->getRepository('Pericles3Bundle:Facture')->factures_a_echeances();
         $sommeAPayer = $em->getRepository('Pericles3Bundle:Facture')->findSommeNonPayee();
         $gestionnaires_sans_facture = $em->getRepository('Pericles3Bundle:Gestionnaire')->findSansFacture();
@@ -47,6 +49,7 @@ class FactureController extends Controller
             'etablissements_sans_facture' => $etablissements_sans_facture,
             'factures_a_echeances' => $factures_a_echeances,
             'factures_a_payer_old' => $factures_a_payer_old,
+            'factures_non_finalisees' => $factures_non_finalisees,
             'sommeAPayer' => $sommeAPayer['total'],
         ));
     }
@@ -723,6 +726,11 @@ class FactureController extends Controller
      */
     public function showAction(Request $request,Facture $facture)
     {
+
+        $this->AddFlash("success","facture->GetConcerne()->GetFirstFacturePresta() : ".$facture->GetConcerne()->GetFirstFacturePresta());
+        $this->AddFlash("success","facture->GetConcerne()->GetFirstFacturePresta()->getDateDebut : ".$facture->GetConcerne()->GetFirstFacturePresta()->getDateDebut()->Format('d-m-Y'));
+
+                
         
        $em = $this->getDoctrine()->getManager();
        
@@ -757,6 +765,13 @@ class FactureController extends Controller
             }
             if ($request->get('type') == 'add_module_etablisement') 
             {
+                
+                
+                $this->AddFlash("success","ICIII");
+                
+                
+
+                
                 $etablissement = $em->getRepository('Pericles3Bundle:Etablissement')->findOneById($request->get('etab_id'));
 
                 $presta = new \Pericles3Bundle\Entity\FacturePresta();

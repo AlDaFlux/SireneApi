@@ -2,9 +2,29 @@
         <div class="row">
             
             
+        {% if factures_non_finalisees | length >0 %}
+            <div class="col-md-3">
+                <div class="panel panel-warning">
+           
+                    <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-king'></i>Factures non finalisées</h3> </div>
+                        <table class='table table-bordered'>
+                      <tbody>
+                          {% for etablissement_facture_afaire in factures_non_finalisees %}
+                              <tr>
+                                    <td><a href="{{ path('facture_show', { 'numFacture': etablissement_facture_afaire.numFacture }) }}">{{  etablissement_facture_afaire.numFacture }}</a></td>
+                               
+                                    <td>{{etablissement_facture_afaire.dateEmission |date('Y-m-d') }}</td>
+                                    <td>{{etablissement_facture_afaire.concerne }}</td>
+                              </tr>
+                          {% endfor%}
+                      </tbody>
+                  </table>                    
+                </div>
+                </div>
+        {% endif  %}   
+                      
             
         <div class="col-md-3">
-   
              {% if gestionnaires_sans_facture | length >0 %}
                 <div class="panel panel-danger">
              {% else %}

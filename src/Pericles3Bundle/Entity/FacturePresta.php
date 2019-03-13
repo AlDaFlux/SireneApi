@@ -349,16 +349,13 @@ class FacturePresta
     {
         if ($this->GetConcerne()->GetFirstFacturePresta())
         {
-            $date_creation_plus = clone  $this->GetFirstFacturePresta()->getDateEmission();
-//            $date_creation_plus->modify("+ 5 year");
+            $date_creation_plus = clone  $this->GetFirstFacturePresta()->getDateDebut();
         }
         else
         {
             $date_creation_plus = new DateTime();
-//            $date_creation_plus->modify("- 5 year");
         }
         $date_creation_plus->modify("+".(1+$this->renouvellement)." year");
-  //      $date_creation_plus->modify("+ 1 year");
         $date_creation_plus->modify("-1 day");
         return($date_creation_plus);
     }
