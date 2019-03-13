@@ -1,6 +1,9 @@
 {% extends "BackOffice/layout.html.twig" %}
 
- 
+{% block message_flash %}
+{% endblock %}
+
+
 
 {% block body %}
 
@@ -8,9 +11,15 @@
    
     <h2>Preuves</h2>
                 
-    <div class='alert-warning'>
+    <div class='alert alert-warning'>
         {{ preuves | length }} preuves en tout
     </div>
+    
+    {% include "MessageFlash/messageFlash.html.twig" %}
+
+    
+    
+        
 {% endblock %}
 
 {% block out_container  %}
@@ -32,7 +41,6 @@
                 </thead>
                 <tbody>
                     {% for preuve in preuves %}
-                        {% if not preuve.FileExist  %}
                             {% set nb_preuves = nb_preuves + 1 %}
                             <tr>
                                 <td>{{preuve}}</td>
@@ -65,7 +73,6 @@
                                 {% set sql_preuves = sql_preuves ~ ' or id='  ~ preuve.id ~  '' %}
 
                             </tr>
-                        {% endif  %}
 
                     {% endfor %}
                 </tbody>

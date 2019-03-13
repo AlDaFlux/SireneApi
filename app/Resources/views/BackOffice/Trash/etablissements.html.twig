@@ -7,6 +7,14 @@
    
     <h2>Etablissements</h2>
     
+    
+    
+    
+    
+    {% if etablissements | length ==  0 %}
+        <div class='alert alert-success'>Aucuns etablissements désuets ! </div>
+    {% else  %}
+        
         <li>Etablissements avec ref desuet{{etablissements | length }}
             
             <table class='table table-triable'>
@@ -44,5 +52,8 @@
                 {% for etablissement in etablissements %}
 php bin/console patch:etablissement-del-obs-ref --etablissement_id={{etablissement.id}}
 {% endfor %}</pre>
+
+    {% endif  %}
+ 
 {% endblock %}
  

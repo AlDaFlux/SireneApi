@@ -5,19 +5,19 @@
 {% block body %}
     {{ parent() }}
     
-           
-{% if is_granted('ROLE_GESTIONNAIRE')  %}
-        
-    {%for etablissement in app.user.etablissements %} 
-        <h2>{{etablissement }}</h2>
-        
-            {% include "Synthese/inc_syntheses_genere.html.twig"   %}
-    {% endfor %}
-        
-{% else  %}
-    
-   {% include "Synthese/inc_syntheses_genere.html.twig"   %}
+{% if app.user.hasOneEtablissement%}
+    {% include "Synthese/inc_syntheses_genere.html.twig"   %}
+{% else %}
+    {% if etablissement is not defined %}        
+        {% for etablissement in app.user.etablissements %} 
+            <h2>{{etablissement }}</h2>
+                {% include "Synthese/inc_syntheses_genere.html.twig"   %}
+        {% endfor %}
+    {% else %}
+                {% include "Synthese/inc_syntheses_genere.html.twig"   %}
+    {% endif  %}
 {% endif  %}
+           
     
     
     
@@ -36,7 +36,7 @@
 
     {% set wgraph =true %}
 
-        {% if is_granted('ROLE_GESTIONNAIRE')  %}
+        {% if etablissement is not defined %}        
             {%for etablissement in app.user.etablissements %} 
 
                 {{ etablissement.domaines  | order | graph('chartEvalGeneraleCanvas_'  ~ etablissement.id ) |raw }}
@@ -51,7 +51,6 @@
                 {% endfor %}
         {% endif %} 
     
-
 
 
         {% include "Synthese/inc_javascritp_export.js.twig"   %}

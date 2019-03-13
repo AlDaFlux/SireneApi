@@ -1471,8 +1471,7 @@ class Etablissement
         $PreuvesFichier=array();
         foreach ($this->preuves as $preuve) 
         {
-            if ($preuve->getFichier()) $PreuvesFichier[]=$preuve->getFichier();
-            
+            if ($preuve->getFichier() && !  $preuve->getBibliotheque()) $PreuvesFichier[]=$preuve->getFichier();
         }
         return array_unique($PreuvesFichier);
     }

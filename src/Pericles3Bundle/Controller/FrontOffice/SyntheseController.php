@@ -31,8 +31,6 @@ use Dompdf\Dompdf;
 use \stdClass;
 
 
-
-
 /**
  * DomaineObjectifStrategique controller.
  *
@@ -85,6 +83,21 @@ class SyntheseController extends Controller
      * @Method("GET")
      */
     public function indexEtablissementAction(Etablissement $Etablissement)
+    {
+
+        return $this->render('Synthese/index.html.twig' , ['etablissement'=>$Etablissement]);
+
+        
+//        return $this->render('Synthese/synthese_arsene/synthese_pericles.html.twig', ['etablissement'=>$Etablissement]);
+    }
+     
+    /**
+     * Synthese Etablissment
+     *
+     * @Route("/synthese_arsene/etablissement_{id}", name="pericles3_synthese_arsene_etablissement")
+     * @Method("GET")
+     */
+    public function indexSyntheseArsenetEtablissementAction(Etablissement $Etablissement)
     {
         return $this->render('Synthese/synthese_arsene/synthese_pericles.html.twig', ['etablissement'=>$Etablissement]);
     }
@@ -219,6 +232,17 @@ class SyntheseController extends Controller
     /**
      * Lists all DomaineObjectifStrategique entities.
      *
+     * @Route("/page_export/etablissement_{id}", name="pericles3_synthese_export_page_etablissement")
+     * @Method("GET")
+     */
+    public function indexExportPageEtablissementAction(Etablissement $Etablissement)
+    {
+        return $this->render('Synthese/export.html.twig', ['etablissement'=>$Etablissement]);
+    }
+    
+    /**
+     * Lists all DomaineObjectifStrategique entities.
+     *
      * @Route("/page_export", name="pericles3_synthese_export_page")
      * @Method("GET")
      */
@@ -226,6 +250,8 @@ class SyntheseController extends Controller
     {
         return $this->render('Synthese/export.html.twig');
     }
+    
+    
     
     
          

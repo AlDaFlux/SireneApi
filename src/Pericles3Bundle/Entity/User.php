@@ -736,6 +736,8 @@ class User implements UserInterface
     
     public function GetUploadFolderPath() 
     {
+        
+        //desuet
         if ($this->etablissement) { return ($this->etablissement->GetUploadFolderPath());}
         elseif ($this->gestionnaire) { return ($this->gestionnaire->GetUploadFolderPath());}
         else return("-");

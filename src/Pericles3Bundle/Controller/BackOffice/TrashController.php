@@ -79,12 +79,47 @@ class TrashController extends AdminController
      */
     public function indexPreuvesAction()
     {
+        $preuves =$this->getPreuvessansFichiers();
+        
+        $lastDate = New \DateTime('2000-01-01');
+        foreach ($preuves as $preuve)
+        {
+            if ($preuve->getdateCreate()>$lastDate)
+            {
+                $lastDate=$preuve->getdateCreate();
+            }
+        }
+        $today=New \DateTime();
+        $nbDays=$today->diff($lastDate)->days;
+
+        if ($nbDays>50) { $this->addFlash('success', $nbDays." jours sans perte de preuves"); }
+        else  { $this->addFlash('danger', $nbDays." jours sans perte de preuves"); }
+
+        return $this->render('BackOffice/Trash/preuves.html.twig', ['preuves'=>$preuves,'lastDate'=>$lastDate]);
+    }
+    
+   
+    function getPreuvessansFichiers()
+    {
         $em = $this->getDoctrine()->getManager();
         $preuves =$em->getRepository('Pericles3Bundle:Preuve')->findAllFichier();
-        
-        return $this->render('BackOffice/Trash/preuves.html.twig', ['preuves'=>$preuves]);
-        
+
+        $preuvesSansFichier= new \Doctrine\Common\Collections\ArrayCollection(); 
+
+        foreach ($preuves as $preuve)
+        {
+            if (! $preuve->getFileExist())
+            {
+                $preuvesSansFichier->Add($preuve);
+            }
+        }
+        return($preuvesSansFichier);
     }
+    
+    
+    
+    
+    
     
     
     
@@ -174,7 +209,41 @@ class TrashController extends AdminController
                 $biblios_manquant->add($biblio);
             }
         }
+        
+        $lastDate = New \DateTime('2000-01-01');
+        foreach ($biblios_manquant as $biblio)
+        {
+            if ($biblio->getDateUpdate()>$lastDate)
+            {
+                $lastDate=$biblio->getDateUpdate();
+                
+            }
+        }
+        $today=New \DateTime();
+        $nbDays=$today->diff($lastDate)->days;
+        if ($nbDays>50) { $this->addFlash('success', $nbDays." jours sans perte du nom de fichier : ".$lastDate->format("Y-m-d")); }
+        else  { $this->addFlash('danger', $nbDays." jours sans perte du nom de fichier : ".$lastDate->format("Y-m-d")); }
+ 
+        
+         
         $biblios =$em->getRepository('Pericles3Bundle:Bibliotheque')->findFichiersManquant();
+        
+        $lastDate = New \DateTime('2000-01-01');
+        foreach ($biblios as $biblio)
+        {
+            if ($biblio->getDateUpdate()>$lastDate)
+            {
+                $lastDate=$biblio->getDateUpdate();
+                
+            }
+        }
+        
+        $today=New \DateTime();
+        $nbDays=$today->diff($lastDate)->days;
+        if ($nbDays>50) { $this->addFlash('success', $nbDays." jours sans perte de fichier dans la bibliotheque : ".$lastDate->format("Y-m-d")); }
+        else  { $this->addFlash('danger', $nbDays."  jours sans perte de fichier dans la bibliotheque : ".$lastDate->format("Y-m-d")); }
+
+        
         return $this->render('BackOffice/Trash/biblio.html.twig', ['biblios_vide'=>$biblios, 'biblios_manquant'=>$biblios_manquant]);
     }
     

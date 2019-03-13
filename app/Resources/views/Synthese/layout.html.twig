@@ -173,7 +173,12 @@
    
           
       <ul class="nav navbar-nav navbar-right">
-        <li><a  class='glyphicon glyphicon glyphicon-save' href="{{ path('pericles3_synthese_export_page') }}"> Exportations/Impressions</a></li>
+          <li> 
+               {% if app.user.hasOneEtablissement or etablissement is not defined %}
+                    <a class='glyphicon glyphicon glyphicon-save'  href="{{ path("pericles3_synthese_export_page") }}">
+                {% else %}
+                    <a class='glyphicon glyphicon glyphicon-save'  href="{{ path("pericles3_synthese_export_page_etablissement",  {"id" : etablissement.id})  }}">
+                {% endif  %}  Exportations/Impressions</a></li>
         <li title='Imprimer cette page' class='print_this_page'><a href="#" OnClick="javascript:window.print()"><i class='glyphicon glyphicon-print' ></i></a></li>
         
       </ul>

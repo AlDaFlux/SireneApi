@@ -7,6 +7,11 @@
    
     <h2>Domaines</h2>
     
+    
+    {% if domaines_desuet | length ==  0 %}
+        <div class='alert alert-success'>Aucuns domaines désuets ! </div>
+    {% else  %}
+        
         <li>Domaines : {{domaines | length }}
         <li>Domaines Desuets : {{domaines_desuet | length }}
             
@@ -32,7 +37,8 @@
 
             <li><a class='btn btn-danger fullwidth' href="{{ path('trash_domaines_trash') }}">Supression de tous les désuets ! </a></<li>
                   
-   
+     {% endif  %}
+  
    
 {% endblock %}
  

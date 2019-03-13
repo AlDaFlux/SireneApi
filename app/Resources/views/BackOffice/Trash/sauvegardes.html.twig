@@ -1,3 +1,5 @@
+{% set nb = 0 %}
+
 {% extends "BackOffice/layout.html.twig" %}
 
  
@@ -12,6 +14,9 @@
             <table class='table table-triable'>
             {% for sauvegarde in sauvegardes %}
                 {% if sauvegarde.getReferentielDesuet %}
+                    {% set nb = nb + 1 %}
+
+                                            
                     <tr>
                         <td>{{sauvegarde}}</td>
                         <td>{{sauvegarde.etablissement}}</td>
@@ -21,6 +26,12 @@
                 {% endif  %}
             {% endfor %}
             </table>
-            
+ 
+{%  if nb == 0%}               
+        <div class='alert alert-success'>Aucune sauvegarde désuette ! </div>
+{% endif %}
+   
+
+
 {% endblock %}
  

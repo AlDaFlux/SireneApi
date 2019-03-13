@@ -6,7 +6,7 @@
     {{ parent() }}
 
     
-{% if is_granted('ROLE_GESTIONNAIRE')  %}
+{% if etablissement is not defined %}
             {#
     <h2> Par public</h2>
         <div class="row">
@@ -58,17 +58,31 @@
 {% else  %}
 
         <div class="row">
-            {% if app.user.ReferentielExterne %}
+            {% if etablissement.ReferentielExterne %}
                 <div class="col-sm-6">
             {% else %}
                 <div class="col-sm-12">
             {% endif  %}
                   <div class="panel panel-primary">
-                      <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_pericles") }}">{{application_name}}</a></h3></div>
+                      <div class="panel-heading">
+                          <h3 class="panel-title"> 
+                              
+                              {% if app.user.hasOneEtablissement%}
+                                <a href="{{ path("pericles3_synthese_pericles") }}">{{application_name}}</a>
+                              {% else %}
+                                <a href="{{ path("pericles3_synthese_arsene_etablissement",  {"id" : etablissement.id})  }}">{{application_name}}</a>
+                              {% endif  %}
+                                
+                          </h3></div>
+                              
                           <div class="panel-body">
 
                               <div class="GraphSyntheseContainer">    
-                                  <a href="{{ path('pericles3_synthese_pericles') }}">   
+                              {% if app.user.hasOneEtablissement%}
+                                <a href="{{ path("pericles3_synthese_pericles") }}">
+                              {% else %}
+                                <a href="{{ path("pericles3_synthese_arsene_etablissement",  {"id" : etablissement.id})  }}">
+                              {% endif  %}
                                       <canvas id="chartEvalGeneraleCanvas" height="220" width="220"></canvas>
                                   </a>
                               </div>
@@ -76,13 +90,23 @@
                   </div>
               </div>
 
-              {% if app.user.ReferentielExterne %}
+              {% if etablissement.ReferentielExterne %}
               <div class="col-sm-6">
                   <div class="panel panel-primary">
-                      <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_alternatif") }}">{{app.user.ReferentielExterne}}</a></h3></div>
+                      <div class="panel-heading"><h3 class="panel-title"> 
+                            {% if app.user.hasOneEtablissement%}
+                                <a href="{{ path("pericles3_synthese_alternatif") }}">
+                            {% else %}
+                                <a href="{{ path("pericles3_synthese_alternatif_etablissement",  {"id" : etablissement.id})  }}">
+                              {% endif  %}
+                                  {{etablissement.ReferentielExterne}}</a></h3></div>
                           <div class="panel-body">
                               <div class="GraphSyntheseContainer">    
-                                  <a href="{{ path('pericles3_synthese_alternatif') }}">   
+                                {% if app.user.hasOneEtablissement%}
+                                <a href="{{ path("pericles3_synthese_alternatif") }}">
+                              {% else %}
+                                <a href="{{ path("pericles3_synthese_alternatif_etablissement",  {"id" : etablissement.id})  }}">
+                              {% endif  %}
                                       <canvas id="GraphEvalExterne" height="220" width="220"></canvas>
                                   </a>
                               </div>
@@ -98,9 +122,20 @@
     <div class="row">
         <div class="col-sm-4">
               <div class="panel panel-primary">
-                  <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_export_page") }}">Exportations / Impressions </a></h3></div>
+                  <div class="panel-heading"><h3 class="panel-title">
+                            {% if app.user.hasOneEtablissement%}
+                                <a href="{{ path("pericles3_synthese_export_page") }}">
+                              {% else %}
+                                <a href="{{ path("pericles3_synthese_export_page_etablissement",  {"id" : etablissement.id})  }}">
+                              {% endif  %}
+                              Exportations / Impressions </a></h3></div>
                       <div class="panel-body">
-                              <a href="{{ path('pericles3_synthese_export_page') }}">   
+                          
+                            {% if app.user.hasOneEtablissement%}
+                                <a href="{{ path("pericles3_synthese_export_page") }}">
+                              {% else %}
+                                <a href="{{ path("pericles3_synthese_export_page_etablissement",  {"id" : etablissement.id})  }}">
+                              {% endif  %}
                                   <div class='alert alert-info'>Exportation en pdf, doc, html....</div>
                               </a>
                   </div>
@@ -114,7 +149,12 @@
                             {% if etablissement.NbSauvegardes == 0 %}
                                 <div class='alert alert-warning'>Vous devez avoir effectué au moins une sauvegarde pour acceder au annexes</div>
                             {% else  %}
-                              <a href="{{ path('pericles3_annexes') }}">   
+                                
+                            {% if app.user.hasOneEtablissement%}
+                                <a href="{{ path("pericles3_annexes") }}">
+                              {% else %}
+                                <a href="{{ path('pericles3_synthese_alternatif_etablissement', {'id': etablissement.id})}}">
+                              {% endif  %}
                                   <div class='alert alert-info'>Faire un état des évolutions entre une sauvegarde et la moment présent</div>
                               </a>
                             {% endif %}
@@ -141,8 +181,7 @@
     
     <script type="text/javascript">
       {% include "Synthese/inc_options_charts.js.twig" %}
-        {% if is_granted('ROLE_GESTIONNAIRE')  %}
-
+      {% if etablissement is not defined %}
                     {%for etablissement in app.user.etablissements %}
                        {{ etablissement.domaines  | order | graph('chartEvalGeneraleCanvas_' ~ etablissement.id) | raw }}
                  {% endfor %}
@@ -154,3 +193,4 @@
     </script>
         
 {% endblock %}
+

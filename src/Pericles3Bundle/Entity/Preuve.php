@@ -351,25 +351,7 @@ class Preuve
     }
     
     
-   /**
-     * Récupère le chemin relatif du fichier
-     *
-     * @return string
-     */
-    public function getNbPreuvesFichier()
-    {
-         // utilisé ?  // DESUET ? 
-        $reponse=0;
-        if ($this->getEtablissement()->getPreuves())
-        {
-            foreach ($this->getEtablissement()->getPreuves() as $tmp_preuve)
-            {
-                //$reponse.="-->".$tmp_preuve->getFichier();
-                if ($tmp_preuve->getFichier() == $this->getFichier()) { $reponse++;}
-            }
-        }
-        return($reponse);
-    }
+   
     
 
     

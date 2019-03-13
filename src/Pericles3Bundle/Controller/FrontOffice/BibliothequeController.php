@@ -429,10 +429,8 @@ class BibliothequeController extends Controller
         $repositoryPreuves = $this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:Preuve');
         
         $preuves=$repositoryPreuves->findFichiersByNameEtablissement($filename,$etablissement);
-                    
-         $folder=WEB_DIR."/upload/".$etablissement->GetUploadFolderPath()."/";
-         
-
+              
+        
         foreach ($preuves as $preuve)
         {
             $preuve->setBibliotheque($biblio);
@@ -440,7 +438,26 @@ class BibliothequeController extends Controller
             $em->persist($preuve);
             $em->flush();
         }
-        unlink($folder."preuves/".$filename);
+        
+        
+        $oldfilepath=WEB_DIR."/upload/".$etablissement->GetUploadFolderPath()."/preuves/".$filename;
+        $folder_trash=WEB_DIR.'/upload/Trash/'.$etablissement->GetUploadFolderPath()."/preuves/";
+        
+        
+            if (file_exists($oldfilepath))
+            {
+                if (! file_exists($folder_trash)) 
+                {
+                    mkdir($folder_trash, 0777, true);
+                }
+                copy($oldfilepath,  $folder_trash."/".$filename);
+                unlink($oldfilepath);
+            }
+            else
+            {
+                $this->addFlash('debug', "Le fichier ".$oldfilepath." n'existait plus");
+            }
+
         $this->addFlash('success', "Les preuves ont été associées à la bibliothèque");
         return $this->redirectToRoute('pericles3_bibliotheque_show', array('id' => $biblio->getId()));
         
@@ -965,9 +982,8 @@ class BibliothequeController extends Controller
      */
     public function deleteFichierGestionnaire($filename, Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $file=WEB_DIR.'/upload/'.$this->GetUser()->GetUploadFolderPath()."/bibliotheque/".$filename;
-        $folder_trash=WEB_DIR.'/upload/Trash/'.$this->GetUser()->GetUploadFolderPath()."/bibliotheque/";
+        $file=WEB_DIR.'/upload/'.$this->GetUser()->GetGestionnaire()->GetUploadFolderPath()."/bibliotheque/".$filename;
+        $folder_trash=WEB_DIR.'/upload/Trash/'.$this->GetUser()->GetGestionnaire()->GetUploadFolderPath()."/bibliotheque/";
         if (file_exists($file))
         {
             if (! file_exists($folder_trash)) 
@@ -978,6 +994,7 @@ class BibliothequeController extends Controller
             unlink($file);
         }
         $this->addFlash('success', "Le fichier ".$filename." à bien été supprimé.");
+        $this->addFlash('debug', "Le fichier ".$file." à bien été supprimé.");
     	return $this->redirect($request->headers->get('referer'));
     }
     

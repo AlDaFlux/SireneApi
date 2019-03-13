@@ -1,3 +1,5 @@
+{% set nb = 0 %}
+
 {% extends "BackOffice/layout.html.twig" %}
 
  
@@ -5,11 +7,9 @@
 {% block body %}
     <h1><a href="{{ path('trash_index') }}">Trash</a></h1>
    
-    <h2>Etablissements / ref Externe</h2>
+    <h2>Etablissements / ref </h2>
     
-        <li>Etablissements avec ref externe
-            
-            <table class='table table-triable'>
+            <table id='tab1' class='table table-triable'>
                 <thead>
                     <th>Id</th>
                     <th>Etab</th>
@@ -18,7 +18,10 @@
                     <th colspan='2'>Questions</th>
                 </thead>
                 <tbody>
+                      
                     
+
+                        
             {% for etablissement in etablissements %}
                 
                 {% set etablissement_NbDomaines = etablissement.NbDomaines %}
@@ -32,6 +35,9 @@
                 
                 
                     {% if etablissement_NbDomaines_ref  != etablissement_NbDomaines or  etablissement_NbCriteres  != etablissement_NbCriteres_ref   or  etablissement_NbQuestions  != etablissement_NbQuestions_ref   %}
+                        
+                    {% set nb = nb + 1 %}
+                        
                         <tr class='alert-danger'>
                         <td>{{etablissement.id}}</td> 
                         <td>{{etablissement}}</td> 
@@ -47,6 +53,11 @@
             {% endfor %}
                 </tbody>
             </table>
+                
+
+{%  if nb == 0%}               
+        <div class='alert alert-success'>Aucuns ref désuets ! </div>
+{% endif %}
    
 {#            
             <pre>{% for etablissement in etablissements %}{% if etablissement.getReferentielExterne is not empty  %}{% if etablissement.NbDomainesExterne  != etablissement.getReferentielExterne.NbDomaines %}php bin/console patch:etablissement-del-obs-ref-externe --etablissement_id={{etablissement.id}}
@@ -55,3 +66,25 @@
 #}
 {% endblock %}
  
+
+
+
+
+{% block javascripts %}
+ 
+    
+{%  if nb == 0%}               
+    
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#tab1').hide();
+    } ); 
+    </script>
+
+
+
+    {% endif %}
+
+
+{% endblock %}

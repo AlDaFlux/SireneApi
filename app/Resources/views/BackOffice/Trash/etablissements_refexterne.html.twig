@@ -1,3 +1,6 @@
+{% set nb = 0 %}
+
+
 {% extends "BackOffice/layout.html.twig" %}
 
  
@@ -5,14 +8,16 @@
 {% block body %}
     <h1><a href="{{ path('trash_index') }}">Trash</a></h1>
    
-    <h2>Etablissements / ref Externe</h2>
+    <h2>Etablissements / Ref Externe +</h2>
+     
     
-        <li>Etablissements avec ref externe
-            
-            <table class='table table-triable'>
+            <table id='tab1' class='table table-triable'>
             {% for etablissement in etablissements %}
                 {% if etablissement.getReferentielExterne is not empty  %}
                     {% if etablissement.NbDomainesExterne  != etablissement.getReferentielExterne.NbDomaines %}
+                        {% set nb = nb + 1 %}
+
+                                            
                         <tr class='alert-danger'>
                         </tr>
                         <tr>
@@ -36,7 +41,7 @@
 
                         {% if  is_granted('ROLE_MEGA_ADMIN') %}
 
-                                {% endif %}
+                        {% endif %}
                         </td>
                     </tr>
                 {% endif %}
@@ -44,9 +49,37 @@
             {% endfor %}
             </table>
    
-            
+            {%  if nb > 0%}      
             <pre>{% for etablissement in etablissements %}{% if etablissement.getReferentielExterne is not empty  %}{% if etablissement.NbDomainesExterne  != etablissement.getReferentielExterne.NbDomaines %}php bin/console patch:etablissement-del-obs-ref-externe --etablissement_id={{etablissement.id}}
 {% endif %}{% endif %}{% endfor %}
 </pre>
+{% endif %}
+    
+{%  if nb == 0%}               
+        <div class='alert alert-success'>Aucuns ref externe désuets ! </div>
+{% endif %}
+
+
 {% endblock %}
  
+    
+    
+    
+{% block javascripts %}
+ 
+    
+{%  if nb == 0%}               
+    
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#tab1').hide();
+    } ); 
+    </script>
+
+
+
+    {% endif %}
+
+
+{% endblock %}

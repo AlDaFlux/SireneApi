@@ -1,13 +1,18 @@
 {% extends "BackOffice/layout.html.twig" %}
 
  
+{% block message_flash %}
+{% endblock %}
+
 
 {% block body %}
 
     <h1><a href="{{ path('trash_index') }}">Trash</a></h1>
    
     <h2><a href="{{ path('trash_biblio') }}">Biblio</a></h2>
-                
+    
+    {% include "MessageFlash/messageFlash.html.twig" %}
+    
 {% endblock %}
 
 {% block out_container  %}
