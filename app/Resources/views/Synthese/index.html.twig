@@ -149,7 +149,6 @@
                             {% if etablissement.NbSauvegardes == 0 %}
                                 <div class='alert alert-warning'>Vous devez avoir effectué au moins une sauvegarde pour acceder au annexes</div>
                             {% else  %}
-                                
                             {% if app.user.hasOneEtablissement%}
                                 <a href="{{ path("pericles3_annexes") }}">
                               {% else %}
