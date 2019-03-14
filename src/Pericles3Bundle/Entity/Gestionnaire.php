@@ -814,10 +814,11 @@ class Gestionnaire
     {
         $lastdate=0;
         $last_facture=null;
-        foreach ($this->facturePrestas as $presta)
+        foreach ($this->getPrestasNotAVoir() as $presta)
         {
             if ($presta->getFacture()->getDateEmission()->getTimestamp()>$lastdate)
             {
+                $lastdate=$presta->getDateEmission()->getTimestamp();
                 $last_facture=$presta;
             }
         }
@@ -828,7 +829,7 @@ class Gestionnaire
     {
         $lastdate=0;
         $last_facture=null;
-        foreach ($this->facturePrestas as $presta)
+        foreach ($this->getPrestasNotAVoir() as $presta)
         {
             if ($lastdate==0)
             {
@@ -837,13 +838,23 @@ class Gestionnaire
             }
             if ($presta->getDateEmission()->getTimestamp()<$lastdate)
             {
+                $lastdate=$presta->getDateEmission()->getTimestamp();
                 $last_facture=$presta;
             }
         }
         return $last_facture;
     }
     
-    
+     public function getPrestasNotAVoir()
+    {
+        $prestas=  new \Doctrine\Common\Collections\ArrayCollection();
+        
+        foreach ($this->getFacturePrestas() as $presta) 
+        {
+            if (! $presta->getFacture()->getAvoir()) $prestas->Add($presta);
+        }
+        return $prestas;
+    }
     
     public function getFacturesPrestaFactures()
     {

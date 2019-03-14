@@ -3,15 +3,18 @@
         <tr>
             <td>Facture</td>
             <td>id</td>
+            <td>Renouvel</td>
+            {%  if etablissement is not defined  %}
             <td>Concerne</td>
             <td>Concerné Date de création</td>
+            {%  endif  %}
             <td> Facture DateEmission </td>
             <td> Date Début</td>
             <td> Date de fin </td>
             <td> creaplus </td>
             <td> Diff</td>
-            <td>presta.Montant </td>
-            <td>Renouvellement</td>
+            <td> Last</td>
+            <td>Montant </td>
             {% if  is_granted('ROLE_MEGA_ADMIN')  %}
                 <td></td>
             {% endif %}
@@ -20,7 +23,20 @@
     <tbody>
     {% for presta in prestas %}
         
-            <tr>
+            
+            {% if facture is defined %}
+                {% if facture == presta.facture %}
+                    <tr  class="font-weight-bold text-uppercase">
+                {% else %}
+                    <tr>
+                {% endif %}
+            {% else %}
+                <tr>
+            {% endif %}
+            
+      
+        
+                
                 {% if presta.facture.getFinalise %}
                     <td class='alert-info'><a href="{{ path('facture_show', { 'numFacture': presta.facture.numFacture }) }}">{{ presta.facture.numFacture }}</a></td>
                 {% else %}
@@ -28,10 +44,13 @@
                 {% endif %}
 
                 <td><a href="{{ path('facture_index_presta_show', { 'id': presta.id }) }}">{{presta.id}}</a></td>
+                
+                <td title="{{presta.RenouvellementLib}}">{{presta.Renouvellement}}</td>
 
-                <td>
+                
+                {%  if etablissement is not defined  %}
 
-                          {% if presta.ConcerneTypeLib =='GESTIONNAIRE' %}
+                <td>                          {% if presta.ConcerneTypeLib =='GESTIONNAIRE' %}
                               {{'gestionnaire' | get_icon | raw}}    <a href="{{ path('backoffice_gestionnaire_show', { 'id': presta.concerne.id }) }}">{{presta.concerne}}</a>
                                   
                             {% else %}
@@ -39,7 +58,8 @@
                             {% endif %}
                     </td>
 
-                <td> {{presta.concerne.CreatedDate | date('Y-m-d H:i:s')  }}</td>
+                <td> {{presta.concerne.CreatedDate | date('Y-m-d')  }}</td>
+                {% endif %}
 
                 <td>{{presta.Facture.DateEmission | hiddenDate | raw}}</td>
                 {% if presta.DateFiff2 > 0 %}
@@ -53,8 +73,13 @@
                 <td class='{{tmp_class}}'>{{presta.DateFinCalcule | hiddenDate | raw}}</td>
                 <td class='{{tmp_class}}'>{{presta.DateFiff2 }}</td>
                 
-                <td>{{presta.Montant}} €</td>
-                <td>{{presta.RenouvellementLib}}</td>
+                            <td>
+                                {%  if presta.isLastFacturePresta %}
+                                    <i class="glyphicon glyphicon-ok greenText"></i>
+                                {% endif %}
+                            </td>
+
+                            <td>{{presta.Montant}} €</td>
             {% if  is_granted('ROLE_MEGA_ADMIN')  %}
                  <td> <a href="{{ path('facture_presta_edit', { 'id': presta.id }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a> </td>
             {% endif %}

@@ -1,0 +1,24 @@
+<h1>{{ etablissement }}</h1>
+{%  if  etablissement.gestionnaire %}
+<h2>{{ etablissement.gestionnaire}}</h2>
+
+{# dump(etablissement.getPrestasNotAVoir) #}
+
+{%  endif  %}
+<table class='table table-striped table-condensed '> 
+    <tr>
+        <th>CreatedDate</th>
+        <td>{{ etablissement.CreatedDate | date('d M Y')}}</td>
+    </tr>
+</table>
+     
+
+
+
+{% include "BackOffice/facture/presta_list.html.twig" %} 
+
+
+</div>
+
+ 
+

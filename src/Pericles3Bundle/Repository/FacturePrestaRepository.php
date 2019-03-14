@@ -21,6 +21,16 @@ class FacturePrestaRepository extends \Doctrine\ORM\EntityRepository
             return $qb->getQuery()->getResult();
 	}
         
+	public function findByEtablissement(\Pericles3Bundle\Entity\Etablissement $etablissement)
+	{
+            $qb = $this->createQueryBuilder('facturePrestas');
+            $qb->Join('facturePrestas.etablissement', 'etablissement');
+            $qb->Join('facturePrestas.facture', 'facture');
+            $qb->where('etablissement.id='.$etablissement->getId());
+            $qb->orderBy("facture.dateEmission","ASC");
+            return $qb->getQuery()->getResult();
+	}
+        
         
     	public function findSommePayee() 
         {

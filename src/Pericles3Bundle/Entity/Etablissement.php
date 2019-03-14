@@ -2598,11 +2598,13 @@ class Etablissement
         $last_facture=null;
         foreach ($this->getPrestasNotAVoir() as $presta)
         {
-            if ($presta->getFacture()->getDateEmission()->getTimestamp()>$lastdate)
+            if ($presta->getDateEmission()->getTimestamp()>$lastdate)
             {
+                $lastdate=$presta->getDateEmission()->getTimestamp();
                 $last_facture=$presta;
             }
         }
+        
         return $last_facture;
     }
     
@@ -2610,7 +2612,7 @@ class Etablissement
     {
         $lastdate=0;
         $last_facture=null;
-        foreach ($this->facturePrestas as $presta)
+        foreach ($this->getPrestasNotAVoir() as $presta)
         {
             if ($lastdate==0)
             {
@@ -2619,6 +2621,7 @@ class Etablissement
             }
             if ($presta->getDateEmission()->getTimestamp()<$lastdate)
             {
+                $lastdate=$presta->getDateEmission()->getTimestamp();
                 $last_facture=$presta;
             }
         }

@@ -6,7 +6,7 @@
                         
                                 {% set next_indice = etab.NewFactureRenouvellementIndice %}
                                     
-                                {%  if  true or facture.HasNotEtablissement(etab) %}
+                                {%  if  facture.HasNotEtablissement(etab) %}
                                 {% set  nb_lignes = 1 + nb_lignes %}
                                 
 
@@ -39,6 +39,9 @@
                                             {% endif %}
                                             </td>
                                         {% endif %}
+                                            <td>
+                                                    <i class=' btn btn-primary show_prestas glyphicon glyphicon-info-sign' data-id_etablissement='{{ etab.id }}'></i>
+                                            </td>
 
                                         
                                         

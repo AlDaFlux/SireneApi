@@ -56,6 +56,11 @@ class FactureController extends Controller
 
     
     
+    
+    
+    
+    
+    
      /**
      * Lists all facture entities.
      *
@@ -119,6 +124,31 @@ class FactureController extends Controller
                 'titre' => "Prestations",
         ));
     }
+    
+    
+    
+    /**
+     * Index Evaluation Etablissement
+     *
+     * @Route("/etablissement_{id}/infos/facture_{facture}", options={"expose"=true}, name="pericles3_etablissements_infos_prestas")
+     * @Method({"GET", "POST"})
+     */    
+    public function indexInfoEtablissmentPrestaAction(\Pericles3Bundle\Entity\Etablissement $etablissement, Facture $facture)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $prestas = $em->getRepository('Pericles3Bundle:FacturePresta')->findByEtablissement($etablissement);
+        
+        return $this->render('BackOffice/facture/modal_prestas_etablissement.html.twig', array(
+                'etablissement' => $etablissement,
+                'facture' => $facture,
+                'prestas' => $prestas,
+                'titre' => "Prestations",
+        ));
+     
+    }
+    
+    
+    
     
     /**
      * Lists all facture entities.
@@ -726,11 +756,6 @@ class FactureController extends Controller
      */
     public function showAction(Request $request,Facture $facture)
     {
-
-        $this->AddFlash("success","facture->GetConcerne()->GetFirstFacturePresta() : ".$facture->GetConcerne()->GetFirstFacturePresta());
-        $this->AddFlash("success","facture->GetConcerne()->GetFirstFacturePresta()->getDateDebut : ".$facture->GetConcerne()->GetFirstFacturePresta()->getDateDebut()->Format('d-m-Y'));
-
-                
         
        $em = $this->getDoctrine()->getManager();
        
