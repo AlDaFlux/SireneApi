@@ -2598,17 +2598,25 @@ class Etablissement
     
     public function getLastFacturePresta()
     {
-        $lastdate=0;
+           $lastdate=0;
         $last_facture=null;
+        $last_renouvellement=null;
         foreach ($this->getPrestasNotAVoir() as $presta)
         {
             if ($presta->getDateEmission()->getTimestamp()>$lastdate)
             {
                 $lastdate=$presta->getDateEmission()->getTimestamp();
                 $last_facture=$presta;
+                $last_renouvellement=$presta->GetRenouvellement();
             }
+            if ($presta->getDateEmission()->getTimestamp()==$lastdate && $presta->GetRenouvellement()>$last_renouvellement)
+            {
+                $lastdate=$presta->getDateEmission()->getTimestamp();
+                $last_renouvellement=$presta->GetRenouvellement();
+                $last_facture=$presta;
+            }
+            
         }
-        
         return $last_facture;
     }
     
@@ -2616,16 +2624,25 @@ class Etablissement
     {
         $lastdate=0;
         $last_facture=null;
+        $last_renouvellement=null;
         foreach ($this->getPrestasNotAVoir() as $presta)
         {
             if ($lastdate==0)
             {
                 $lastdate = $presta->getDateEmission()->getTimestamp();
                 $last_facture=$presta;
+                $last_renouvellement=$presta->GetRenouvellement();
             }
             if ($presta->getDateEmission()->getTimestamp()<$lastdate)
             {
                 $lastdate=$presta->getDateEmission()->getTimestamp();
+                $last_renouvellement=$presta->GetRenouvellement();
+                $last_facture=$presta;
+            }
+            if ($presta->getDateEmission()->getTimestamp()==$lastdate && $presta->GetRenouvellement()<$last_renouvellement)
+            {
+                $lastdate=$presta->getDateEmission()->getTimestamp();
+                $last_renouvellement=$presta->GetRenouvellement();
                 $last_facture=$presta;
             }
         }

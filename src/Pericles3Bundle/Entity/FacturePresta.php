@@ -299,18 +299,27 @@ class FacturePresta
         else return(" - Premier abonnement : ");
     }
     
-    public function getDateFiff2()
+   
+     public function getDateFiff2()
     {
         if ($this->GetDateFin())
         {
-            $diff=$this->GetDateFin()->diff($this->getDateFinCalcule());
-            return($diff->format('%a'));
+            if(! $this->getDateFinCalcule())
+            {
+                return("ERREUR pas de date calculée---");
+            }
+            else
+            {
+                $diff=$this->GetDateFin()->diff($this->getDateFinCalcule());
+                return($diff->format('%a'));
+            }
         }
         else
         {
-            return("ERREUR pas de date---");
+            return("ERREUR pas de date de fin---");
         }
     }
+    
     
     
     
@@ -359,12 +368,21 @@ class FacturePresta
     {
         if ($this->renouvellement)
         {
-                $date_creation_plus = clone  $this->GetFirstFacturePresta()->getDateDebut();
+            $date_creation_plus = clone  $this->GetFirstFacturePresta()->getDateDebut();
         }
         else
         {
+            if ($this->GetFirstFacturePresta())
+            {
                 $date_creation_plus = clone  $this->GetFirstFacturePresta()->getDateEmission();
+            }
+            else
+            {
+                return(null);
+//               throw new FatalErrorException("-----------",5046,3,"FacturePresta.php",375);
+            }
         }
+        
         $date_creation_plus->modify("+".(1+$this->renouvellement)." year");
         $date_creation_plus->modify("-1 day");
         if (! $date_creation_plus)
@@ -374,8 +392,7 @@ class FacturePresta
         return($date_creation_plus);
     }
 
-    
-    
+     
    
     
 

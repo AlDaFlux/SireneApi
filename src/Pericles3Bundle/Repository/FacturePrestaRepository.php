@@ -2,6 +2,9 @@
 
 namespace Pericles3Bundle\Repository;
 
+use DateTime;
+
+
 /**
  * ConstatRepository
  *
@@ -20,6 +23,31 @@ class FacturePrestaRepository extends \Doctrine\ORM\EntityRepository
             $qb->orderBy("ba.id","ASC");
             return $qb->getQuery()->getResult();
 	}
+        
+        
+	public function findFuturLoitainARevoir($limit=100)
+	{
+            $dateLoin =new Datetime('now');
+            $dateLoin->modify("+ 1 year");
+            $dateLoin->modify("- 1  month");
+
+            $dateYAPasLongtemps=new Datetime('now');
+            $dateYAPasLongtemps->modify("- 1  month");
+
+            
+            
+            $qb = $this->createQueryBuilder('facturePrestas');
+            if ($limit) { $qb->setMaxResults($limit); }
+            $qb->Join('facturePrestas.facture', 'facture');
+            $qb->where("facturePrestas.dateFin >= :dateLoin");
+            $qb->andWhere("facture.dateEmission >= :dateYAPasLongtemps");
+            $qb->setParameter('dateLoin', $dateLoin);
+            $qb->setParameter('dateYAPasLongtemps', $dateYAPasLongtemps);
+            $qb->orderBy("facturePrestas.dateFin","DESC");
+            return $qb->getQuery()->getResult();
+	}
+        
+        
         
 	public function findByEtablissement(\Pericles3Bundle\Entity\Etablissement $etablissement)
 	{

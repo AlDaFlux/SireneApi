@@ -73,8 +73,14 @@
                 
                 <td class='{{tmp_class}}'>{{presta.getDateDebut| hiddenDate | raw}}</td>
                 <td class='{{tmp_class}}'>{{presta.DateFin | hiddenDate | raw}}</td>
-                <td class='{{tmp_class}}'>{{presta.DateFinCalcule | hiddenDate | raw}}</td>
-                <td class='{{tmp_class}}'>{{presta.DateFiff2 }}</td>
+
+                {% if  presta.facture.Avoir %}
+                    <td class='{{tmp_class}}'>-</td>
+                    <td class='{{tmp_class}}'>-</td>
+                {% else  %}
+                    <td class='{{tmp_class}}'>{{presta.DateFinCalcule | hiddenDate | raw}}</td>
+                    <td class='{{tmp_class}}'>{{presta.DateFiff2 }}</td>
+                {% endif  %}
                 
                             <td>
                                 {%  if presta.isLastFacturePresta %}

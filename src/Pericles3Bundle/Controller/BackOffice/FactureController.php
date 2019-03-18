@@ -44,6 +44,10 @@ class FactureController extends Controller
         $sommeAPayer = $em->getRepository('Pericles3Bundle:Facture')->findSommeNonPayee();
         $gestionnaires_sans_facture = $em->getRepository('Pericles3Bundle:Gestionnaire')->findSansFacture();
         $etablissements_sans_facture = $em->getRepository('Pericles3Bundle:Etablissement')->findReelsSansFacture();
+        
+        
+        $prestas_a_revoir = $em->getRepository('Pericles3Bundle:FacturePresta')->findFuturLoitainARevoir();
+        
 
         
         
@@ -54,6 +58,7 @@ class FactureController extends Controller
             'factures_a_echeances' => $factures_a_echeances,
             'factures_a_payer_old' => $factures_a_payer_old,
             'factures_non_finalisees' => $factures_non_finalisees,
+            'prestas_a_revoir' => $prestas_a_revoir,
             'sommeAPayer' => $sommeAPayer['total'],
         ));
     }
