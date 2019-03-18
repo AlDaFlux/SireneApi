@@ -7,7 +7,11 @@ use Pericles3Bundle\Entity\FacturePresta;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+
+use Symfony\Component\Debug\Exception\FatalErrorException;
+
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -130,21 +134,36 @@ class FactureController extends Controller
     /**
      * Index Evaluation Etablissement
      *
-     * @Route("/etablissement_{id}/infos/facture_{facture}", options={"expose"=true}, name="pericles3_etablissements_infos_prestas")
+     * @Route("/etablissement_{id}/infosprestas/facture_{facture}", options={"expose"=true}, name="pericles3_etablissements_infos_prestas_facture")
      * @Method({"GET", "POST"})
      */    
-    public function indexInfoEtablissmentPrestaAction(\Pericles3Bundle\Entity\Etablissement $etablissement, Facture $facture)
+    public function indexInfoEtablissmentPrestaFactureAction(\Pericles3Bundle\Entity\Etablissement $etablissement, Facture $facture)
     {
         $em = $this->getDoctrine()->getManager();
         $prestas = $em->getRepository('Pericles3Bundle:FacturePresta')->findByEtablissement($etablissement);
-        
         return $this->render('BackOffice/facture/modal_prestas_etablissement.html.twig', array(
                 'etablissement' => $etablissement,
                 'facture' => $facture,
                 'prestas' => $prestas,
                 'titre' => "Prestations",
         ));
-     
+    }
+    
+    /**
+     * Index Evaluation Etablissement
+     *
+     * @Route("/etablissement_{id}/infosprestas", options={"expose"=true}, name="pericles3_etablissements_infos_prestas")
+     * @Method({"GET", "POST"})
+     */    
+    public function indexInfoEtablissmentPrestaAction(\Pericles3Bundle\Entity\Etablissement $etablissement)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $prestas = $em->getRepository('Pericles3Bundle:FacturePresta')->findByEtablissement($etablissement);
+        return $this->render('BackOffice/facture/modal_prestas_etablissement.html.twig', array(
+                'etablissement' => $etablissement,
+                'prestas' => $prestas,
+                'titre' => "Prestations",
+        ));
     }
     
     
@@ -790,19 +809,15 @@ class FactureController extends Controller
             }
             if ($request->get('type') == 'add_module_etablisement') 
             {
+                    
                 
-                
-                $this->AddFlash("success","ICIII");
-                
-                
-
-                
+                    
+                    
+                $this->AddFlash("debug","ICIII");
                 $etablissement = $em->getRepository('Pericles3Bundle:Etablissement')->findOneById($request->get('etab_id'));
-
                 $presta = new \Pericles3Bundle\Entity\FacturePresta();
                 $presta->SetMontant($request->get('montant'));
                 $presta->SetFacture($facture);
-
                 $this->AddFlash("success","Version :".$request->get('version'));
                 
                 $presta->setRenouvellement($request->get('version'));
@@ -810,6 +825,10 @@ class FactureController extends Controller
                 $em->persist($presta);
                 $em->flush();
                 $presta->setDateFin($presta->getDateFinCalcule());
+                if (! $presta->getDateFinCalcule())
+                {
+                    throw new FatalErrorException("Le date de fin ne marche pas",5046,3,"controller",813);
+                }
                 $em->persist($presta);
                 $em->flush();                
             }

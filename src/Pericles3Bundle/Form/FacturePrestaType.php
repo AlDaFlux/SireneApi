@@ -25,6 +25,7 @@ class FacturePrestaType extends AbstractType
                                                 ));
         
         $builder->add('montant');
+        $builder->add('renouvellement');
     }
     /**
      * {@inheritdoc}

@@ -189,8 +189,13 @@
                 
             {% if  etablissement.getFacturesAll | length > 0 %}
                 {% include "BackOffice/facture/small_factures.html.twig" with {'factures': etablissement.facturesAll} %}
+                
+            <div class=' btn btn-primary full-width show_prestas' data-id_etablissement='{{ etablissement.id }}'><i class='glyphicon glyphicon-info-sign'>détail des prestas</i></div>
+
+                                                                    
             {% endif %}
-            {% if  etablissement.getFacturesNotAVoir  | length == 0 %}
+            {% if  etablissement.getFacturesNotAVoir  | length == 0 and etablissement.Facturable %}
+                
                 <div class='alert alert-danger'>
                         Aucune facture ! 
                         {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') and etablissement.ModeCotisation.Id > 0 %}  
@@ -279,6 +284,16 @@
                                
     <a href="{{ path('pericles3_backoffice_etablissement') }}"  class = "back_to back_to_list btn  btn-link full-width">Retour à la liste</a>
  
+
+    {% include "BackOffice/facture/inc_show_prestas_jquery_modal.html.twig"   %}
 	
+        
 {% endblock %}
+
+
+{% block javascripts %}
+ 
+    {% include "BackOffice/facture/inc_show_prestas_jquery.html.twig" with {'factures': cur_etablissement.facturesAll} %}
+{% endblock %}
+
 

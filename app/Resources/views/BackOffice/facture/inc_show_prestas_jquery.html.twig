@@ -1,0 +1,15 @@
+<script type="text/javascript">
+    $(function() 
+    {
+        $('.show_prestas').click(function() 
+        {
+            $('#info_prestas').html("Chargement des infos");
+            $('#id_info_prestas').modal('show');
+               {% if facture is defined %}
+                   $('#info_prestas').load(Routing.generate('pericles3_etablissements_infos_prestas_facture', { id: $(this).data('id_etablissement'), facture:'{{facture}}' }));
+               {% else %}
+                   $('#info_prestas').load(Routing.generate('pericles3_etablissements_infos_prestas', { id: $(this).data('id_etablissement') }));
+               {% endif %}
+            });            
+    });
+</script>

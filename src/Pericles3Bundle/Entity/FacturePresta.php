@@ -2,6 +2,9 @@
 
 namespace Pericles3Bundle\Entity;
 
+use Symfony\Component\Debug\Exception\FatalErrorException;
+
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -298,8 +301,15 @@ class FacturePresta
     
     public function getDateFiff2()
     {
-        $diff=$this->GetDateFin()->diff($this->getDateFinCalcule());
-        return($diff->format('%a'));
+        if ($this->GetDateFin())
+        {
+            $diff=$this->GetDateFin()->diff($this->getDateFinCalcule());
+            return($diff->format('%a'));
+        }
+        else
+        {
+            return("ERREUR pas de date---");
+        }
     }
     
     
@@ -347,22 +357,26 @@ class FacturePresta
     
     public function getDateFinCalcule()
     {
-        if ($this->GetConcerne()->GetFirstFacturePresta())
+        if ($this->renouvellement)
         {
-            $date_creation_plus = clone  $this->GetFirstFacturePresta()->getDateDebut();
+                $date_creation_plus = clone  $this->GetFirstFacturePresta()->getDateDebut();
         }
         else
         {
-            $date_creation_plus = new DateTime();
+                $date_creation_plus = clone  $this->GetFirstFacturePresta()->getDateEmission();
         }
         $date_creation_plus->modify("+".(1+$this->renouvellement)." year");
         $date_creation_plus->modify("-1 day");
+        if (! $date_creation_plus)
+        {
+           throw new FatalErrorException("La date de fin est vide ",5046,3,"FacturePresta.php",375);
+        }
         return($date_creation_plus);
     }
 
     
     
-    
+   
     
 
     /**

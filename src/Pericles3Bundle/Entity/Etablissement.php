@@ -2302,10 +2302,8 @@ class Etablissement
     {
         return $this->category->getId()==6;
     }
-
-    
-    
-    
+                
+                
     
     
     /**
@@ -2587,6 +2585,12 @@ class Etablissement
         
         $last_facture=$this->getLastFacturePresta();
         if ($last_facture) return($last_facture->getFacture ());
+    }
+    
+    public function getFirstFacture()
+    {
+        $first_facture=$this->getFirstFacturePresta();
+        if ($first_facture) return($first_facture->getFacture());
     }
     
     

@@ -6,7 +6,13 @@
 {{ parent() }}    
 
     <h1><a href="{{ path('facture_index') }}">Factures</a></h1>
-    <h2><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{facture}}</a></h2>
+    
+    
+    {% if facture.getAvoir  %}
+        <h2 class='fincontrat'><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{facture}}</a></h2>
+    {% else %}
+        <h2><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{facture}}++</a></h2>
+    {% endif %}
 
 <div class='row'>
     <div class='col-md-3'>
@@ -155,23 +161,9 @@
     
     
     
+    {% include "BackOffice/facture/inc_show_prestas_jquery_modal.html.twig"   %}
 
-    <div class="modal fade" id="id_info_prestas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog  modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header ">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Prestas </h4>
-                </div>
-                <div class="modal-body">
-                    <p id='info_prestas'>Chargement des infos</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 {% endblock %}
 
 
