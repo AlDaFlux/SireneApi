@@ -171,35 +171,13 @@ class EvaluationController extends Controller
      */    
     public function indexReferentielAction()
     {
-        $em = $this->getDoctrine()->getManager();
-        //$etablissementsAll = $em->getRepository('Pericles3Bundle:Etablissement')->findAll();
-
         $etablissements=$this->GetUser()->GetEtablissements();
-        $referentiels=$this->GetUser()->getGestionnaireReferentielsPublic();
-        
         foreach ($etablissements as $etablissement)
         {
             $etabsByRef[$etablissement->GetReferentielPublic()->GetID()][]=$etablissement;
         }
-        
-        
-        
-        /*
-        foreach ($referentielPublics as $referentielPublic)
-        {
-            foreach ($referentielPublic->getReferentielDomaines() as $refDomaine)
-            {
-                $refDomaines
-                if ($this->GetUser()->ADroitEtablissement($dom->GetEtablissement()))
-                {
-                    $ref[$referentiel->GetId()][]=$dom;
-                }
-            }
-        }
-        */
-        
         return $this->render('Evaluation/Referentiel/index.html.twig', 
-                array('referentielsPublic'=> $referentiels, 
+                array(
                 'etablissements'=> $etablissements, 
                 'etabsByRef'=> $etabsByRef 
                     ));

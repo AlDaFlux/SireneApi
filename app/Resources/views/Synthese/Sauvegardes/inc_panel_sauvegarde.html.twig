@@ -1,8 +1,8 @@
                    
-                {% if is_granted('ROLE_GESTIONNAIRE')  %}
-                    {% set path_backup = path("pericles3_sauvegardes_etablissement", {'id': etablissement.id}) %}
-                {% else %}
+                {% if app.user.hasOneEtablissement%}
                     {% set path_backup = path("pericles3_sauvegardes") %}
+                {% else %}
+                    {% set path_backup = path("pericles3_sauvegardes_etablissement", {'id': etablissement.id}) %}
                 {% endif %}
             
         {% if  etablissement.getStatus==3 %}

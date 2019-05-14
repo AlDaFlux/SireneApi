@@ -11,8 +11,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-use Symfony\Component\Console\Input\ArrayInput
-;
+use Symfony\Component\Console\Input\ArrayInput;
+
+use Pericles3Bundle\Entity\PatchToDo;
+use DateTime;
+
 
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -27,6 +30,8 @@ class PatchEtablissementCommand extends ContainerAwareCommand
         $this->setHelp("Patch l'établissement... attention dangereux !");
         $this->addOption('etablissement_id',null,InputOption::VALUE_REQUIRED,"L'identifiant de l'établissement",0);
         $this->addOption('patch_id',null,InputOption::VALUE_OPTIONAL,"L'identifiant du patch ",0);
+        $this->addOption('patch_todo_id',null,InputOption::VALUE_OPTIONAL,"L'identifiant du patch todo, si vide, en crée un ! ",0);
+        $this->addOption('whitout_backups',null,InputOption::VALUE_NONE,"Ne patche pas les sauvegardes ! !attention, les patcher manuellement ensuite");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -35,12 +40,32 @@ class PatchEtablissementCommand extends ContainerAwareCommand
         $em = $doctrine->getEntityManager();
         $em->getConfiguration()->setSQLLogger(null);
 
+        if ($input->getOption('whitout_backups'))
+        {
+            $sauvegardes=false;
+        }
+        else
+        {
+            $sauvegardes=true;
+        }
+        
+        
         $etablissementId = $input->getOption('etablissement_id');
+        $patchTodoId = $input->getOption('patch_todo_id');
         $etablissement = $em->getRepository("Pericles3Bundle:Etablissement")->findOneById($etablissementId);
+        
+        $patchTodo = $em->getRepository("Pericles3Bundle:PatchTodo")->findOneById($patchTodoId);
+        
+        
+        
+        
+        
+        
+        
         gc_collect_cycles();
         if (! $etablissement)
         {
-            $output->writeln("<error>L'établissement ".$etablissement." n'exites pas<error>");
+            $output->writeln("<error>L'établissement ".$etablissement." n'exites pas</error>");
             return(0);
         }
         else
@@ -70,24 +95,43 @@ class PatchEtablissementCommand extends ContainerAwareCommand
         
         if (! $patch)
         {
-            $output->writeln("<error>Le patch ".$patchId." n'exites pas<error>");
+            $output->writeln("<error>Le patch ".$patchId." n'exites pas</error>");
             return(0);
         }
        
+        
+        
+        if (! $patchTodo)
+        {
+            
+            $patchTodo = $em->getRepository("Pericles3Bundle:PatchTodo")->findToDoEtablissementPatch($etablissement,$patch);
+            if (! $patchTodo)
+            {
+                $output->writeln("pas de patch todo choisi !  /création : ");
+                $patchTodo=new PatchToDo();
+                $patchTodo->setPatch($patch);
+                $patchTodo->setEtablissement($etablissement);
+            }
+        }
+        $patchTodo->setDateDebutPatch(new DateTime());
+        $em->persist($patchTodo);
+        $em->flush();
+         
+            
         $output->writeln("Patch choisi : ");
         $output->writeln("--->".$patch);
         $etablissementController = new \Pericles3Bundle\Controller\BackOffice\EtablissementController();
-            $etablissementController->SetOutput($output);
-            $etablissementController->SetEm($em);
+        $etablissementController->SetOutput($output);
+        $etablissementController->SetEm($em);
 
         if ($patch->Getsource()!=$etablissement->GetReferentielPublic())
         {
-            $output->writeln("<error>Le patch et le référentiel de l'établissement ne corresponde pas");
+            $output->writeln("<error>Le patch et le référentiel de l'établissement ne corresponde pas</error>");
         }
         else
         { 
             
-            $etablissementController->etablisssementPatchGo($etablissement,$patch);
+            $etablissementController->etablisssementPatchGo($etablissement,$patch,$sauvegardes);
             /*
             for ($etape=1;$etape<=4;$etape++)
             {
@@ -95,6 +139,19 @@ class PatchEtablissementCommand extends ContainerAwareCommand
             }
              */
         }
+        $patchTodo->setDateFinPatch(new DateTime());
+        $patchTodo->setMemoryUsage(memory_get_usage(true));
+        
+        $em->persist($patchTodo);
+        $em->flush();
+        $em->clear();
+        gc_collect_cycles();
+
+        $memoryUsage = memory_get_usage(true) / 1024 / 1024;
+        $output->writeln("<info>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ <info>");
+        $output->writeln("<info>++++++++++++   Mémoire utilisée : ".$memoryUsage." Mégas ++++++++++++ <info>");
+        $output->writeln("<info>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ <info>");
+
         
         
     }

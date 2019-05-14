@@ -59,15 +59,13 @@
                                 <td>   
                                         {{ etablissement.NbQuestionsRepondues}} / {{ referentielPublic.getNbQuestionsCache }}
                                 </td>
-                                
-                                 
- 
                                 <td>    {{etablissement.getMoyenneNotes | formatNoteSimple}} </a></td>
                                 <td>    <img width='32px' src='{{ etablissement.getMoyenneNotes | formatNoteNuage }}'></a> </td>
                                 {% set total_note = total_note + etablissement.getMoyenneNotes %}
                                 {% set nb_note = nb_note + 1%}
                             </tr>
                         {% endfor %}
+                        
                                 {% set note_moyenne = total_note / nb_note%}
                         
                           <tr>

@@ -10,16 +10,12 @@ namespace Pericles3Bundle\Repository;
  */
 class PatchRepository extends \Doctrine\ORM\EntityRepository
 {
-	 
-    
     public function findWithSource(\Pericles3Bundle\Entity\ReferentielPublic $Source) 
     {
         $qb = $this->createQueryBuilder('patch');
         $qb->Where("patch.patcheRefPublicSource = ".$Source->GetId());
         return $qb->getQuery()->getResult();
     }	
-    
-        
 }
 
 

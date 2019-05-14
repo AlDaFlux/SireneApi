@@ -19,6 +19,7 @@ use Pericles3Bundle\Entity\SauvegardeCritere;
 use Pericles3Bundle\Entity\SauvegardeDimension;
 use Pericles3Bundle\Entity\SauvegardeDomaine;
 use Pericles3Bundle\Entity\SauvegardeQuestion;
+use Pericles3Bundle\Entity\ReferentielPublic;
 
 
 
@@ -48,20 +49,45 @@ class SyntheseController extends Controller
      */
     public function indexAction()
     {
-        /*
         if ($this->GetUser()->IsGestionnaire())
         {
-            FindByUserDomaines
-            
+            $etablissements=$this->GetUser()->GetEtablissements();
+            $referentiels=$this->GetUser()->getGestionnaireReferentielsPublic();
+            foreach ($etablissements as $etablissement)
+            {
+                $etabsByRef[$etablissement->GetReferentielPublic()->GetID()][]=$etablissement;
+            }
+
+            return $this->render('Synthese/index.html.twig', 
+                array('referentielsPublic'=> $referentiels, 
+                'etablissements'=> $etablissements, 
+                'etabsByRef'=> $etabsByRef 
+                    ));
+
         }
         else
         {
             return $this->render('Synthese/index.html.twig');
+
         }
-        */
-        return $this->render('Synthese/index.html.twig');
         
     }
+    
+    
+    /**
+     * Synthese Etablissment
+     *
+     * @Route("/referentiel_{id}", name="pericles3_synthese_referentiel_menu")
+     * @Method("GET")
+     */
+    public function indexSynthesereferentielMenuAction(ReferentielPublic  $referentielPublic)
+    {
+        return $this->render('Synthese/index_referentiel.html.twig' , ['referentielPublic'=>$referentielPublic]);
+//        return $this->render('Synthese/synthese_arsene/synthese_pericles.html.twig', ['etablissement'=>$Etablissement]);
+    }
+     
+    
+    
     
     
     /**
@@ -240,6 +266,38 @@ class SyntheseController extends Controller
         return $this->render('Synthese/export.html.twig', ['etablissement'=>$Etablissement]);
     }
     
+    
+    
+    /**
+     * Lists all DomaineObjectifStrategique entities.
+     *
+     * @Route("/page_export_config/etablissement_{id}", name="pericles3_synthese_export_config_etablissement")
+     * @Method("GET")
+     */
+    public function indexExportConfigPageEtablissementAction(Etablissement $Etablissement)
+    {
+        return $this->render('Synthese/export_etablissement_config.html.twig', ['etablissement'=>$Etablissement]);
+    }
+    
+    
+    /**
+     * Lists all DomaineObjectifStrategique entities.
+     *
+     * @Route("/generate/etablissement_{id}", name="pericles3_generate_export_etablissement")
+     * @Method("GET")
+     */
+    public function indexExportGenerateEtablissementAction(Request $request,Etablissement $Etablissement)
+    {
+        return $this->render('Synthese/export/generate/synthese.html.twig', ['parameters'=> $request->query->all(),'typeExport'=>'PDF','etablissement'=>$Etablissement]);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * Lists all DomaineObjectifStrategique entities.
      *
@@ -269,6 +327,24 @@ class SyntheseController extends Controller
         return($this->exportFile($file,$filename, $synthese_type, $synthese_extension));
     }
 
+    
+    
+    
+    /**
+     * Exportation du fichier
+     *
+     * @Route("/export/referentiel_{id}/file/{synthese_type}.{synthese_extension}", name="arsene_synthese_getpath_referentiel")
+     * @Method({"GET", "POST"})
+     */
+    public function exportRefAction( ReferentielPublic $referentielPublic, $synthese_type, $synthese_extension){
+        $uploadPath = WEB_DIR.'/upload/';
+        $filename="ARSENE - ".$synthese_type.' - ' .$referentielPublic.' - '.date("Y-m-d").'.'.$synthese_extension;
+        $file=$uploadPath.$this->GetUser()->Getgestionnaire()->GetUploadFolderPath()."/synthese/".$synthese_type.".".$synthese_extension;
+        return($this->exportFile($file,$filename, $synthese_type, $synthese_extension));
+    }
+
+    
+    
     
     /**
      * Exportation du fichier
@@ -414,6 +490,53 @@ class SyntheseController extends Controller
         
     }
 
+    private function GetUploadDirectorySyntheseReferentiel()
+    {
+        $relative=$this->GetUser()->GetGestionnaire()->GetUploadFolderPath()."/synthese/";
+        $UploadDirectory = UPLOAD_DIR.$relative;
+        $this->get('Utils')->FolderUploadExisteCreate($relative);
+        return($UploadDirectory);
+        
+    }
+
+    
+    
+    /**
+     * Lists all DomaineObjectifStrategique entities.
+     *
+     * @Route("/generesynthesesdocument_referentiel", name="pericles3_synthese_referntiel_generation")
+     * @Method({"GET", "POST"})
+     */
+    public function genereSyntheseReferentielDocumentAction(Request $request)
+    {
+    //check si c'est un appel Ajax
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])){
+            die();
+        }
+        if ($request->get("referentiel_id"))
+        {
+            $repository = $this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:ReferentielPublic');
+            $referentielPublic = $repository->findOneById($request->get("referentiel_id"));
+            
+        }
+        else
+        {
+            die();
+        }
+        
+        $synthese_type=$request->get('type');
+        $synthese_extension=$request->get('extension');
+        $view = $this->renderView('Synthese/export/Referentiel/'.$synthese_type.'.html.twig', 
+                        array(
+                        'referentielPublic'=>$referentielPublic,
+                        'typeExport'=>  strtoupper($synthese_extension)
+                        ));
+        return($this->genereSyntheseFunctionAction($this->GetUploadDirectorySyntheseReferentiel(),$view,$synthese_type,$synthese_extension));
+    }
+    
+    
+    
+    
 
     /**
      * Lists all DomaineObjectifStrategique entities.
@@ -443,14 +566,14 @@ class SyntheseController extends Controller
                         'etablissement'=>$Etablissement,
                         'typeExport'=>  strtoupper($synthese_extension)
                         ));
-        return($this->genereSyntheseFunctionAction($Etablissement,$view,$synthese_type,$synthese_extension));
+        return($this->genereSyntheseFunctionAction($this->GetUploadDirectorySynthese($Etablissement),$view,$synthese_type,$synthese_extension));
     }
     
     
     /**
      * Lists all DomaineObjectifStrategique entities.
      *
-     * @Route("/genere_synthese_sauvegarde}", name="pericles3_synthese_document_generation_sauvegarde")
+     * @Route("/genere_synthese_sauvegarde", name="pericles3_synthese_document_generation_sauvegarde")
      * @Method({"GET", "POST"})
      */
     public function genereSyntheseDocumentSauvegardeAction(Request $request)
@@ -469,14 +592,14 @@ class SyntheseController extends Controller
                         'Sauvegarde'=>$Sauvegarde,
                         'typeExport'=>  strtoupper($synthese_extension)
                         ));
-        return($this->genereSyntheseFunctionAction($Etablissement,$view,$synthese_type,$synthese_extension,"_".$Sauvegarde->GetId()));
+        return($this->genereSyntheseFunctionAction($this->GetUploadDirectorySynthese($Etablissement),$view,$synthese_type,$synthese_extension,"_".$Sauvegarde->GetId()));
     }
     
     
     
     
     
-    public function genereSyntheseFunctionAction($Etablissement,$view,$synthese_type,$synthese_extension,$suffixe='')
+    public function genereSyntheseFunctionAction($path,$view,$synthese_type,$synthese_extension,$suffixe='')
     {
         if ($synthese_extension=="pdf")
         {
@@ -485,7 +608,7 @@ class SyntheseController extends Controller
             $dompdf = new DOMPDF();
             $dompdf->load_html($view);
             $dompdf->render();
-            $file_to_save=$this->GetUploadDirectorySynthese($Etablissement).$synthese_type.$suffixe.".pdf";
+            $file_to_save=$path.$synthese_type.$suffixe.".pdf";
             file_put_contents($file_to_save, $dompdf->output());
             return new JsonResponse(true);
         }
@@ -493,7 +616,7 @@ class SyntheseController extends Controller
         {
             //include($this->get('kernel')->getRootDir().'/../vendor/htmltodoc/html_to_doc.inc.php');
             $view=$this->get('HtmlToMht')->HtmlToMht($view);
-            $fp = fopen($this->GetUploadDirectorySynthese($Etablissement).$synthese_type.$suffixe.".doc", 'w');
+            $fp = fopen($path.$synthese_type.$suffixe.".doc", 'w');
             fwrite($fp, $view);
             return new JsonResponse(true);
         }
@@ -517,6 +640,24 @@ class SyntheseController extends Controller
                 )));    
     } 
 
+    
+    /**
+     * Lists all DomaineObjectifStrategique entities.
+     *
+     * @Route("/testdev_synthese/ref_public_{id}/{synthese_type}", name="pericles3_synthese_dev_ref")
+     * @Method("GET")
+     */
+    public function testdevRefAction(ReferentielPublic $referentielPublic, $synthese_type)
+    {
+        $synthese_extension="PDF";
+       return($this->render('Synthese/export/Referentiel/'.$synthese_type.'.html.twig', 
+                        array(
+                        'referentielPublic'=>$referentielPublic,
+                        'typeExport'=>  strtoupper($synthese_extension)
+                        )));    
+        
+    }
+    
     
        
     /**

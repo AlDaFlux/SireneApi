@@ -1,7 +1,11 @@
 <?php
 
 namespace Pericles3Bundle\Repository;
- 
+
+use Pericles3Bundle\Entity\Etablissement;
+use Pericles3Bundle\Entity\Patch;
+
+
 /**
  * CritereRepository
  *
@@ -26,6 +30,13 @@ class PatchToDoRepository extends \Doctrine\ORM\EntityRepository
         $qb = $this->createQueryBuilder('patchToDo');
         $qb->Where("patchToDo.dateDebutPatch IS NULL" );
         return $qb->getQuery()->getResult();
+    }	
+    
+    public function findToDoEtablissementPatch(Etablissement $etablissement, Patch $patch) 
+    {
+        $qb = $this->createQueryBuilder('patchToDo');
+        $qb->Where("patchToDo.dateDebutPatch IS NULL and patchToDo.etablissement=".$etablissement->GetId()." and patchToDo.patch=".$patch->GetId());
+        return  $qb->getQuery()->getOneOrNullResult();
     }	
     
     public function findDone() 

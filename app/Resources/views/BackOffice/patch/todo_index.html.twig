@@ -10,14 +10,17 @@
     <table class='table table-bordered table-triable'>
         <thead>
             <tr>
-                <th>Crée le </th>
+                <th>Crée le </th>   
                 <th>id</th>
                 <th>Etablissement</th>
                 <th>Patch</th>
                 <th>Etat</th>
+                <th>NbSauvegardes</th>
+                <th>Nb Sauvegardes Desuettes</th>
                 <th>Début</th>
                 <th>Fin</th>
                 <th>Duree</th>
+                <th>Mémoire</th>
                 <th>Created par</th>
                 <th>Actions</th>
             </tr>
@@ -31,6 +34,21 @@
                 <td><a href="{{ path('patch_show', { 'id': patchToDo.patch.id }) }}">{{ patchToDo.patch}}</a></td>
 
                 <td class='{{patchToDo.EtatClass}}'>{{ patchToDo.Etat}}</td>
+                {%  if patchToDo.etablissement.NbSauvegardesReferentielNonDesuet == 0 %}
+                    <td class='alert-success'>{{ patchToDo.etablissement.NbSauvegardesReferentielNonDesuet}}</td>
+                {%  elseif patchToDo.etablissement.NbSauvegardesReferentielNonDesuet >=2  %}
+                    <td class="alert-danger">{{ patchToDo.etablissement.NbSauvegardesReferentielNonDesuet}}</td>
+                {% else %}
+                    <td class="alert-warning">{{ patchToDo.etablissement.NbSauvegardesReferentielNonDesuet}}</td>
+                {% endif %}
+                
+                {%  if patchToDo.etablissement.NbSauvegardesReferentielDesuet == 0 %}
+                    <td class='alert-success'>{{ patchToDo.etablissement.NbSauvegardesReferentielDesuet}}</td>
+                {% else %}
+                    <td class="alert-danger">{{ patchToDo.etablissement.NbSauvegardesReferentielDesuet}}</td>
+                {% endif %}
+                 
+                
                 <td>{% if patchToDo.dateDebutPatch %}{{ patchToDo.dateDebutPatch  |date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>{% if patchToDo.dateFinPatch %}{{ patchToDo.dateFinPatch  |date('Y-m-d H:i:s') }}{% endif %}</td>
                 {% if patchToDo.dateFinPatch %}
@@ -40,6 +58,17 @@
                 {% endif %}
                 
                 
+                {% if patchToDo.getMemoryUsage > 0 %}
+                    {% if patchToDo.getMemoryUsage > 200000000  %}
+                        <td class='alert-danger'>{{ patchToDo.getMemoryUsage | formatBytes }}</td>
+                    {% elseif patchToDo.getMemoryUsage > 60000000  %}
+                        <td class='alert-warning'>{{ patchToDo.getMemoryUsage | formatBytes }}</td>
+                    {% else  %}
+                        <td class='alert-success'>{{ patchToDo.getMemoryUsage | formatBytes }}</td>
+                    {% endif  %}
+                {% else  %}
+                    <td></td>
+                {% endif  %}
                 <td>{{ patchToDo.createdBy }}</td>
                 <td> 
                     
@@ -55,7 +84,12 @@
     </table>
  
          <pre>{% for patchToDo in patchToDos %}{% if not patchToDo.dateDebutPatch %}
-php bin/console patch:patch-etablissement --etablissement_id={{patchToDo.etablissement.id}} --patch_id={{patchToDo.patch.id}}
+php bin/console patch:patch-etablissement --etablissement_id={{patchToDo.etablissement.id}} --patch_id={{patchToDo.patch.id}} --no-debug --whitout_backups
+{% if patchToDo.etablissement.nbSauvegardes %}
+{% for sauvegarde in patchToDo.etablissement.Sauvegardes  %}
+php bin/console patch:sauvegarde-do --sauvegarde_id={{ sauvegarde.id }} --patch_id={{ patchToDo.patch.id  }} --no-debug
+{% endfor %}
+{% endif  %}
 {% endif %}{% endfor %}    
         </pre>
 {% endblock %}

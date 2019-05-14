@@ -25,7 +25,7 @@
                     Accès impossible
                     </div>
                     <div class='alert alert-warning'>
-                        Le site arsene est en maintenance   
+                        Le site   est en maintenance   
                     </div>
                 
                 <p>&nbsp;
@@ -89,11 +89,11 @@
     {% else  %}
                 {% set granted = false %}
             {% set granted_explanation = " <div class='alert alert-danger'>
-                        L'utilisateur ARSENE  <b>" ~ app.user  ~ "</b>  n'a pas les droits d'accés a cette page.
+                        L'utilisateur " ~ application_name ~ " <b>" ~ app.user  ~ "</b>  n'a pas les droits d'accés a cette page.
                     </div>
                 <p>&nbsp;
                 <p>&nbsp;
-                <p>&nbsp; "%}
+                <p>&nbsp; "%} 
     {% endif%}
 {% endif%}
 {% if app.user %}
@@ -121,7 +121,13 @@
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
         <meta name="description" content="">
         <meta name="author" content="">
-        <link rel="icon" href="/favicon.ico">
+        {% if app.debug %}
+            <link rel="icon" type="image/png" href="/img/arsene_dev.png" />        
+        {% else %}
+            <link rel="icon" href="/favicon.ico">
+        {% endif %}
+
+        
         <title>{% block title %}  {{application_name}} {% endblock %}</title>
 
         <!-- Latest compiled and minified CSS -->

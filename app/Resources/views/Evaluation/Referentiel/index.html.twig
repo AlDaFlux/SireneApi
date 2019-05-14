@@ -1,6 +1,6 @@
 {% extends "Evaluation/layout.html.twig" %}
 
-
+{%  set  referentielsPublic = app.user.GestionnaireReferentielsPublic %}
 
 {% block title %}{{ parent() }} - {% endblock %}
 
@@ -11,7 +11,7 @@
       <h1>Par référentiel</h1>
       
       {% for referentielPublic in referentielsPublic %}
-          <h2><a href='{{ path('pericles3_referentiel_ref', {'id' :referentielPublic.id })}}'>{{ referentielPublic.public }} </a></h2> 
+          <h2><a href='{{ path('pericles3_referentiel_ref', {'id' :referentielPublic.id })}}'>{{ referentielPublic }} </a></h2> 
           
         <div class="row">
             <a href='{{ path('pericles3_referentiel_ref', {'id' :referentielPublic.id })}}'>

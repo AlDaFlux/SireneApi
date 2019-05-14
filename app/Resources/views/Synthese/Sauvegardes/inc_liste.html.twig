@@ -28,9 +28,11 @@
             <td>
             {#<a title="Modifier l'objectif" href="{{ path('paq_osa_edit', {'id': ObjectifStrategique.id}) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a>#}
             <a href="{{ path('pericles3_backup_synthese', {'id': sauvegarde.id}) }}"><i alt='Voir' class='glyphicon glyphicon-eye-open'></i></a>
-            <i title="Supprimer la sauvegarde" data-invite="Voulez-vous supprimer définitivement la sauvegarde du {{sauvegarde.dateCreate|date('d-m-Y') }}"
+            {% if is_granted('ROLE_RW_EVAL') %}
+                <i title="Supprimer la sauvegarde" data-invite="Voulez-vous supprimer définitivement la sauvegarde du {{sauvegarde.dateCreate|date('d-m-Y') }}"
                                 data-url_delete="{{ path('pericles3_sauvegardes_delete', {'id': sauvegarde.id}) }}" 
                                class='DeleteBoxBefore glyphicon glyphicon-trash iconhead   redText active full-width' ></i> 
+            {% endif %}
             </td>
         </tr>                    
     {% endfor %}

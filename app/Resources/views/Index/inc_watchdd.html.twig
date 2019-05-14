@@ -46,7 +46,7 @@
                     {% if app.user.Etablissement %}
                         
                     {% else  %}
-                          <i data-invite="Supprimer le fichier  définitive ? ?  ?" data-url_delete="{{ path('pericles3_bibliotheque_delete_fichier_gestionnaire', {'filename':key}) }}"  class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText btn  btn-danger active ' ></i> </td>
+                          <i data-invite="Supprimer le fichier de manière définitive ? ?  ?" data-url_delete="{{ path('pericles3_bibliotheque_delete_fichier_gestionnaire', {'filename':key}) }}"  class='DeleteBoxBefore glyphicon glyphicon-trash iconhead redText btn  btn-danger active ' ></i> </td>
                     {% endif  %}
 
             {% endif  %}

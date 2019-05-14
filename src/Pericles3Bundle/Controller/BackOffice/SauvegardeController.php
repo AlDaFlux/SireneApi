@@ -113,49 +113,9 @@ class SauvegardeController extends AdminController
         $em = $this->GetEm();
         $this->OutputOrFlash("Supression de >".$Sauvegarde);
         $em->remove($Sauvegarde);
-        $em->flush();            
-        
-//        $etablissement->removeSauvegarde($Sauvegarde);
-        
-        /*
-        foreach ($Sauvegarde->getDomaines() as $Domaine) 
-        {
-            $em->remove($Domaine);
-            $em->flush();            
-            
-           
-            $Sauvegarde->removeDomaine($Domaine);
-            $em->persist($Sauvegarde);
-            $em->flush();            
-            
-            
-                    /*
-            foreach ($Domaine->getDimensions() as $Dimension) 
-            {
-                $this->OutputOrFlash("----->".$Dimension);
-                foreach ($Dimension->getCriteres() as $Critere) 
-                {
-                    foreach ($Critere->getQuestions() as $Question) 
-                    {
-                        $em->remove($Question);
-                        $em->flush();
-                    }
-                    $em->remove($Critere);
-                    $em->flush();
-                }
-                $em->remove($Dimension);
-                $em->flush();
-            }
-            
-        }
-        /*
-        $etablissement=$Sauvegarde->getEtablissement();
-        $etablissement->removeSauvegarde($Sauvegarde);
-        $em->persist($etablissement);
         $em->flush();
-         * 
-         */
-
+//        $etablissement->removeSauvegarde($Sauvegarde);
+ 
     }
     
     

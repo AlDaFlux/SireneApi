@@ -27,10 +27,20 @@
 <td title='{{td_save_title}}' class='help center alert {{td_save_class}}'>
     {% if app.user.isGestionnaire %}
         <a href="{{ path('pericles3_sauvegardes_etablissement', {'id': etablissement.id}) }}">
-                {{ etablissement.NbSauvegardes}}
+                {{ etablissement.NbSauvegardes}} 
         </a>
     {% else %}
-        {{ etablissement.NbSauvegardes}}   
+        {{ etablissement.NbSauvegardes}}  
+
+        {%  set sauvegardes_bulle = td_save_title  %}
+        {% if etablissement.NbSauvegardes %}
+            {% for Sauvegarde in etablissement.Sauvegardes %}
+                {%  set sauvegardes_bulle = sauvegardes_bulle ~ "<li>" ~ Sauvegarde %}
+            {% endfor  %}  
+        {% endif  %}  
+        
+        {{sauvegardes_bulle | popover_help | raw }}
+        
     {% endif %}
 </td>
 

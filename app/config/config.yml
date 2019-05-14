@@ -3,7 +3,7 @@ imports:
     - { resource: ../../../application.yml }
     - { resource: security.yml }
     - { resource: services.yml }
-    - { resource: "@Pericles3Bundle/Resources/config/services.yml" }
+#    - { resource: "@Pericles3Bundle/Resources/config/services.yml" }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -94,7 +94,13 @@ doctrine:
                     softdeleteable:
                         class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
                         enabled: true
-
+                dql:
+                    datetime_functions:
+                        date_format: DoctrineExtensions\Query\Mysql\DateFormat
+                        DAY: DoctrineExtensions\Query\Mysql\Day
+                        MONTH: DoctrineExtensions\Query\Mysql\Month
+                        YEAR: DoctrineExtensions\Query\Mysql\Year
+                    
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"
@@ -152,4 +158,3 @@ chartjs:
         fontStyle: 'bold'
         padding: 10
         text:	''    
-    

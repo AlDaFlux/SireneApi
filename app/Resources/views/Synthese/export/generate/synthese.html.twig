@@ -1,0 +1,74 @@
+{% set titre_synthese= 'Evaluation ' ~ application_name %}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+    <meta charset="UTF-8">
+    <TITLE>{{titre_synthese}}</TITLE>
+    {% include "Synthese/export/inc/export.css.html.twig" %}
+</HEAD>
+<BODY> 
+
+    {{    "/img/header_doc.jpg" | getImageExport(typeExport,"100%") | raw }}
+    <div class='main_titre'>{{titre_synthese}}<br></div>
+    <h2 class='center'>{{etablissement}}</h2>
+    <div class='date_eval'>
+    export du {{ 'now'|date('d-m-Y  H:i') }}
+    </div>
+
+
+    
+    
+    {% if  parameters | parametersBoolean("logo") %}    
+        {% if etablissement.hasLogo %}
+            <div class='logo_etablissement'>
+              {{etablissement.LogoPath | getImageExport(typeExport,0,'200px') | raw }}
+             </div>
+        {% endif %}
+    {% endif %}
+
+
+    
+ 
+{% for domaine in etablissement.domaines %}
+    <h1><a id="domaine_{{domaine.ordre}}" name="domaine_{{domaine.ordre}}">{{ domaine.ordre}}. {{ domaine}}</a>
+        
+                    {% set note = domaine.MoyenneNotes %} 
+                    
+                    <span class='note_in'>
+                        {% if  parameters["domaine_note"] > "0" %}    
+                             {{ note | formatNoteSimple }}
+                        {% endif %}
+
+                        {% if  parameters["domaine_note"] == "2" %}    
+                        {% set img_note = note | formatNoteNuage(true) %}
+                            {{ img_note | getImageExport(typeExport) | raw }}
+                        {% endif %}
+
+                    </span>
+
+    </h1>
+
+    {% if  parameters | parametersBoolean("domaine_graphique") %}    
+    <div class='graph_big'>
+        {% set img_note = '/upload/st01/etablissement_' ~ etablissement.id ~ '/synthese/graphs/' ~ domaine.id ~'.jpg' %}
+        {{ img_note | getImageExport(typeExport) | raw }}
+    </div>
+    {% endif %}
+
+{% endfor %}
+
+    {{ dump(parameters) }}
+    
+
+
+
+
+             
+ </body>
+</html>
+
+
+
+

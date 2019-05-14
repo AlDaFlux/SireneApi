@@ -36,7 +36,7 @@ class ReferentielOsoleteSupressionDomainesCommand extends ContainerAwareCommand
     $domaines_desuet =$em->getRepository('Pericles3Bundle:Domaine')->FindReferentielDesuet();
     foreach ($domaines_desuet as $Domaine )
     {
-        $output->writeln("<error>Supression : ".$Domaine." </error>");
+        $output->writeln("<error>Supression : ".$Domaine->GetEtablissement()." : ".$Domaine->GetNumero()." ".$Domaine." </error>");
         if ($Domaine->GetEtablissement()->getNbSauvegardesReferentielDesuet()==0)
         {
                foreach ($Domaine->getDimensions() as $Dimension  )

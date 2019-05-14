@@ -22,4 +22,6 @@ class LoginListener
 		$this->em->persist($user);
 		$this->em->flush();
 	}
+        
+        
 }

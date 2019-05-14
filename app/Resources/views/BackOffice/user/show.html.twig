@@ -138,12 +138,12 @@
                         <ul>
                             {% for referentiel in user.getReferentielsPublic  %}
                                 {%if referentiel.fini==1 %}
-                                    <li><a class='btn-success' href='{{ path('referentielpublic_show', {'id': referentiel.id}) }}"'>{{referentiel}}</a>
+                                    <li><a class='btn-success' href='{{ path('referentielpublic_show', {'id': referentiel.id}) }}'>{{referentiel}}</a>
                                 {% else %}
                                     {% if is_granted('ROLE_MEGA_ADMIN')  %}
-                                        <li><a class='btn-warning' href='{{ path('referentielpublic_show', {'id': referentiel.id}) }}"'>{{referentiel}}</a>
+                                        <li><a class='btn-warning' href='{{ path('referentielpublic_show', {'id': referentiel.id}) }}'>{{referentiel}}</a>
                                     {% else %}
-                                        <li><span class='btn-warning' href='{{ path('referentielpublic_show', {'id': referentiel.id}) }}"'>{{referentiel}}</span>
+                                        <li><span class='btn-warning' href='{{ path('referentielpublic_show', {'id': referentiel.id}) }}'>{{referentiel}}</span>
                                     {% endif %}
                                 {% endif %}
                             {% endfor  %}

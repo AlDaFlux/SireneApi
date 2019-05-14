@@ -30,6 +30,8 @@ class AppKernel extends Kernel
             new fados\ChartjsBundle\ChartjsBundle(),
             new PUGX\AutocompleterBundle\PUGXAutocompleterBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
+#            new FOS\UserBundle\FOSUserBundle(),
+
 #            new InDaFlux\ \InDafluxIDSBundle(),
             
         ];

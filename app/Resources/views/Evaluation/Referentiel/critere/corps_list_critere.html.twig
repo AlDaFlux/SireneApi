@@ -45,17 +45,22 @@
                                 {% set currentState = critere.getStatus() %}
                                 <td>   <a href="{{ path('pericles3_critere', {'id': critere.id}) }}#CritereNote">  {{critere.note | formatNoteSimple}} </a></td>
                                 <td>  <a href="{{ path('pericles3_critere', {'id': critere.id}) }}#CritereNote">    <img width='32px' src='{{ critere.note | formatNoteNuage }}'></a> </td>
-                                {% set total_note = total_note + critere.note %}
-                                {% set nb_note = nb_note + 1%}
+                                {%  if critere.concerne %}
+                                    {% set total_note = total_note + critere.note %}
+                                    {% set nb_note = nb_note + 1%}
+                                {%  endif  %}
                             </tr>
                         {% endfor %}
-                                {% set note_moyenne = total_note / nb_note%}
+
+                        {%  if nb_note %}
+                            {% set note_moyenne = total_note / nb_note%}
                         
                           <tr>
                                 <th colspan='5'>Moyenne</td> 
                                 <th>  {{ note_moyenne | formatNoteSimple}} </a></td>
                                 <th>  <img width='32px' src='{{ note_moyenne |  round | formatNoteNuage }}'></a> </td>
                           </tr>
+                        {%  endif  %}
                         
                         
                         

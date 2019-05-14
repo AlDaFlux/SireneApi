@@ -1,0 +1,11 @@
+
+<div class='sub_menu_doc'>
+    <ul>
+{% for domaine in  referentielPublic.getReferentielDomaines  %}                          
+         <li><a href="#domaine_{{domaine.ordre}}">{{domaine.ordre}}. {{domaine}} ({{ domaine.getDomaineGestionnaireUserMoyenneNotes(gestionnaire,app.user) | formatNoteSimple }})</a></li>
+    {% endfor %}
+    </ul>
+</div>
+
+        
+        

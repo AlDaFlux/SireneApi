@@ -1,0 +1,7 @@
+ 
+         
+    {% if etablissement.PatchToDoAfaire %}
+          <div class='alert alert-danger'>Les sauvegardes sont désactivées car un patch est prévu</div>
+     {% else %}
+         <a class = "lien_synt  btn  btn-danger full-width"    href="{{ path_sauvegardes_do }}">Effectuer une sauvegarde</a>
+     {% endif %}

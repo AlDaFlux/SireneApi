@@ -1,0 +1,179 @@
+{% extends "Synthese/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - Synthèse - {% endblock %}
+
+{% block stylesheets %}
+    <style>
+    .form-group
+    {
+        border:#cccccc 1px solid;
+        border-radius: 8px;
+        margin: 20px;
+        padding:  20px;
+    }
+    
+    </style>
+    
+    
+{% endblock %}    
+
+{% block body %}
+    {{ parent() }}
+    
+{% endblock %}    
+
+{% block out_container  %} 
+    <div class='row'>
+    
+    <div class='col-md-4'>
+    <form id='parameters' class="form-horizontal">
+<fieldset>
+
+<!-- Form Name -->
+<legend>Page de garde</legend>
+<div class="form-group">
+  <label class="col-md-4 control-label" for="logo">Multiple Checkboxes</label>
+  <div class="col-md-4"> <div class="checkbox">
+    <label for="logo-0">
+      <input type="checkbox" name="logo" id="logo-0" value="1">Logo Etablissement</label>
+	</div>
+  </div>
+</div>
+
+
+
+<legend>Domaines</legend>
+
+<!-- Multiple Radios (inline) -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="domaine_note">Domaines</label>
+  <div class="col-md-4"> 
+    <label for="radios-0"><input type="radio" name="domaine_note" id="radios-0" value="0" checked="checked">Sans note</label> 
+    <label for="radios-1"><input type="radio" name="domaine_note" id="radios-1" value="1">Note Simple</label> 
+    <label  for="radios-2"><input type="radio" name="domaine_note" id="radios-2" value="2">Note avec Picto</label> 
+    <label  for="radios-3"><input type="radio" name="domaine_note" id="radios-3" value="3">Note avec Histo</label> 
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-md-4 control-label" for="domaine_graphique">Graphiques</label>
+  <div class="col-md-4"> 
+    <input type="radio" name="domaine_graphique" id="radios-0" value="0" checked="checked">Sans graphique
+    <input type="radio" name="domaine_graphique" id="radios-1" value="1">Avec graphique
+  </div>
+</div>
+
+<legend>Tests</legend>
+<!-- Multiple Checkboxes -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="checkboxes">Multiple Checkboxes</label>
+  <div class="col-md-4">
+  <div class="checkbox">
+    <label for="checkboxes-0">
+      <input type="checkbox" name="checkboxes" id="checkboxes-0" value="1">Option one</label>
+	</div>
+  <div class="checkbox">
+    <label for="checkboxes-1">
+      <input type="checkbox" name="checkboxes" id="checkboxes-1" value="2">
+      Option two
+    </label>
+	</div>
+  </div>
+</div>
+
+<!-- Multiple Radios -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="radios">Multiple Radios</label>
+  <div class="col-md-4">
+  <div class="radio">
+    <label for="radios-0">
+      <input type="radio" name="radios" id="radios-0" value="1" checked="checked">
+      Option one
+    </label>
+	</div>
+  <div class="radio">
+    <label for="radios-1">
+      <input type="radio" name="radios" id="radios-1" value="2">
+      Option two
+    </label>
+	</div>
+  </div>
+</div>
+
+</fieldset>
+</form>
+</div>
+        
+            <div class='col-md-8'>
+                <div class='btn btn-block btn-primary' id='recalc'>recalc</div>
+                
+                <div class="iframe">
+                    <iframe width='100%' height='2000px' name="ifrm" id="ifrm" src="tabs.html" frameborder="0">
+                    Your browser doesn't support iframes.</iframe>
+                </div>
+            </div>
+</div>
+
+    
+    
+  
+{% endblock %}
+
+
+ 
+
+{% block javascripts %}
+    <script type="text/javascript">
+        $(function() 
+        {
+            $('#recalc').click(function() 
+            {
+                recalc_preview();
+            });
+            $('input').click(function() 
+            {
+                recalc_preview();
+            });
+            
+            
+        });
+        
+        function maj_parameters()
+        {
+            recalc_preview();
+        }
+        
+        function recalc_preview()
+        {
+           url="{{ path('pericles3_generate_export_etablissement', {'id': etablissement.id}) }}";
+           var parameters = $('#parameters').serialize();
+           url= url + '?' + parameters;
+           $("#ifrm").attr("src", url);
+        }
+    </script> 
+{% endblock %}
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

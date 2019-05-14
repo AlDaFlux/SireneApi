@@ -42,21 +42,15 @@ class PatchTodoCommand extends ContainerAwareCommand
         {
             $output->writeln("Etablissement choisi : ".$PatchToDo->GetEtablissement());
             $output->writeln("Patch choisi : ".$PatchToDo->GetPatch());
-            
-            $PatchToDo->setDateDebutPatch(new DateTime());
-            $em->persist($PatchToDo);
-            $em->flush();
-            
             $command = $this->getApplication()->find('patch:patch-etablissement');
-            $arguments = array('command' => 'patch:patch-etablissement','--etablissement_id'    => $PatchToDo->GetEtablissement()->GetId(),'--patch_id'  => $PatchToDo->GetPatch()->GetId());
-            
+            $arguments = array('command' => 'patch:patch-etablissement','--patch_todo_id'=>$PatchToDo->GetId(),'--etablissement_id'    => $PatchToDo->GetEtablissement()->GetId(),'--patch_id'  => $PatchToDo->GetPatch()->GetId());
             $PatchEtabInput = new ArrayInput($arguments);
             $command->run($PatchEtabInput, $output);
-            $PatchToDo->setDateFinPatch(new DateTime());
-            $em->persist($PatchToDo);
-            $em->flush();
             $em->clear();
+            gc_collect_cycles();
         }
         $output->writeln($i." établissements patchés: ");
     }
 }
+
+

@@ -1335,7 +1335,7 @@ class EtablissementController extends AdminController
     
     
     
-    function etablisssementPatchGo(Etablissement $Etablissement,Patch $patch)
+    function etablisssementPatchGo(Etablissement $Etablissement,Patch $patch,$sauvegardes=true)
     {
         for ($etape=0;$etape<=4;$etape++)
         {
@@ -1344,10 +1344,25 @@ class EtablissementController extends AdminController
         $sauvegardeController = new \Pericles3Bundle\Controller\BackOffice\SauvegardeController();
         $sauvegardeController->SetOutput($this->GetOutput());
         $sauvegardeController->SetEm($this->GetEm());
-        foreach ($Etablissement->getSauvegardes() as $sauvegarde)
+        if ($sauvegardes)
         {
-            $sauvegardeController->patchSauvegardeApply($sauvegarde, $patch);
-        } 
+            $this->OutputOrFlashSuccess("-------------------------------------- ");
+            $this->OutputOrFlashSuccess("------------ Sauvegardes ------------- ");
+            $this->OutputOrFlashSuccess("-------------------------------------- ");
+            foreach ($Etablissement->getSauvegardes() as $sauvegarde)
+            {
+                $this->OutputOrFlashSuccess("------>".$sauvegarde);
+                $sauvegardeController->patchSauvegardeApply($sauvegarde, $patch);
+            } 
+        }
+        elseif ($Etablissement->getNbSauvegardes())
+        {
+            $this->OutputOrFlashError("!!!!!   attention,  les sauvegardes ne sont pas patchés ! ");
+        }
+        else
+        {
+            $this->OutputOrFlashError("Pas de sauvegardes ! ");
+        }
     }
  
     

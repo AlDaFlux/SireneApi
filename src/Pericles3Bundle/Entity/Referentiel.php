@@ -736,6 +736,97 @@ class Referentiel
     }
     
     
+    public function getCritereGestionnaireUser(Gestionnaire $gestionnaire,User $user)
+    {
+        $etablissements= $gestionnaire->getEtablissementsByUsers($user);
+        $criteres=new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->GetCriteres() as $critere)
+        {
+            if ($etablissements->contains($critere->GetEtablissement()))
+            {
+                $criteres->Add($critere);
+            }
+        }
+        return ($criteres);
+    }
+    
+
+    public function getDimensionGestionnaireUser(Gestionnaire $gestionnaire,User $user)
+    {
+        $etablissements= $gestionnaire->getEtablissementsByUsers($user);
+        $dimensions=new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->GetDimensions() as $dimension)
+        {
+            if ($etablissements->contains($dimension->GetEtablissement()))
+            {
+                $dimensions->Add($dimension);
+            }
+        }
+        return ($dimensions);
+    }
+    
+
+    public function getDomaineGestionnaireUser(Gestionnaire $gestionnaire,User $user)
+    {
+        $etablissements= $gestionnaire->getEtablissementsByUsers($user);
+        $domaines=new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->getDomaines() as $domaine)
+        {
+            if ($etablissements->contains($domaine->GetEtablissement()))
+            {
+                $domaines->Add($domaine);
+            }
+        }
+        return ($domaines);
+    }
+    
+
+    public function getCritereGestionnaireUserMoyenneNotes(Gestionnaire $gestionnaire,User $user)
+    {
+        $note = 0;  $nb_criteres=0; $concerne=false;
+        foreach ($this->getCritereGestionnaireUser($gestionnaire,$user) as $critere ) 
+        {
+            if ($critere->getConcerne())  { $concerne=true; $nb_criteres++; $note+=$critere->getNote(); }
+        }
+        if ($nb_criteres) { $moyenne=$note/$nb_criteres; return round($moyenne, 1); }
+        elseif (! $concerne) { return(-1); }
+        else { return(0); }
+    }
+    
+    
+    public function getDimensionGestionnaireUserMoyenneNotes(Gestionnaire $gestionnaire,User $user)
+    {
+        $note = 0;  $nb_dimensions=0; $concerne=false;
+        foreach ($this->getDimensionGestionnaireUser($gestionnaire,$user) as $dimension ) 
+        {
+            $note_tmp=$dimension->getNote();
+            if ($note_tmp>=0)  { $concerne=true; $nb_dimensions++; $note+=$note_tmp; }
+        }
+        if ($nb_dimensions) { 
+        $moyenne=$note/$nb_dimensions; 
+        return round($moyenne, 1); }
+        elseif (! $concerne) { return(-1); }
+        else { return(0); }
+    }
+    
+    public function getDomaineGestionnaireUserMoyenneNotes(Gestionnaire $gestionnaire,User $user)
+    {
+        $note = 0;  $nb_domaines=0; $concerne=false;
+        foreach ($this->getDomaineGestionnaireUser($gestionnaire,$user) as $domaine ) 
+        {
+            $note_tmp=$domaine->getMoyenneNotes();
+            if ($note_tmp>=0)  { $concerne=true; $nb_domaines++; $note+=$note_tmp; }
+        }
+        if ($nb_domaines) { 
+            $moyenne=$note/$nb_domaines; 
+            return round($moyenne, 1); 
+        }
+        elseif (! $concerne) { return(-1); }
+        else { return(0); }
+    }
+    
+
+    
     
     
     

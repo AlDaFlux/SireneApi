@@ -25,33 +25,39 @@ class BibliothequeAncreaiType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('titre')
-            ->add('href',UrlType::class, array('label' => 'URL (http://...)') )
-            ->add('typeSourceBA')
-            ->add('datePublication', DateType::class, array(
-                                                'label' => 'Date de publication',
-                                                'widget' => 'single_text',
-                                                'input' => 'datetime',
-                                                'format' => 'dd-MM-yyyy',
-                                                'attr' => array('class' => 'date')
-                                                ));
-//        $builder->add('cache', FileType::class,  array('required' => false, 'label' => 'Cache (PDF file)','data_class' => null));
-        $builder->add('cache', FileType::class,  array('required' => false, 'label' => 'Cache (PDF file)','data_class' => null));
-        
-        if ($options['avec_public'])
-        {
-             $builder->add('referentielPublics', EntityType::class, array(
-                'class' => 'Pericles3Bundle:referentielPublic',
-                'multiple' => true,
-                'expanded' => true,
-                    'query_builder' => function(ReferentielPublicRepository $repository) 
-                    {  $qb = $repository->createQueryBuilder('referentiel');
-                        return $qb;
-                    }  
-                ));
-        }
-                
+         if ($options['onlyfile'])
+         {
+                $builder->add('cache', FileType::class,  array('required' => false, 'label' => 'Cache (PDF file)','data_class' => null));
+         }
+         else
+         {
+                $builder
+                    ->add('titre')
+                    ->add('href',UrlType::class, array('label' => 'URL (http://...)') )
+                    ->add('typeSourceBA')
+                    ->add('datePublication', DateType::class, array(
+                                                        'label' => 'Date de publication',
+                                                        'widget' => 'single_text',
+                                                        'input' => 'datetime',
+                                                        'format' => 'dd-MM-yyyy',
+                                                        'attr' => array('class' => 'date')
+                                                        ));
+        //        $builder->add('cache', FileType::class,  array('required' => false, 'label' => 'Cache (PDF file)','data_class' => null));
+
+                if ($options['avec_public'])
+                {
+                     $builder->add('referentielPublics', EntityType::class, array(
+                        'class' => 'Pericles3Bundle:referentielPublic',
+                        'multiple' => true,
+                        'expanded' => true,
+                            'query_builder' => function(ReferentielPublicRepository $repository) 
+                            {  $qb = $repository->createQueryBuilder('referentiel');
+                                return $qb;
+                            }  
+                        ));
+                }
+            }
+
     }
     
     /**
@@ -62,7 +68,7 @@ class BibliothequeAncreaiType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'Pericles3Bundle\Entity\BibliothequeAncreai',
             'avec_public' => true,
-
+            'onlyfile' => false,
         ));
     }
 }

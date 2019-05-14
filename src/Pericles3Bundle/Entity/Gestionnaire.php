@@ -335,6 +335,22 @@ class Gestionnaire
         return $this->etablissements;
     }
     
+    
+    public function getEtablissementsByUsers(User $user)
+    {
+
+        $etablissements=new \Doctrine\Common\Collections\ArrayCollection();
+
+        foreach ($this->etablissements as $etablissement)
+        {
+            if ($user->ADroitEtablissement($etablissement)) { $etablissements->Add($etablissement);}
+        }
+        return($etablissements);
+        
+    }
+    
+    
+    
     public function getNbEtablissements()
     {
         return count($this->etablissements);

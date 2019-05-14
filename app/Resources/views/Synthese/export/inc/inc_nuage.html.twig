@@ -1,0 +1,2 @@
+{% set img_note = note | formatNoteNuage(true) %}
+{{ img_note | getImageExport(typeExport) | raw }}

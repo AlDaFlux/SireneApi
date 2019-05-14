@@ -44,37 +44,44 @@ class PatchOldSauvegardeCommand extends ContainerAwareCommand
             if ($sauvegarde->getReferentielDesuet()) $sauvegardes->add($sauvegarde);
         }
 
-        foreach ($sauvegardes as $sauvegarde )
+        if ($sauvegardes)
         {
-            $em->clear();
-            $output->writeln("--->".$sauvegarde);
-            $etablissement=$sauvegarde->GetEtablissement();
-            $output->writeln("--Etablissement ->".$etablissement);
-            $publicCible=$etablissement->GetReferentielPublic();
-            $publicSource=$sauvegarde->GetReferentiel();
-            $output->writeln("----- Public Source ---->".$publicSource);
-            $output->writeln("----- Public Cible ---->".$publicCible);
-            $patch=$publicSource->getPatchCiblePatch($publicCible);
-            $output->writeln("-------Patch-->".$patch);
+            foreach ($sauvegardes as $sauvegarde )
+            {
+                $em->clear();
+                $output->writeln("--->".$sauvegarde);
+                $etablissement=$sauvegarde->GetEtablissement();
+                $output->writeln("--Etablissement ->".$etablissement);
+                $publicCible=$etablissement->GetReferentielPublic();
+                $publicSource=$sauvegarde->GetReferentiel();
+                $output->writeln("----- Public Source ---->".$publicSource);
+                $output->writeln("----- Public Cible ---->".$publicCible);
+                $patch=$publicSource->getPatchCiblePatch($publicCible);
+                $output->writeln("-------Patch-->".$patch);
 
-            if ($input->getOption('execution'))
-            {
-                $command = $this->getApplication()->find('patch:sauvegarde-do');
-                $arguments = array('command' => 'patch:sauvegarde-do','--sauvegarde_id'  => $sauvegarde->GetId(),'--patch_id'  => $patch->GetId());
-                $PatchEtabInput = new ArrayInput($arguments);
-                $command->run($PatchEtabInput, $output);
-                
-            }
-            else
-            {
-                $output->writeln( "php bin/console patch:sauvegarde-do --sauvegarde_id=".$sauvegarde->GetId()." --patch_id=".$patch->GetId());
+                if ($input->getOption('execution'))
+                {
+                    $command = $this->getApplication()->find('patch:sauvegarde-do');
+                    $arguments = array('command' => 'patch:sauvegarde-do','--sauvegarde_id'  => $sauvegarde->GetId(),'--patch_id'  => $patch->GetId());
+                    $PatchEtabInput = new ArrayInput($arguments);
+                    $command->run($PatchEtabInput, $output);
+                }
+                else
+                {
+                    $output->writeln( "php bin/console patch:sauvegarde-do --sauvegarde_id=".$sauvegarde->GetId()." --patch_id=".$patch->GetId()." --no-debug");
+                }
+
             }
             
+        }
+        else
+        {
+            $output->writeln("Aucune sauvegarde à patcher");
         }
 
         
         $em->clear();
-        if ($input->getOption('execution'))
+        if ($input->getOption('execution') && $sauvegardes)
         {
                 $output->writeln(" Les sauvegardes ont été patchés");
         }

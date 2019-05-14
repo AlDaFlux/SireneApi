@@ -25,8 +25,15 @@ class SauvegardeDeleteCommand extends ContainerAwareCommand
     {
         $this->setName('sauvegarde:delete');
         $this->setDescription("Supprimme une sauvegarde.. attention dangereux !");
-        $this->setHelp("Supprimme une sauvegarde.. attention dangereux !");
+    $this->setHelp(<<<'HELP'
+<info>%command.name%</info> Supprimme une sauvegarde.. attention dangereux !":
+     <info>php %command.full_name%</info>
+ <info>php %command.full_name%</info> <comment>--sauvegarde_id=???  --etablissement_id=???  </comment>
+ 
+HELP
+            );
         $this->addOption('sauvegarde_id',null,InputOption::VALUE_REQUIRED,"L'identifiant de la sauvegarde",0);
+        $this->addOption('etablissement_id',null,InputOption::VALUE_REQUIRED,"L'identifiant de la sauvegarde",0);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -36,7 +43,10 @@ class SauvegardeDeleteCommand extends ContainerAwareCommand
         $em = $doctrine->getEntityManager();
         
         $sauvegardeId = $input->getOption('sauvegarde_id');
-            
+        $etablissementId = $input->getOption('etablissement_id');
+
+
+        
         $em = $doctrine->getEntityManager();
         if (! $sauvegardeId )
         {

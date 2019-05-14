@@ -4,6 +4,8 @@ namespace Pericles3Bundle\Repository;
 
 use Pericles3Bundle\Entity\Sauvegarde;
 use Pericles3Bundle\Entity\Gestionnaire;
+use Pericles3Bundle\Entity\Etablissement;
+
 /**
  * DomaineRepository
  *
@@ -48,6 +50,45 @@ class SauvegardeRepository extends \Doctrine\ORM\EntityRepository
 		return $qb->getQuery()->getResult();
 	}
          
+        
+        
+        public function findByEtablissement(Etablissement $etablissement) 
+        {
+		$qb = $this->createQueryBuilder('sauvegarde');
+                $qb->Join('sauvegarde.etablissement', 'etablissement');
+//                $qb->orderBy('sauvegarde.dateCreate','DESC');
+                $qb->where('etablissement.id = :etablissement')->setParameter('etablissement', $etablissement->getId());
+		return $qb->getQuery()->getResult();
+	}
+        
+        public function findDateDoublonsByEtablissement(Etablissement $etablissement) 
+        {
+		$qb = $this->createQueryBuilder('sauvegarde');
+		$qb->select('date_format(sauvegarde.dateCreate, \'%Y-%m-%d\') as dateCreateGrp', 'count(sauvegarde.dateCreate) as nb');
+                $qb->Join('sauvegarde.etablissement', 'etablissement');
+//                $qb->orderBy('sauvegarde.dateCreate','DESC');
+                $qb->where('etablissement.id = :etablissement')->setParameter('etablissement', $etablissement->getId());
+                $qb->having('nb>1');               
+                $qb->GroupBy('dateCreateGrp');               
+		return $qb->getQuery()->getResult();
+	}
+        
+        
+        public function findByEtablissementDay(Etablissement $etablissement,$day) 
+        {
+		$qb = $this->createQueryBuilder('sauvegarde');
+                //date_format(sauvegarde.dateCreate, \'%Y-%m-%d\')
+                $qb->Join('sauvegarde.etablissement', 'etablissement');
+//                $qb->orderBy('sauvegarde.dateCreate','DESC');
+                $qb->where('etablissement.id = :etablissement')->setParameter('etablissement', $etablissement->getId());
+                $qb->andWhere("date_format(sauvegarde.dateCreate, '%Y-%m-%d')='".$day."'");
+//                $qb->andWhere("=".$day);
+		return $qb->getQuery()->getResult();
+	}
+        
+        
+        
+        
         
         
         

@@ -303,15 +303,19 @@ class BibliothequeAncreaiController extends Controller
             $bibliothequeAncreai->setCodeRetour(0);
             $bibliothequeAncreai->setLastModifiedBy($this->GetUser());
             
-              
+              /*
             $file = $bibliothequeAncreai->getCache();
-            $fileName = $file->getClientOriginalName();
-            $bibliothequeAncreai->setCache($fileName);
-            $file->move(
-                $this->getParameter('cache_biblio_directory'),
-                $fileName
-            );
-            
+            if ($file)
+            {
+                $fileName = $file->getClientOriginalName();
+                $bibliothequeAncreai->setCache($fileName);
+                $file->move(
+                    $this->getParameter('cache_biblio_directory'),
+                    $fileName
+                );
+                
+            }
+            */
             
             
             $em->persist($bibliothequeAncreai);
@@ -428,6 +432,44 @@ class BibliothequeAncreaiController extends Controller
             'edit_form' => $editForm->createView()
         ));
     }
+    
+    
+      /**
+     * Displays a form to edit an existing BibliothequeAncreai entity.
+     *
+     * @Route("/{id}/edit_cache", name="backoffice_bibliotheque_ancreai_edit_cache")
+     * @Method({"GET", "POST"})
+     */
+    public function editCacheAction(Request $request, BibliothequeAncreai $bibliothequeAncreai)
+    {
+        $editForm = $this->createForm('Pericles3Bundle\Form\BibliothequeAncreaiType', $bibliothequeAncreai, ["onlyfile"=>true]);
+        $editForm->handleRequest($request);
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $bibliothequeAncreai->setDateUpdate(new \DateTime());
+            $bibliothequeAncreai->setLastModifiedBy($this->GetUser());
+            $file = $bibliothequeAncreai->getCache();
+            if ($file)
+            {
+                $fileName = $file->getClientOriginalName();
+                $file->move($this->getParameter('cache_biblio_directory'),$fileName);
+                $this->addFlash('success', "Code : ".$this->getParameter('cache_biblio_directory')."/".$fileName);
+                $bibliothequeAncreai->setCache($fileName);
+            }
+            $em->persist($bibliothequeAncreai);
+            $em->flush();
+            $this->CheckLink($bibliothequeAncreai);
+            return $this->redirectToRoute('backoffice_bibliotheque_ancreai_show', array('id' => $bibliothequeAncreai->getId()));
+        }
+
+        return $this->render('BackOffice/bibliothequeancreai/edit.html.twig', array(
+            'bibliothequeAncreai' => $bibliothequeAncreai,
+            'edit_form' => $editForm->createView()
+        ));
+    }
+    
+    
+    
     
     
     /**

@@ -180,6 +180,19 @@ class Critere
         if ($this->note) return $this->note;
         else {return (0);}
     }
+    
+    public function getNonConcerne()
+    {
+        return ($this->note==-1);
+    }
+    
+    public function getConcerne()
+    {
+        return (! ($this->note==-1));
+    }
+    
+    
+    
 
     public function HaveNote()
     {

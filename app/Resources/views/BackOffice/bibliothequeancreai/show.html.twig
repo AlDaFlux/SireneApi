@@ -1,7 +1,7 @@
 {% extends "BackOffice/layout.html.twig" %}
 
 {% block body %}
-    <h1>Bibliothèque {{application_name}}</h1>
+    <h1><a href='{{ path('backoffice_bibliotheque_ancreai_index') }}'>Bibliotheque {{application_name}}</a></h1>
  
     
     <table class='table'>
@@ -40,11 +40,19 @@
             <tr>
                 <td>Cache</td>
                 {% if bibliothequeAncreai.cache %}
-                    <td class='alert-success'><a href='/cache_biblio/{{bibliothequeAncreai.cache}}'>{{bibliothequeAncreai.cache}} </a></td>
+                    <td class='alert-success'><a href='/cache_biblio/{{bibliothequeAncreai.cache}}'>{{bibliothequeAncreai.cache}} </a>
+                    {% if is_granted("ROLE_RW_BIBLIO_ARSENE") %}
+                        <a class="btn btn-link" href={{ path('backoffice_bibliotheque_ancreai_edit_cache', { 'id': bibliothequeAncreai.id }) }}><i class=' glyphicon glyphicon-pencil'></i>Modifier le PDF en cache</a>
+                    {% endif  %}
+
+                    </td>
                 {% else   %}
-                    <td class='alert-danger'></td>
+                    <td class='alert-danger'>
+                    {% if is_granted("ROLE_RW_BIBLIO_ARSENE") %}
+                        <a class="btn btn-link glyphicon glyphicon-pencil full-width" href={{ path('backoffice_bibliotheque_ancreai_edit_cache', { 'id': bibliothequeAncreai.id }) }}>Ajouter un PDF en cache</a>
+                    {% endif  %}
+                    </td>
                 {% endif  %}
-               
             </tr>
             <tr>
                 <th>Type de source</th>

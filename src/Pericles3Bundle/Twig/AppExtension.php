@@ -98,6 +98,7 @@ class AppExtension extends \Twig_Extension
         $facturees_ren_payees=$this->em->getRepository('Pericles3Bundle:FacturePresta')->findSomme(true,true)['total'];
         $facturees_non_payees=$this->em->getRepository('Pericles3Bundle:FacturePresta')->findSomme(false,false)['total'];
         $facturees_payees=$this->em->getRepository('Pericles3Bundle:FacturePresta')->findSomme(true,false)['total'];
+        $appVersion=$this->container->getParameter('app.version');
 
         
         
@@ -129,6 +130,7 @@ class AppExtension extends \Twig_Extension
         
         
         return array(
+
             'BibliothequeAncreaiTypeSources' => $BibliothequeAncreaiTypeSources,
             'BibliothequeTypesDoc' => $BibliothequeTypesDoc,
             'ReferentielsPublic' => $ReferentielsPublic,
@@ -153,17 +155,13 @@ class AppExtension extends \Twig_Extension
             'NbFacturesARenouveller' => count($FacturesARenouveller),
             'GestionnaireReels' => $GestionnaireReels,
             'SommeFacturee' => $SommeFacturee,
-            
             'factureesRenNonPayees' => $facturees_ren_non_payees,
             'factureesRenPayees' => $facturees_ren_payees,
             'factureesNonPayees' => $facturees_non_payees,
             'factureesPayees' => $facturees_payees,
-        
-
+            'appVersion' => $appVersion,
         );
     }
-
-
     
     
     
@@ -192,6 +190,7 @@ class AppExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
+            new \Twig_SimpleFilter('parametersBoolean', array($this, 'parametersBoolean')),
             new \Twig_SimpleFilter('price', array($this, 'priceFilter')),
             new \Twig_SimpleFilter('PAQstatut', array($this, 'PAQstatutFilter')),
             new \Twig_SimpleFilter('critereStateCss', array($this, 'critereStateCss')),
@@ -238,6 +237,16 @@ class AppExtension extends \Twig_Extension
             );
     }
 
+
+    public function parametersBoolean($paramaters,$field ) 
+    { 
+        if (isset($paramaters[$field]))
+        {
+            return($paramaters[$field]=="1");
+        }
+        
+    }
+    
 
     public function TdBytes($bytes ) 
     { 

@@ -35,6 +35,18 @@ class PatchToDo
      */
     private $etablissement;
 
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->codeRetour = 0;
+        $this->memoryUsage = 0;
+    }
+    
+    
+    
     public function __toString() 
     {
         return("->".$this->getPatch()->getCible());
@@ -65,12 +77,20 @@ class PatchToDo
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateFinPatch;
-    
-    
-    
+
 
     
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $memoryUsage;
+     
     
+    
+        
+
     
     
     
@@ -257,4 +277,33 @@ class PatchToDo
     
     
     
+
+    /**
+     * Set memoryUsage
+     *
+     * @param integer $memoryUsage
+     *
+     * @return PatchToDo
+     */
+    public function setMemoryUsage($memoryUsage)
+    {
+        $this->memoryUsage = $memoryUsage;
+        return $this;
+    }
+
+    public function addMemoryUsage($memoryUsage)
+    {
+        $this->memoryUsage = $this->memoryUsage + $memoryUsage;
+        return $this;
+    }
+
+    /**
+     * Get memoryUsage
+     *
+     * @return integer
+     */
+    public function getMemoryUsage()
+    {
+        return $this->memoryUsage;
+    }
 }

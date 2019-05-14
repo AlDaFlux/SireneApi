@@ -1,0 +1,34 @@
+{% extends "Synthese/layout.html.twig" %}
+
+
+
+{% block body %}
+    {{ parent() }}
+
+    <h2>{{ referentielPublic }}</h2>
+    
+    
+    <div id='loader_{{referentielPublic.id}}'>
+        <div class="row" >
+        {% set colspan=12 %}
+        {% include "Synthese/inc_synthese_genere_ref.html.twig" 
+                   with {'sub_titre': 'Rapport GEstionnaire ' ~ application_name ,
+                        'description_synthese': 'Téléchargez le rapport gestionnaire',
+                        'synthese': 'synthese'
+                            } %}
+      
+    </div>
+    </div>
+{% endblock %}
+
+
+
+
+{% block javascripts %}
+<script type="text/javascript">
+    {% include "Synthese/inc_options_charts.js.twig" %}
+    {% set wgraph =false%}
+    {% include "Synthese/inc_javascritp_export_referentiel.js.twig" %}
+</script>
+        
+{% endblock %}

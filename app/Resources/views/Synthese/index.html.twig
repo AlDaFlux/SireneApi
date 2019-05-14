@@ -7,30 +7,32 @@
 
     
 {% if etablissement is not defined %}
-            {#
     <h2> Par public</h2>
         <div class="row">
-        {%for public in app.user.GestionnaireReferentielsPublic %}
+
+        {% if app.user.isGestionnaire and appVersion>'1.0.0' %}
+
+        {% for public in app.user.GestionnaireReferentielsPublic %}
     
                   <div class="col-sm-6">
                       <div class="panel panel-primary">
-                          <div class="panel-heading"><h3 class="panel-title"> {{public}}</h3></div>
+                          <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_referentiel_menu", {'id' : public.id }) }}">{{public}}</a></h3></div>
                               <div class="panel-body">
-
-                                  {% for dom in public.ReferentielDomaines %}
-                                      <li> + {{dom}}
-                                          
-                                  {% endfor  %}
-                                  
+                                    <div class="GraphSyntheseContainer">    
+                                            <canvas id="chartCanvasEtablissements_{{public.id}}"  height="220" width="220"></canvas>
+                                  </div>
                           </div>
                       </div>
                   </div>
             
 
-        {% endfor %}            
+        {% endfor %}    
+        
                   </div>
         <hr>
-        #}
+        
+    {% endif %}
+
     <h2> Par établissement</h2>
 
         <div class="row">
@@ -187,7 +189,16 @@
             {{ domaines  | order | graph('chartEvalGeneraleCanvas') |raw }}
             {{ etablissement.domainesExterne | order | graph('GraphEvalExterne') |raw }}
         {% endif %}
-    </script>
-        
+ 
+
+        {% if app.user.isGestionnaire  and appVersion>'1.0.0' and etablissement is not defined  %}
+            {% for referentielPublic in referentielsPublic %}
+                {{ etabsByRef[referentielPublic.id] | graph('chartCanvasEtablissements_' ~ referentielPublic.id,true,'options_responsive') |raw }}
+            {% endfor %}
+        {% endif %}
+
+
+           </script>
+
 {% endblock %}
 

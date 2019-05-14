@@ -1552,6 +1552,7 @@ class Etablissement
         return count($this->sauvegardes);
     }
     
+
     
     /**
      *
@@ -1574,6 +1575,11 @@ class Etablissement
     public function getNbSauvegardesReferentielDesuet()
     {
         return count($this->getSauvegardesReferentielDesuet());
+    }
+    
+    public function getNbSauvegardesReferentielNonDesuet()
+    {
+        return ($this->getNbSauvegardes()-count($this->getSauvegardesReferentielDesuet()));
     }
     
     

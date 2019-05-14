@@ -28,6 +28,7 @@ class PatchSauvegardeCommand extends ContainerAwareCommand
         $this->setHelp("Patch une sauvegarde obsolete... attention dangereux !");
         $this->addOption('sauvegarde_id',null,InputOption::VALUE_REQUIRED,"L'identifiant de la sauvegarde",0);
         $this->addOption('patch_id',null,InputOption::VALUE_OPTIONAL,"L'identifiant du patch ",0);
+        $this->addOption('patch_todo_id',null,InputOption::VALUE_OPTIONAL,"L'identifiant du patch todo ",0);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -41,6 +42,15 @@ class PatchSauvegardeCommand extends ContainerAwareCommand
         
         $sauvegardeId = $input->getOption('sauvegarde_id');
         $patchId = $input->getOption('patch_id');
+        
+        $patchTodoId = $input->getOption('patch_todo_id');
+        
+        if ($patchTodoId)
+        {
+            $patchTodo = $em->getRepository("Pericles3Bundle:PatchTodo")->findOneById($patchTodoId);
+        }
+
+        
              
         if (! $sauvegardeId or ! $patchId)
         {
@@ -82,13 +92,24 @@ class PatchSauvegardeCommand extends ContainerAwareCommand
                 $etablissementController = new \Pericles3Bundle\Controller\BackOffice\SauvegardeController();
                 $etablissementController->SetOutput($output);
                 $etablissementController->SetEm($em);
-                
-                
                 $etablissementController->patchSauvegardeApply($sauvegarde, $patch);
+                if ($patchTodo)
+                {
+                    $patchTodo->setDateFinPatch(new DateTime());
+                    $patchTodo->addMemoryUsage(memory_get_usage(true));
+                    $em->persist($patchTodo);
+                    $em->flush();
+                }
             }
         }
  
         $em->clear();
+        gc_collect_cycles();
+        $memoryUsage = memory_get_usage(true) / 1024 / 1024;
+        $output->writeln("<info>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ <info>");
+        $output->writeln("<info>++++++++++++   Mémoire utilisée : ".$memoryUsage." Mégas ++++++++++++ <info>");
+        $output->writeln("<info>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ <info>");
+
          
         $output->writeln(" La sauvegarde a été patché");
     }

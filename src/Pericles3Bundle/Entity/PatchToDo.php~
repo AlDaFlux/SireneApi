@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use Gedmo\Blameable\Traits\BlameableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 
 
@@ -34,6 +35,11 @@ class PatchToDo
      */
     private $etablissement;
 
+    public function __toString() 
+    {
+        return("->".$this->getPatch()->getCible());
+    }
+    
     
 
     /**
@@ -42,6 +48,7 @@ class PatchToDo
     private $patch;
 
     use BlameableEntity;
+    use TimestampableEntity;
 
     
     /**
@@ -58,13 +65,20 @@ class PatchToDo
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateFinPatch;
-    
-    
-    
+
 
     
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $memoryUsage;
+     
     
     
+        
+
     
     
 
@@ -132,7 +146,8 @@ class PatchToDo
         if ($this->GetFini())
         {
             $interval =  $this->dateFinPatch->diff($this->dateDebutPatch);
-            return($interval->format('%S secondes'));        
+            return($interval);        
+            //return($interval->format('%i minutes  %S secondes'));        
         }
     }
     

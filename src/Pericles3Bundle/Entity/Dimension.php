@@ -119,7 +119,7 @@ class Dimension
         $nb_criteres=0;
         $criteres = $this->getCriteres();
         foreach ($criteres as $critere ) {
-            if ( ! ($critere->getNote()==-1)) // non concerné
+            if ($critere->getConcerne()) 
             {
                 $nb_criteres++;
                 $moyenne+=$critere->getNote();
