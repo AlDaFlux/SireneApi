@@ -21,7 +21,7 @@ use DateTime;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 
-class PatchEtablissementCommand extends ContainerAwareCommand
+class PatchEtablissementCommand extends ArseneCommand
 {
     protected function configure()
     {
@@ -36,10 +36,26 @@ class PatchEtablissementCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        
+        
+        $this->input=$input;
+        $this->output=$output;
+
+        
+        
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getEntityManager();
         $em->getConfiguration()->setSQLLogger(null);
 
+        if ($this->GetPatchTodoEnCours())
+        {
+            $output->writeln("<error>Annulation du CRON</error>");
+            exit();
+        }
+        
+       
+
+        
         if ($input->getOption('whitout_backups'))
         {
             $sauvegardes=false;
@@ -99,6 +115,7 @@ class PatchEtablissementCommand extends ContainerAwareCommand
             return(0);
         }
        
+        
         
         
         if (! $patchTodo)

@@ -114,12 +114,12 @@
                     {% endif %}
                 {% endif %}
                 
-                <td class='small'>{% if user.dateLastConnect %}
-                        {{ user.dateLastConnect|date('Y-m-d H:i:s') }}
-                    {% else %}
-                        <i class='glyphicon glyphicon-ban-circle'></i>
-                    {% endif %}
-                        </td>
+                {% if user.dateLastConnect %}
+                        <td class='small'>{{ user.dateLastConnect|date('Y-m-d H:i:s') }}</td>
+                {% else %}
+                         <td class='alert-danger text-center'><i class='glyphicon glyphicon-ban-circle'></i></td>
+                {% endif %}
+                
                 <td class='small'>{% if user.dateCreate %}{{ user.dateCreate|date('Y-m-d H:i:s') }}{% endif %}</td>
                 {#
                 <td>{% if user.bibliowrite %}<i class='glyphicon glyphicon-ok'></i>{% else %}<i class='glyphicon glyphicon-remove'></i>{% endif %}</td>

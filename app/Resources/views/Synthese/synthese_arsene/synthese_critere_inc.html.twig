@@ -28,11 +28,7 @@
    
         {% if critere.preuves | length > 0 %}
         <h2>Preuves</h2>
-                <ul>
-                   {% for preuve in critere.preuves %}
-                        <li>{{ preuve }}</li>
-                {% endfor %}
-                </ul>
+            {% include "Synthese/export/inc/inc_preuves_sans_link.html.twig" with {'preuves':critere.preuves %}
         {% endif %}
         
         

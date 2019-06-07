@@ -224,7 +224,7 @@ class UserController extends Controller
                 $form->handleRequest($request);
                 $email=$form->getData()->GetEmail();
 
-                if ($em->getRepository('Pericles3Bundle:User')->findOneByUsername($form->getData()->GetUsername()) > 0)
+                if ($em->getRepository('Pericles3Bundle:User')->findOneByUsername($form->getData()->GetUsername()))
                 {
                     $this->addFlash('error', "L'utilisateur <i>".$form->getData()->GetUsername()."</i> existe déja");
                 }

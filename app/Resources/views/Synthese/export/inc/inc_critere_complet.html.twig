@@ -46,35 +46,12 @@
                     <li><a target='blank' href='{{critere.rbpp.href}}'>{{critere.rbpp}}</a>  <i>{{critere.RbpppComment}}</i>
                 </ul>  
        {% endif  %}
-                
-                {% if critere.NbQuestionsRepondues > 0 %}
-                    {% set points_forts =''%}
-                    {% set points_faible =''%}
-                    {% for question in critere.questions %}
-                        {% if question.repondu %}
-                            {% if question.reponse %}
-                                 {% set points_forts = points_forts ~ '<li>' ~  question.ReponseLib ~ '</li>'%}
-                            {% else %}
-                                 {% set points_faible = points_faible ~  '<li>' ~ question.ReponseLib  ~  '</li>'%}
-                            {% endif%}
-                        {% endif%}
-                    {% endfor %}
-                    
-                    {% if points_forts is not empty %}
-                            <h4>Eléments qualité à conserver </h4>
-                                <ul>
-                                        {{ points_forts | raw }} 
-                                </ul>
-                    {% endif%}
-                           
-                    {% if points_faible is not empty %}
-                            <h4>Points qualité à améliorer </h4>
-                                <ul>
-                                        {{ points_faible | raw }} 
-                                </ul>
-                    {% endif%}
-                {% endif %}
 
+                 
+       
+       {% include "Synthese/export/inc/questions/inc_questions_reponses_conserver_ameliorer.html.twig" with { "questions" : critere.questions } %}
+
+       
                 {% if critere.constats|length > 0 %}
                     <h4>Constats et analyses</h4>
                     <ul>
@@ -85,24 +62,13 @@
                 {% endif %}
                 {% if critere.preuves|length > 0 %}
                     <h4>Portefeuille de preuves</h4>
-                        <ul>
-                    {% for preuve in critere.preuves %}
-                            <li>
-                                {{ preuve.commentaire }}  -  <a href="{{ app.request.getSchemeAndHttpHost()~asset('upload') }}/{{ preuve.getRelativPath }}" target="_blank">{{ preuve.fichier }}</a>
-                            </li>
-                    {% endfor %}
-                    </ul>
+                            {% include "Synthese/export/inc/inc_preuves_link.html.twig" with {'preuves':critere.preuves%}
                 {% endif %}
                 
                 
                 
                 {% if critere.NbObjectifsOperationnel > 0 %}
-                        <h4>Objectifs Opérationnels d'Amélioration</h4>
-                        <ul>
-                            {% for objectif in critere.objectifs %}
-                            <li>{{ objectif }}</li>          
-                            {% endfor %}
-                        </ul>
+          {% include "Synthese/export/inc/objectifs/inc_ooa_simple.html.twig" with { "objectifs" : critere.objectifs } %}
                 {% endif %}
                 
     

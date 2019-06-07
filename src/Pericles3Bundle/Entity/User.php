@@ -232,6 +232,18 @@ class User implements UserInterface
     private $etablissementsPole;
 
     
+    /**
+     * @ORM\OneToMany(targetEntity="Pericles3Bundle\Entity\StatUserConnect", mappedBy="user")
+     */
+    private $statsUserConnect;
+    
+    
+    
+
+
+    
+    
+    
 
     
     
@@ -1599,4 +1611,38 @@ class User implements UserInterface
     
     
     
+
+    /**
+     * Add statsUserConnect
+     *
+     * @param \Pericles3Bundle\Entity\StatUserConnect $statsUserConnect
+     *
+     * @return User
+     */
+    public function addStatsUserConnect(\Pericles3Bundle\Entity\StatUserConnect $statsUserConnect)
+    {
+        $this->statsUserConnect[] = $statsUserConnect;
+
+        return $this;
+    }
+
+    /**
+     * Remove statsUserConnect
+     *
+     * @param \Pericles3Bundle\Entity\StatUserConnect $statsUserConnect
+     */
+    public function removeStatsUserConnect(\Pericles3Bundle\Entity\StatUserConnect $statsUserConnect)
+    {
+        $this->statsUserConnect->removeElement($statsUserConnect);
+    }
+
+    /**
+     * Get statsUserConnect
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getStatsUserConnect()
+    {
+        return $this->statsUserConnect;
+    }
 }

@@ -35,16 +35,25 @@
     
 
     
+  {% if app.user.IsAnEtablissement   %}
+      <p>
+            {% include 'BackOffice/utilsateur_arsene/inc_delegation_pannel.html.twig'  %}
+  {% endif %}
+  
+  
   {% if app.user.IsAnEtablissement   and app.user.etablissement.Category.id==5 %}
       <p><br>
-   <div class="row">
-        <div class='col-md-6'>
-            <a class="btn btn-danger active full-width"  href="{{ path('backoffice_etablissement_reboot', { 'id': etablissement.id}) }}"><i class='glyphicon glyphicon-trash'></i>Supprimer toutes les saisies de l'établissement</a>
-       </div>
-        <div class='col-md-6'>
-           <a class="btn btn-danger  full-width" href="{{ path('arsene_genere_note') }}">Générer des notes aléatoires</a>
-       </div>
-    </div>
+        <div class="panel panel-warning">
+            <div class="panel-heading">Données établissement test</div>
+            <div class="panel-body">
+                <div class='col-md-6'>
+                    <a class="btn btn-danger active full-width"  href="{{ path('backoffice_etablissement_reboot', { 'id': etablissement.id}) }}"><i class='glyphicon glyphicon-trash'></i>Supprimer toutes les saisies de l'établissement</a>
+               </div>
+                <div class='col-md-6'>
+                   <a class="btn btn-danger  full-width" href="{{ path('arsene_genere_note') }}">Générer des notes aléatoires</a>
+               </div>
+            </div>
+        </div>
   {% endif %}
   
   

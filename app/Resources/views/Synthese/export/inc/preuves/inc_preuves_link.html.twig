@@ -1,0 +1,7 @@
+<ul>
+    {% for preuve in preuves %}
+    <li>
+        {{ preuve.commentaire }}  -  <a href="{{ app.request.getSchemeAndHttpHost()~asset('upload') }}/{{ preuve.getRelativPath }}" target="_blank">{{ preuve.fichier }}</a>    </li>
+    {% endfor %}
+</ul>
+

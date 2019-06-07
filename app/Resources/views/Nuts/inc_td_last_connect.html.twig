@@ -1,0 +1,13 @@
+
+{% set oneYear = "now"|date_modify("- 10 months ")|date("Y-m-d") %}
+{% set lastConnectFormat = dateLastConnect|date("Y-m-d") %}
+
+{% if dateLastConnect %}
+    {% if lastConnectFormat < oneYear %}
+        <td class='alert-warning small'>{{ dateLastConnect |  hiddenDate  | raw }} </td>
+    {% else %}
+        <td class='small'>{{ dateLastConnect |  hiddenDate  | raw }}  </td>
+    {% endif %}
+{% else %}
+         <td class='alert-danger text-center'><i class='glyphicon glyphicon-ban-circle'></i></td>
+{% endif %}

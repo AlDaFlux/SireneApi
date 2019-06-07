@@ -253,10 +253,10 @@ padding-left:0.5em;
 
 .pastilles i
 {
-text-shadow: -1px 0 0 #ffffff, 
-             1px 0 0 #ffffff,
-             0 -1px 0 #ffffff,
-             0 1px 0 #ffffff;
+text-shadow: -1px 0 0 #007699, 
+             1px 0 0 #007699,
+             0 -1px 0 #007699,
+             0 1px 0 #007699;
 	color:#cdcccc;	
 }
 
@@ -266,7 +266,21 @@ text-shadow: -1px 0 0 #ffffff,
     margin-bottom: 4px;
 }
 
+
+i.new { 
+    color:#0000ff; 
+}
+ .pastilles i.new
+{
+text-shadow: -1px 0 0 #ff0000, 
+             1px 0 0 #ff0000,
+             0 -1px 0 #ff0000,
+             0 1px 0 #ff0000;
+}	
+
+
 i.done { color:#9ca64b;	}			 
+
 i.toedit { color:#e94435 }		
 i.doing { color:#f29829 }	 
 i.todo {  color:#cdcccc  }			 
@@ -676,10 +690,18 @@ td.center{
 }
 
 
-.orangeContener, .list_menu .doing { border-left: solid 4px orange; font-weight: bold }
-.greenContener, .list_menu .done{ border-left: solid 4px #00a300; }
-.redContener, .list_menu .toedit{ border-left: solid 4px red; font-weight: bold}
+.list_menu .doing { border-left: solid 4px orange; font-weight: bold }
+.list_menu .done{ border-left: solid 4px #00a300; }
+.list_menu .toedit{ border-left: solid 4px red; font-weight: bold}
 .list_menu .todo{ border-left: solid 4px #cdcccc; font-weight: bold}
+.list_menu .modifie{ border-left: solid 4px #0000cc; font-weight: bold}
+.list_menu .nouveau
+{
+    border-left: solid 4px #3333cc; 
+    font-weight: bold;
+    box-shadow:1px 1px 3px #cc0000;
+}
+
 
 #DimensionTitle{border-bottom: solid white 1px;padding-left:5px;}
  

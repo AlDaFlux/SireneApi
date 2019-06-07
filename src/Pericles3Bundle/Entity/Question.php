@@ -209,6 +209,13 @@ class Question
         }
     }
     
+    public function getCss()
+    {
+        return("reponse_".strtolower($this->getReponseLibCourt()));
+    }
+    
+    
+    
     
     
     

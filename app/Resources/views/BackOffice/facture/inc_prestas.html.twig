@@ -21,8 +21,15 @@
                             <tr>
                         {% endif  %}
                         
-                            <td>{{presta}}</td>
-                            
+                        {% if presta.etablissement  %}
+                            {% if presta.etablissement.finContrat %}
+                                <td class='fincontrat' title='Contrat TERMINE :  {{  presta.etablissement.category.commentaire}}'>{{presta}}</td>
+                            {% else  %}
+                                <td>{{presta}}</td>
+                            {% endif  %}
+                        {% endif  %}
+
+
                             <td>{{presta.montant}} €</td>
                             
                             {% if presta.getDateFiff2 > 100 or presta.getDateFinLointaine %}

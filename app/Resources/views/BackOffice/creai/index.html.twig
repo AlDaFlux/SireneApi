@@ -7,6 +7,7 @@
         <thead>
             <tr>
                 <th>Nom</th>
+                <th>Dernier accès</th>
                 <th>Email</th>
                 <th>Etablissements</th>
                 <th><i class="glyphicon glyphicon-user"> Conseillers</th>
@@ -17,9 +18,12 @@
         {% for creai in creais %}
             <tr>
                 <td><a href="{{ path('backoffice_creai_show', { 'id': creai.id }) }}">{{ creai.nom  }}</a></td>
-                <td>{{ creai.email}}</td>
+ 
+                {% include "Nuts/inc_td_last_connect.html.twig"  with {'dateLastConnect' : creai.dateLastConnect}  %}
+               <td>{{ creai.email}}</td>
                 <td>{{ creai.NbEtablissements}}</td>
-                <td>{{ creai.NbUsers }}</td>
+ 
+                <td>{{ creai.NbUsers }}</td>    
                 <td>
                     {% for departement in creai.departements %}
                             <span title='{{departement}}' >{{departement.id}}</span> - 

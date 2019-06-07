@@ -100,7 +100,11 @@
             </tr>
             <tr>
                 <th>Dernière connection</th>
-                <td>{% if user.dateLastConnect %}{{ user.dateLastConnect|date('Y-m-d H:i:s') }}{% endif %}</td>
+                {% if user.dateLastConnect %}
+                        <td>{{ user.dateLastConnect|date('Y-m-d H:i:s') }}</td>
+                {% else %}
+                         <td class='alert-danger text-center'><i class='glyphicon glyphicon-ban-circle'></i></td>
+                {% endif %}
             </tr>
             <tr>
                 <th>Date de création</th>
@@ -108,7 +112,11 @@
             </tr>
             <tr>
                 <th>Conditions acceptées</th>
-                <td>{{ user.conditionsAcceppted  | reponseGlyphIcone   | raw }}</td>
+                  {% if user.conditionsAcceppted %}
+                        <td class='text-center'>{{ user.conditionsAcceppted  | reponseGlyphIcone   | raw }}</td>
+                {% else %}
+                        <td class='alert-danger text-center'>{{ user.conditionsAcceppted  | reponseGlyphIcone   | raw }}</td>
+                {% endif %}
             </tr>
             {% include 'BackOffice/inc_blameable.html.twig' with {'entity' : user}  %}
             

@@ -71,20 +71,37 @@
                 #}
             </tr><tr>
  
-             {% if is_granted('ROLE_SUPER_ADMIN')   %}
+            {% if is_granted('ROLE_SUPER_ADMIN')   %}
             <tr>
                 <th>Crée par</th>
                 <td><b>{{ etablissement.CreatedBy }}</b> le <b>{{ etablissement.CreatedDate  | date('Y-m-d H:i:s') }}</b></td>
             </tr>
-                {% endif %}
+            <tr>
+                <th>Dernier accès</th>
+                {% include "Nuts/inc_td_last_connect.html.twig"  with {'dateLastConnect' : etablissement.dateLastConnect}  %}
+            </tr>
+            
+            {% endif %}
             <tr>
                 <th>Departement</th>
                 <td>{{ etablissement.departement}}</td>
             </tr>
             <tr>
                 <th>CREAI</th>
-                <td>{{ etablissement.creai}} <span title='délégation CREAI'>{{ etablissement.delegationCreai | reponseGlyphIcone | raw }} </td>
+                <td>{{ etablissement.creai}} 
+                    <span title='délégation CREAI'>{{ etablissement.delegationCreai | reponseGlyphIcone | raw }} 
+                        {% if is_granted('ROLE_ADMIN') and  is_granted('ROLE_GESTIONNAIRE')   %}
+                           {% if etablissement.delegationCreai %}
+                               {% include 'BackOffice/utilsateur_arsene/inc_delegation_on_message.html.twig'  %}
+                               <a class="btn btn-warning" href="{{ path('backoffice_etab_gest_undeleg', {"id":  etablissement.id}) }}">Désactiver la délégation CREAI</a>
+                           {% else %}
+                               {% include 'BackOffice/utilsateur_arsene/inc_delegation_off_message.html.twig'  %}
+                               <a class="btn btn-warning" href="{{ path('backoffice_etab_gest_deleg' , {"id":  etablissement.id}) }}">Activer la délégation CREAI</a>
+                           {% endif  %}
+                       {% endif  %}
+                    </td>
             </tr>
+            
             {% if etablissement.delegationCreai and (etablissement.creai == app.user.creai or  is_granted('ROLE_ADMIN_SUPERVISOR')) %}
             <tr>
                 <th>Evaluation</th>

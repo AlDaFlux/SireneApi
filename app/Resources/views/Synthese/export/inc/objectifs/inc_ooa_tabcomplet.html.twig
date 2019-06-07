@@ -1,19 +1,3 @@
-{#
-{% if critere.objectifsSince(dateSince) | length > 0 %}
-        <h2>Objectifs Opérationnels d'Amélioration</h2>
-                <ul>
-                   {% for objectif in critere.objectifsSince(dateSince) %}
-                        <li>{{ objectif }} - {{ objectif.DateDebut|date('Y-m-d') }}-->{{ objectif.DateFin|date('Y-m-d') }}</li>
-                {% endfor %}
-                </ul>
-        {% endif %}
-                          
-#}
-
-
-        
-        
-
     <h4>Objectifs Opérationnels d'Amélioration</h4>
         <table class='osa' width="100%">
                 <tr>
@@ -36,12 +20,14 @@
                         {% if objectif.indicateurs %} 
                             <div><b>Indicateurs : </b>{{ objectif.indicateurs }}</div>
                         {% endif %}
-                        {% if objectif.NbPreuves %}
-                            <div><b>Preuves : </b>
+                        
+                        {% if objectif.NbPreuves and affichePreuve %}
+                            <div>
+                                <b>Preuves : </b>
                                 <ul>
-                            {% for preuve in objectif.Preuves %}
-                                <li>{{preuve}}
-                            {% endfor %}
+                                    {% for preuve in objectif.Preuves %}
+                                        <li>{{preuve}}
+                                    {% endfor %}
                                 </ul>
                             </div>
                         {% endif %}

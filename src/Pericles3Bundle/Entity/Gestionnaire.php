@@ -171,10 +171,14 @@ class Gestionnaire
     
     
     
-    
-    
-    
-    
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_last_connect", type="datetime", nullable=true)
+     */
+    private $dateLastConnect;
+
+
     
     
     
@@ -338,16 +342,30 @@ class Gestionnaire
     
     public function getEtablissementsByUsers(User $user)
     {
-
         $etablissements=new \Doctrine\Common\Collections\ArrayCollection();
-
         foreach ($this->etablissements as $etablissement)
         {
             if ($user->ADroitEtablissement($etablissement)) { $etablissements->Add($etablissement);}
         }
         return($etablissements);
-        
     }
+    
+    
+    public function getEtablissementsDelegationCreaiAllByUsers(User $user)
+    {
+        $allDelegation=true;
+        $etablissements=$this->getEtablissementsByUsers($user);
+        
+        foreach ($etablissements as $etablissement)
+        {
+            $allDelegation=$allDelegation && $etablissement->GetDelegationCreai();
+        }
+        return($allDelegation);
+    }
+    
+    
+    
+    
     
     
     
@@ -1021,4 +1039,31 @@ class Gestionnaire
     {
         return $this->pericles;
     }
+    
+    /**
+     * Set dateLastConnect
+     *
+     * @param \DateTime $dateLastConnect
+     *
+     * @return User
+     */
+    public function setDateLastConnect($dateLastConnect)
+    {
+        $this->dateLastConnect = $dateLastConnect;
+
+        return $this;
+    }
+
+    /**
+     * Get dateLastConnect
+     *
+     * @return \DateTime
+     */
+    public function getDateLastConnect()
+    {
+        return $this->dateLastConnect;
+    }
+
+    
+    
 }

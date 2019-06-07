@@ -82,14 +82,16 @@
         {% endfor %}
         </tbody>
     </table>
- 
-         <pre>{% for patchToDo in patchToDos %}{% if not patchToDo.dateDebutPatch %}
+         <pre>bin/console patch:patch-todo-batch --start
+{% for patchToDo in patchToDos %}{% if not patchToDo.dateDebutPatch %}
 php bin/console patch:patch-etablissement --etablissement_id={{patchToDo.etablissement.id}} --patch_id={{patchToDo.patch.id}} --no-debug --whitout_backups
 {% if patchToDo.etablissement.nbSauvegardes %}
 {% for sauvegarde in patchToDo.etablissement.Sauvegardes  %}
 php bin/console patch:sauvegarde-do --sauvegarde_id={{ sauvegarde.id }} --patch_id={{ patchToDo.patch.id  }} --no-debug
 {% endfor %}
 {% endif  %}
-{% endif %}{% endfor %}    
+{% endif %}{% endfor %}
+bin/console patch:patch-todo-batch --stop
+    
         </pre>
 {% endblock %}

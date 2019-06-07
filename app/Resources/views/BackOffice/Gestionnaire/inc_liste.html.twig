@@ -17,6 +17,7 @@
                 {% endif %}
 
                 <th>Crée le </th>
+                <th>Dernier accès</th>
                 <th>Adresse</th>
                 <th>Suivi Par</th>
                 <th><i class="glyphicon glyphicon-user"></i>Utilisateurs</th>
@@ -91,6 +92,9 @@
                 
                 
                 <td>{{ gestionnaire.CreatedDate| hiddenDate | raw}} </td>
+                
+                {% include "Nuts/inc_td_last_connect.html.twig"  with {'dateLastConnect' : gestionnaire.dateLastConnect}  %}
+                
                 <td>{{ gestionnaire.adresse }} -  {{ gestionnaire.codePostal }}  {{ gestionnaire.ville }}</td>
                 
                 {% if gestionnaire.Creai is empty %}

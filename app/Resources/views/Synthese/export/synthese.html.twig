@@ -52,18 +52,10 @@
     </div>
     
      {% if domaine.preuves|length > 0 %}
-                    <h4>Point de vue de l’usager</h4>
-                        <ul>
-                    {% for preuve in domaine.preuves %}
-                            <li>
-                                {{ preuve.commentaire }}  -  <a href="{{ app.request.getSchemeAndHttpHost()~asset('upload') }}/{{ preuve.getRelativPath }}" target="_blank">{{ preuve.fichier }}</a>
-                            </li>
-                    {% endfor %}
-                    </ul>
+        <h4>Point de vue de l’usager</h4>
+        {% include "Synthese/export/inc/inc_preuves_link.html.twig" with {'preuves': domaine.preuves %}
     {% endif %}
-    
-    
-    
+     
     {% if domaine.commentaires |length > 0 %}
       <h4>Commentaires</h4>
         <ul>

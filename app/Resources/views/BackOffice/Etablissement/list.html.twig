@@ -5,6 +5,7 @@
                 <th>FINESS</th>
                 <th>Nom</th>
                 <th>Date de <br>Création</th>
+                <th>Dernière accés</th>
                 {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')  %}
                     <th title='Facture'><i class='glyphicon glyphicon-euro'></i> </th>
                 {% endif %}
@@ -77,6 +78,10 @@
                                  </a></td>           
 
                 <td>{{ etablissement.CreatedDate  | hiddenDate | raw }}</td>
+
+                    
+                {% include "Nuts/inc_td_last_connect.html.twig"  with {'dateLastConnect' : etablissement.dateLastConnect}  %}
+                
                 {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')  %}
                     
                         {% if not etablissement.Facturable %}

@@ -34,12 +34,8 @@
         <div class="row">
              <div class="col-md-12 ">
                 <div class="panel panel-primary panel_osa">            
-                    <div class="panel-heading"> <h3 class="panel-title">Point de vue de l’usager...   </h3> </div>
-                            {% set access = false %}
-                            {% set is_pdv = false %}
-                            {% set par_type_preuve = true %}
-
-                            {% include 'Bibliotheque/preuves_list.html.twig' %}
+                    <div class="panel-heading"> <h3 class="panel-title">Point de vue de l’usager</h3> </div>
+                        {% include "Synthese/export/inc/preuves/inc_preuves_tableau.html.twig"  %}
                 </div>
             </div>
         </div>

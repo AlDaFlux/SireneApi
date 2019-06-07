@@ -8,6 +8,10 @@
         <a href='{{ path("pericles3_dimension",{"id": dimension.id}) }}'>
             <i title='{{dimension}} - Modifiée' class='icon-circle modifie'></i>
         </a>
+    {% elseif dimension.status==6 %}
+        <a href='{{ path("pericles3_dimension",{"id": dimension.id}) }}'>
+            <i title='{{dimension}} - Nouveau !!' class='icon-circle new'></i>
+        </a>
     {% elseif dimension.status==1 %}
         <a href='{{ path("pericles3_dimension",{"id": dimension.id}) }}'>
             <i title='{{dimension}} - Non commencé' class='icon-circle todo'></i>

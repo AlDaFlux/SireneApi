@@ -1,0 +1,26 @@
+{% set points_forts =''%}
+{% set points_faible =''%}
+{% for question in critere.questions %}
+    {% if question.repondu %}
+        {% if question.reponse %}
+             {% set points_forts = points_forts ~ '<li>' ~  question.ReponseLib ~ '</li>'%}
+        {% else %}
+             {% set points_faible = points_faible ~  '<li>' ~ question.ReponseLib  ~  '</li>'%}
+        {% endif%}
+    {% endif%}
+{% endfor %}
+
+{% if points_forts is not empty %}
+        <h4>Eléments qualité à conserver </h4>
+            <ul>
+                    {{ points_forts | raw }} 
+            </ul>
+{% endif%}
+
+{% if points_faible is not empty %}
+        <h4>Points qualité à améliorer </h4>
+            <ul>
+                    {{ points_faible | raw }} 
+            </ul>
+{% endif%}
+

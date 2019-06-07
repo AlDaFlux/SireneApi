@@ -81,7 +81,8 @@ class CritereRepository extends \Doctrine\ORM\EntityRepository
                 $qb->orderBy('referentielDomaine.ordre, referentielDimension.ordre, referentielCritere.ordre');
 		return $qb->getQuery()->getResult();
 	}
-          public function findByNoteDomaine(Domaine $Domaine,$notemin=1,$notemax=3) 
+          
+        public function findByNoteDomaine(Domaine $Domaine,$notemin=1,$notemax=3) 
         {
 		$qb = $this->createQueryBuilder('critere');
 		$qb->Join('critere.referentiel', 'referentielCritere');

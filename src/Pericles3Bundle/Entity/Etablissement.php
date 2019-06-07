@@ -423,6 +423,17 @@ class Etablissement
     protected $qualiEval;
            
 
+        
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_last_connect", type="datetime", nullable=true)
+     */
+    private $dateLastConnect;
+
+    
+    
+    
     
     
     public function __construct()
@@ -2918,4 +2929,30 @@ class Etablissement
     {
         return $this->qualiEval;
     }
+    
+    /**
+     * Set dateLastConnect
+     *
+     * @param \DateTime $dateLastConnect
+     *
+     * @return User
+     */
+    public function setDateLastConnect($dateLastConnect)
+    {
+        $this->dateLastConnect = $dateLastConnect;
+
+        return $this;
+    }
+
+    /**
+     * Get dateLastConnect
+     *
+     * @return \DateTime
+     */
+    public function getDateLastConnect()
+    {
+        return $this->dateLastConnect;
+    }
+
+    
 }

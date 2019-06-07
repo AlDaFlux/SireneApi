@@ -16,7 +16,11 @@
 <table class='table table-striped table-condensed '> 
     <tr>
         <th>Etablissement créer le : </th>
-        <td>{{ etablissement.CreatedDate | date('d M Y')}}</td>
+        <td>{{ etablissement.CreatedDate | date('d-m-Y')}}</td>
+    </tr>
+    <tr>
+        <th>Dernier accès le : </th>
+        {% include "Nuts/inc_td_last_connect.html.twig"  with {'dateLastConnect' : etablissement.dateLastConnect}  %}
     </tr>
 </table>
      

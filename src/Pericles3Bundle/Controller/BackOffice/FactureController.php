@@ -546,7 +546,7 @@ class FactureController extends Controller
         
         foreach ($facture->getFacturePrestas() as $presta )
         {
-            if ($presta->getEtablissement() && $presta->isLastFacturePresta())
+            if ($presta->getEtablissement() && $presta->isLastFacturePresta() && ! $presta->getEtablissement()->GetFinContrat())
             {
                 $newPresta = new FacturePresta();
                 $newPresta->setEtablissement($presta->getEtablissement());

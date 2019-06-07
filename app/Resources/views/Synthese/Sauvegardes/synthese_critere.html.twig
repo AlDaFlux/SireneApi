@@ -81,12 +81,8 @@
         {% endif %}
  
         {% if critere.preuvesSince(dateSince) | length > 0 %}
-        <h2>Preuves</h2>
-                <ul>
-                   {% for preuve in critere.preuvesSince(dateSince) %}
-                        <li>{{ preuve }}</li>
-                {% endfor %}
-                </ul>
+            <h2>Preuves</h2>
+                {% include "Synthese/export/inc/inc_preuves_sans_link.html.twig" with {'preuves': critere.preuvesSince(dateSince) %}
         {% endif %}
         
     

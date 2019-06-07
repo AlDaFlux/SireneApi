@@ -704,6 +704,18 @@ class Critere
         return ($this->arevoir==4);
     }
     
+    public function getModifieReferentiel()
+    {
+        if ($this->arevoir!=4)
+        {
+            $this->arevoir=3;
+        }
+    }
+    
+    
+    
+    
+    
     
     
             /**

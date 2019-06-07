@@ -1,0 +1,7 @@
+<ul>
+    {% for question in questions %}
+        <li class='{{question.css}}'><b>{{ question.numero}} : </b>{{ question}}  : <b>{{ question.getReponseLibCourt }}</b></li>
+    {% endfor %}
+</ul>
+
+

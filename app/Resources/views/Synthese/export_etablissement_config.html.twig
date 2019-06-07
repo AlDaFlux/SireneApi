@@ -12,6 +12,21 @@
         padding:  20px;
     }
     
+    .legendStyle {
+	display: block;
+	width: 100%;
+	padding: 0;
+	padding-left: 30px;
+	margin-bottom: 20px;
+	font-size: 21px;
+	line-height: inherit;
+	color: #333;
+	border: 0;
+	border-bottom: 1px solid #e5e5e5;
+}
+
+
+    
     </style>
     
     
@@ -32,10 +47,10 @@
 <!-- Form Name -->
 <legend>Page de garde</legend>
 <div class="form-group">
-  <label class="col-md-4 control-label" for="logo">Multiple Checkboxes</label>
+  <label class="col-md-4 control-label" for="logo">Logo Etablissement</label>
   <div class="col-md-4"> <div class="checkbox">
     <label for="logo-0">
-      <input type="checkbox" name="logo" id="logo-0" value="1">Logo Etablissement</label>
+      <input type="checkbox" name="logo" id="logo-0" value="1"> </label>
 	</div>
   </div>
 </div>
@@ -43,61 +58,149 @@
 
 
 <legend>Domaines</legend>
-
 <!-- Multiple Radios (inline) -->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="domaine_note">Domaines</label>
+  <label class="col-md-4 control-label" for="domaine_note_display">Afficher la note</label>
+  <div class="col-md-4"> <div class="checkbox">
+    <label for="domaine_note_display-0">
+      <input data-display='.domaine_note' class='display' type="checkbox" name="domaine_note_display" id="domaine_note_display" value="1"></label>
+	</div>
+  </div>
+</div>
+
+
+
+<div class="form-group domaine_note hidethis">
+  <label class="col-md-4 control-label" for="domaine_note">Note</label>
   <div class="col-md-4"> 
-    <label for="radios-0"><input type="radio" name="domaine_note" id="radios-0" value="0" checked="checked">Sans note</label> 
-    <label for="radios-1"><input type="radio" name="domaine_note" id="radios-1" value="1">Note Simple</label> 
+    <label for="radios-1"><input type="radio" name="domaine_note" id="radios-1" value="1"  checked="checked">Note Simple</label> 
     <label  for="radios-2"><input type="radio" name="domaine_note" id="radios-2" value="2">Note avec Picto</label> 
     <label  for="radios-3"><input type="radio" name="domaine_note" id="radios-3" value="3">Note avec Histo</label> 
   </div>
 </div>
+
 <div class="form-group">
   <label class="col-md-4 control-label" for="domaine_graphique">Graphiques</label>
+  <div class="col-md-4"> <div class="checkbox">
+    <label for="domaine_graphique">
+      <input type="checkbox" name="domaine_graphique" id="domaine_graphique" value="1"> </label>
+	</div>
+  </div>
+</div>
+
+
+
+<div class="form-group">
+    <div class="row">
+        <label class="col-md-4 control-label" for="domaine_preuve_display">Points de vue de l'usage</label>
+        <div class="col-md-8"> <div class="checkbox">
+          <label for="domaine_preuve_display-0">
+            <input data-display='.domaine_preuve' class='display' type="checkbox" name="domaine_preuve_display" id="domaine_preuve_display" value="1"></label>
+              </div>
+        </div>
+  </div>
+  
+<div class="row domaine_preuve hidethis">
+    <label class="col-md-4 control-label" for="domaine_preuve">Options</label>
+      <div class="col-md-8"> 
+        <input type="radio" name="domaine_preuve" id="radios-1" value="1" checked="checked">Sans liens
+        <br><input type="radio" name="domaine_preuve" id="radios-2" value="2">Avec liens
+        <br><input type="radio" name="domaine_preuve" id="radios-3" value="3">Complet 
+      </div>
+</div>
+
+  
+  
+</div>
+
+
+
+
+<div class='legendStyle'><input data-display='.dimension' class='display' type="checkbox" name="dimension_display"   value="1"> Dimensions</div> 
+
+
+
+
+<div class="form-group dimension hidethis">
+  <label class="col-md-4 control-label" for="dimension_note_display">Afficher la note</label>
+  <div class="col-md-4"> <div class="checkbox">
+    <label for="dimension_note_display">
+      <input data-display='.dimension_note' class='display' type="checkbox" name="dimension_note_display" id="domaine_note_display" value="1"></label>
+	</div>
+  </div>
+</div>
+
+
+
+<div class="form-group dimension_note hidethis">
+  <label class="col-md-4 control-label" for="dimension_note">Note</label>
   <div class="col-md-4"> 
-    <input type="radio" name="domaine_graphique" id="radios-0" value="0" checked="checked">Sans graphique
-    <input type="radio" name="domaine_graphique" id="radios-1" value="1">Avec graphique
+    <label for="radios-1"><input type="radio" name="dimension_note" id="radios-1" value="1"  checked="checked">Note Simple</label> 
+    <label  for="radios-2"><input type="radio" name="dimension_note" id="radios-2" value="2">Note avec Picto</label> 
+    <label  for="radios-3"><input type="radio" name="dimension_note" id="radios-3" value="3">Note avec Histo</label> 
   </div>
 </div>
 
-<legend>Tests</legend>
-<!-- Multiple Checkboxes -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="checkboxes">Multiple Checkboxes</label>
-  <div class="col-md-4">
-  <div class="checkbox">
-    <label for="checkboxes-0">
-      <input type="checkbox" name="checkboxes" id="checkboxes-0" value="1">Option one</label>
-	</div>
-  <div class="checkbox">
-    <label for="checkboxes-1">
-      <input type="checkbox" name="checkboxes" id="checkboxes-1" value="2">
-      Option two
-    </label>
-	</div>
-  </div>
+
+ 
+
+<div class='hidethis dimension'>
+    
+    <div class='legendStyle'><input data-display='.critere' class='display' type="checkbox" name="critere_display"   value="1"> Critère</div> 
+    <!-- Multiple Radios (inline) -->
+    <div class='hidethis critere'>
+    <div class="form-group">
+        <label class="col-md-4 control-label" for="critere_note">Critères</label>
+        <div class="col-md-4"> 
+          <label for="radios-0"><input type="radio" name="critere_note" id="radios-0" value="0" checked="checked">Sans note</label> 
+          <label for="radios-1"><input type="radio" name="critere_note" id="radios-1" value="1">Note Simple</label> 
+          <label  for="radios-2"><input type="radio" name="critere_note" id="radios-2" value="2">Note avec Picto</label> 
+          <label  for="radios-3"><input type="radio" name="critere_note" id="radios-3" value="3">Note avec Histo</label> 
+        </div>
+    </div>
+
+        <div class="form-group ">
+          <label class="col-md-4 control-label" for="objectif">Objectifs opérationnels</label>
+          <div class="col-md-4">
+          <div class="checkbox">
+            <label for="objectif-0">
+              <label for="objectif-null"><input type="radio" name="objectif" id="objectif-null" value="0" checked="checked">Ne pas afficher</label> 
+              <label for="objectif-0"><input type="radio" name="objectif" id="objectif-0" value="1" >simple</label> 
+              <label for="objectif-1"><input type="radio" name="objectif" id="objectif-1" value="2" >complete</label> 
+              <label for="objectif-1"><input type="radio" name="objectif" id="objectif-1" value="3" >Complet avec preuve</label> 
+            </div>
+          </div>
+        </div>
+    </div>
 </div>
 
-<!-- Multiple Radios -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="radios">Multiple Radios</label>
-  <div class="col-md-4">
-  <div class="radio">
-    <label for="radios-0">
-      <input type="radio" name="radios" id="radios-0" value="1" checked="checked">
-      Option one
-    </label>
-	</div>
-  <div class="radio">
-    <label for="radios-1">
-      <input type="radio" name="radios" id="radios-1" value="2">
-      Option two
-    </label>
-	</div>
-  </div>
+
+
+<div class='hidethis critere'>
+    <div class='legendStyle'><input data-display='.question' class='display' type="checkbox" name="question_display"   value="1"> Eléments d'apréciations</div> 
+    <!-- Multiple Radios (inline) -->
+    <div class='hidethis question'>
+    <div class="form-group">
+        <label class="col-md-4 control-label" for="question_affiche"></label>
+        <div class="col-md-4"> 
+            <label for="radios-0"><input type="radio" name="question_affiche" id="radios-0" value="0" checked="checked">Question seulement</label> 
+            <label for="radios-1"><input type="radio" name="question_affiche" id="radios-1" value="1">Question : oui / non </label> 
+            <label for="radios-2"><input type="radio" name="question_affiche" id="radios-2" value="2">Libellé des Réponses</label> 
+            <label for="radios-3"><input type="radio" name="question_affiche" id="radios-3" value="3">Eléments qualité à conserver  / Points qualité à améliorer </label> 
+            <label for="radios-4"><input type="radio" name="question_affiche" id="radios-4" value="4">Eléments qualité à conserver uniquement </label> 
+            <label for="radios-5"><input type="radio" name="question_affiche" id="radios-5" value="5"> Points qualité à améliorer uniquement </label> 
+        </div>
+    </div>
+    </div>
 </div>
+    
+            
+
+        
+
+
+
+ 
 
 </fieldset>
 </form>
@@ -135,6 +238,21 @@
             });
             
             
+            $('.display').click(function() 
+            {
+                disp_selector=$(this).data('display');
+                if ($(this).prop('checked'))
+                {
+                    $(disp_selector).show(500);
+                }
+                else
+                {
+                    $(disp_selector).hide(500);
+                }
+                recalc_preview();
+            });
+            
+            
         });
         
         function maj_parameters()
@@ -149,6 +267,9 @@
            url= url + '?' + parameters;
            $("#ifrm").attr("src", url);
         }
+
+    recalc_preview();
+
     </script> 
 {% endblock %}
 

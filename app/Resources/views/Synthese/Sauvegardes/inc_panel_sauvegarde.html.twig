@@ -5,7 +5,7 @@
                     {% set path_backup = path("pericles3_sauvegardes_etablissement", {'id': etablissement.id}) %}
                 {% endif %}
             
-        {% if  etablissement.getStatus==3 %}
+        {% if  etablissement.SaisieTerminee  %}
         <div class="panel panel-primary">
             <div class="panel-heading"><h3 class="panel-title"> <a href="{{path_backup}}">Sauvegardes</a></h3></div>
             <div class="panel-body">

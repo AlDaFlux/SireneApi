@@ -32,6 +32,18 @@ class PatchToDoRepository extends \Doctrine\ORM\EntityRepository
         return $qb->getQuery()->getResult();
     }	
     
+    
+    public function findEnCours() 
+    {
+        $qb = $this->createQueryBuilder('patchToDo');
+        $qb->Where("patchToDo.dateDebutPatch IS NOT NULL AND patchToDo.dateFinPatch IS NULL" );
+        return $qb->getQuery()->getResult();
+    }
+    
+    
+    
+    
+    
     public function findToDoEtablissementPatch(Etablissement $etablissement, Patch $patch) 
     {
         $qb = $this->createQueryBuilder('patchToDo');

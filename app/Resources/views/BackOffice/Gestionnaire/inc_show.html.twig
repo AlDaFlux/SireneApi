@@ -7,10 +7,6 @@
 {% endif  %}
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ gestionnaire.id }}</td>
-            </tr>
-            <tr>
                 <th>Nom</th>
                 <td>{{ gestionnaire.nom }}</td>
             </tr>
@@ -37,20 +33,20 @@
                 </td>
                 {% endif  %}
             </tr>
+            <tr>
+                <th>Crée par</th>
+                <td><b>{{ gestionnaire.CreatedBy }}</b> le <b>{{ gestionnaire.CreatedDate  | date('Y-m-d H:i:s') }}</b></td>
+            </tr>
+            <tr>
+                <th>Dernier accès</th>
+                {% include "Nuts/inc_td_last_connect.html.twig"  with {'dateLastConnect' : gestionnaire.dateLastConnect}  %}
+            </tr>
                 
             {% endif  %}
 
             <tr>
                 <th>Adresse</th>
-                <td>{{ gestionnaire.adresse }}</td>
-            </tr>
-            <tr>
-                <th>Codepostal</th>
-                <td>{{ gestionnaire.codePostal }}</td>
-            </tr>
-            <tr>
-                <th>Ville</th>
-                <td>{{ gestionnaire.ville }}</td>
+                <td>{{ gestionnaire.adresse }} {{ gestionnaire.codePostal }} {{ gestionnaire.ville }}</td>
             </tr>
             <tr>
                 <th>Tel</th>

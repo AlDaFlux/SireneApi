@@ -185,6 +185,8 @@ class Dimension
         $isOneCritereTermine =false;
         $isOneCritereArevoir =false;
         $isOneCritereModifie =false;
+        $isAllCritereNew =true;
+        $isAllCritereNonCommence = true;
 
         foreach ($this->getCriteres() as $critere ) {
             $crietereState = $critere->getStatus();
@@ -195,11 +197,14 @@ class Dimension
                     break;
                 case 2:
                         $isOneCritereEncours =true;
+                        $isAllCritereNonCommence=false;
                     break;
                 case 3:
+                        $isAllCritereNonCommence=false;
                         $isOneCritereTermine =true;
                     break;
                 case 4:
+                        $isAllCritereNonCommence=false;
                         $isOneCritereArevoir =true;
                     break;            
                 case 5:
@@ -208,8 +213,14 @@ class Dimension
                         $isOneCritereModifie =true;
                     break;            
             }
+            $isAllCritereNew= ($crietereState==6) && $isAllCritereNew;
         }
 
+        
+        if ($isAllCritereNew) return 6;
+        elseif ($isAllCritereNonCommence) return 1;
+
+        
         if ($isOneCritereModifie) return 5;
         if ($isOneCritereArevoir) return 4;
 
@@ -237,6 +248,15 @@ class Dimension
                break;    
             case 4:
                return("toedit");
+               break;    
+            case 4:
+               return("toedit");
+               break;    
+            case 5:
+               return("modifie");
+               break;    
+            case 6:
+               return("nouveau");
                break;    
         }
     }

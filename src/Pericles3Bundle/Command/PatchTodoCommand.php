@@ -19,7 +19,7 @@ use DateTime;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 
-class PatchTodoCommand extends ContainerAwareCommand
+class PatchTodoCommand extends ArseneCommand
 {
     protected function configure()
     {
@@ -31,9 +31,23 @@ class PatchTodoCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $doctrine = $this->getContainer()->get('doctrine');
+        
+
+        
+        $this->input=$input;
+        $this->output=$output;
+
         $em = $doctrine->getEntityManager();
         $em->getConfiguration()->setSQLLogger(null);
         
+        
+        if ($this->GetPatchEnCours())
+        {
+            $output->writeln("<error>Annulation du CRON</error>");
+            exit();
+        }
+        
+        $this->PatchTodoBatchStart();
         
         $PatchsToDo = $em->getRepository("Pericles3Bundle:PatchToDo")->findToDo();
         
@@ -50,7 +64,10 @@ class PatchTodoCommand extends ContainerAwareCommand
             gc_collect_cycles();
         }
         $output->writeln($i." établissements patchés: ");
+        $this->PatchTodoBatchStop();
     }
 }
+
+
 
 

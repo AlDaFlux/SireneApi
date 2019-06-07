@@ -202,6 +202,81 @@ class EtablissementController extends AdminController
     
     
     
+    function undelegEtablissement(Etablissement $etablissement)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $etablissement->setDelegationCreai(false);
+        $em->flush();
+        $this->addFlash('warning', "La délégation CREAI a été désactivée");
+    }
+    
+    function delegEtablissement(Etablissement $etablissement)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $etablissement->setDelegationCreai(true);
+        $em->flush();
+        $this->addFlash('success', "La délégation CREAI a été activée");
+    }
+    
+    
+    /**
+     * Deletes a Etablissment entity.
+     *
+     * @Route("/deleg_{id}", name="backoffice_etab_gest_deleg")
+     */
+    public function delegEtabGestAction(Etablissement $etablissement)
+    {
+        $this->delegEtablissement($etablissement);
+        return $this->redirectToRoute('backoffice_etablissement_view', array('id' => $etablissement->getId()));
+    }
+    
+    
+    /**
+     * Deletes a Etablissment entity.
+     *
+     * @Route("/undeleg_{id}", name="backoffice_etab_gest_undeleg")
+     */
+    public function undelegEtabGestAction(Etablissement $etablissement)
+    {
+        $this->undelegEtablissement($etablissement);
+        return $this->redirectToRoute('backoffice_etablissement_view', array('id' => $etablissement->getId()));
+    }
+    
+    
+      
+    /**
+     * Deletes a Etablissment entity.
+     *
+     * @Route("/deleg", name="backoffice_etablissement_deleg")
+     */
+    public function delegAction()
+    {
+        $etablissement=$this->GetUser()->GetEtablissement();
+        if ($etablissement)
+        {
+            $this->delegEtablissement($etablissement);
+        }
+        return $this->redirectToRoute('pericles3_backoffice');
+    }
+    
+    
+    /**
+     * Deletes a Etablissment entity.
+     *
+     * @Route("/undeleg", name="backoffice_etablissement_undeleg")
+     */
+    public function undelegAction()
+    {
+        $etablissement=$this->GetUser()->GetEtablissement();
+        if ($etablissement)
+        {
+            $this->undelegEtablissement($etablissement);
+        }
+        return $this->redirectToRoute('pericles3_backoffice');
+    }
+
+    
+    
     private function GetEtablissements($reel=null)
     {
         if ($this->getUser()->IsAnEtablissement())
@@ -1470,6 +1545,7 @@ class EtablissementController extends AdminController
 //                $this->Output("-------> domaine <-------: ".$domaine." (".$domaine->GetReferentielPublic().")");
                 foreach ($domaine->GetDimensions() as $dimension )
                 {
+                    
   //                  $this->Output("-------> dimension <-------: ".$dimension);
                     $nb_dimensions++;
                     foreach ($dimension->GetCriteres() as $critere)
@@ -1513,6 +1589,10 @@ class EtablissementController extends AdminController
                                 $em->flush();
 
                             }
+                            else
+                            {
+                                $critere->SetArevoir(4);
+                            }
                         }
                     }
                     if (! $nb_dimensions )  $this->Output("<error> Pas de dimensions  pour l'établissement ".$Etablissement." avec le referentiel public cible ".$ReferentielPublicCible." </error>");
@@ -1553,6 +1633,11 @@ class EtablissementController extends AdminController
                                 {
                                     $question->setReponse($source->GetReponse());
                                     $em->persist($question);
+                                }
+                                else
+                                {
+                                    $critere->getModifieReferentiel();
+                                    $em->persist($critere);
                                 }
                             }
                     }
@@ -2107,8 +2192,6 @@ class EtablissementController extends AdminController
     
     
     
-    
-    
       
     /**
      * Deletes a Etablissment entity.
@@ -2128,11 +2211,7 @@ class EtablissementController extends AdminController
                 }
                 $em->remove($ObjectifOperationnel);
             }
-            foreach ($Etablissement->getBibliotheques() as $Bibliotheque)
-            {
-                $em->remove($Bibliotheque);
-            }
-            
+           
             $em->flush();                
             
        
@@ -2192,8 +2271,18 @@ class EtablissementController extends AdminController
                          */
                     }
                 }
+                      
+          
+            
             }
+             $em->flush();
+            foreach ($Etablissement->getBibliotheques() as $Bibliotheque)
+            {
+                $em->remove($Bibliotheque);
+            }
+                     
             $em->flush();
+            
 
             /*
             $em->flush();
