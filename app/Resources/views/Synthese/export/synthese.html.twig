@@ -20,14 +20,10 @@
 <h1>Evaluation résumé </h1>
 {% include "Synthese/export/inc/inc_menu_domaine.html.twig" %}
 
+
+{% include "Synthese/export/inc/inc_graph_etablissement.html.twig" %}
+
       
-
-<h3>Cotation moyenne des {{ etablissement.domaines|length }} domaines d'évaluation (10 points maximum)</h3>
-<div class='graph_big'>
-        {% set img_note = '/upload/st01/etablissement_' ~ etablissement.id ~ '/synthese/graphs/general.jpg' %}
-        {{ img_note | getImageExport(typeExport) | raw }}
-
-</div>
         
 
    
@@ -53,18 +49,12 @@
     
      {% if domaine.preuves|length > 0 %}
         <h4>Point de vue de l’usager</h4>
-        {% include "Synthese/export/inc/inc_preuves_link.html.twig" with {'preuves': domaine.preuves %}
+        {% include "Synthese/export/inc/preuves/inc_preuves_link.html.twig" with {'preuves': domaine.preuves } %}
     {% endif %}
+    
+    
+    {% include "Synthese/export/inc/domaine_commentaire/commentaires_simple.html.twig"  %}
      
-    {% if domaine.commentaires |length > 0 %}
-      <h4>Commentaires</h4>
-        <ul>
-            {% for commentaire in domaine.commentaires %}
-                <li>{{ commentaire.commentaire }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-            
     
     
     {% include "Synthese/export/inc/inc_osa.html.twig" %}

@@ -283,16 +283,51 @@ class SyntheseController extends Controller
     /**
      * Lists all DomaineObjectifStrategique entities.
      *
-     * @Route("/generate/etablissement_{id}", name="pericles3_generate_export_etablissement")
+     * @Route("/generate/etablissement_{id}/preview", name="pericles3_generate_export_etablissement_preview")
      * @Method("GET")
      */
-    public function indexExportGenerateEtablissementAction(Request $request,Etablissement $Etablissement)
+    public function indexExportGenerateEtablissementPreviwAction(Request $request,Etablissement $Etablissement)
     {
         return $this->render('Synthese/export/generate/synthese.html.twig', ['parameters'=> $request->query->all(),'typeExport'=>'PDF','etablissement'=>$Etablissement]);
+        
+    }
+     
+    
+    /**
+     * Lists all DomaineObjectifStrategique entities.
+     *
+     * @Route("/generate/etablissement_{id}/{synthese_extension}", name="pericles3_generate_export_etablissement")
+     * @Method("GET")
+     */
+    public function indexExportGenerateEtablissementPdfAction(Request $request,Etablissement $Etablissement, $synthese_extension)
+    {
+
+        $uploadPath = WEB_DIR.'/upload/';
+        $filename="ARSENE -  ".$Etablissement.' - '.date("Y-m-d").'.'.$synthese_extension;
+        $file=$uploadPath.$Etablissement->GetUploadFolderPath()."/synthese/".date("Y-m-d").".".$synthese_extension;
+        $view = $this->renderView('Synthese/export/generate/synthese.html.twig', ['parameters'=> $request->query->all(),'typeExport'=>strtoupper($synthese_extension) ,'etablissement'=>$Etablissement]);
+        
+         if ($synthese_extension=="pdf")
+        {
+                $dompdf = new DOMPDF();
+                $dompdf->load_html($view);
+                $dompdf->render();
+                file_put_contents($file, $dompdf->output());
+                return($this->exportFile($file,$filename, $synthese_extension));
+        }
+        elseif ($synthese_extension=="doc")
+        {
+            $view=$this->get('HtmlToMht')->HtmlToMht($view);
+            $fp = fopen($file, 'w');
+            fwrite($fp, $view);
+            return($this->exportFile($file,$filename, $synthese_extension));
+        }
+        else { return new JsonResponse(false); }
+        
+        
     }
     
-    
-    
+     
     
     
     
@@ -324,7 +359,7 @@ class SyntheseController extends Controller
         $uploadPath = WEB_DIR.'/upload/';
         $filename="ARSENE - ".$synthese_type.' - ' .$Etablissement.' - '.date("Y-m-d").'.'.$synthese_extension;
         $file=$uploadPath.$Etablissement->GetUploadFolderPath()."/synthese/".$synthese_type.".".$synthese_extension;
-        return($this->exportFile($file,$filename, $synthese_type, $synthese_extension));
+        return($this->exportFile($file,$filename,  $synthese_extension));
     }
 
     
@@ -340,7 +375,7 @@ class SyntheseController extends Controller
         $uploadPath = WEB_DIR.'/upload/';
         $filename="ARSENE - ".$synthese_type.' - ' .$referentielPublic.' - '.date("Y-m-d").'.'.$synthese_extension;
         $file=$uploadPath.$this->GetUser()->Getgestionnaire()->GetUploadFolderPath()."/synthese/".$synthese_type.".".$synthese_extension;
-        return($this->exportFile($file,$filename, $synthese_type, $synthese_extension));
+        return($this->exportFile($file,$filename,  $synthese_extension));
     }
 
     
@@ -361,14 +396,12 @@ class SyntheseController extends Controller
         
         
         $file=$uploadPath.$Etablissement->GetUploadFolderPath()."/synthese/".$synthese_type."_".$Sauvegarde->GetId().".".$synthese_extension;
-        return($this->exportFile($file,$filename, $synthese_type, $synthese_extension));
+        return($this->exportFile($file,$filename,  $synthese_extension));
     }
 
     
-    private function exportFile($file,$filename, $synthese_type, $synthese_extension)
+    private function exportFile($file,$filename,   $synthese_extension)
     {
-        
-        $uploadPath = $this->get('kernel')->getRootDir().'/../web/upload/';
         if($synthese_extension=="pdf")
         {
             $contenttype="application/pdf";
@@ -379,8 +412,6 @@ class SyntheseController extends Controller
         }
         else
             die();
-        
-
         
         $response = new Response();
         $response->headers->set('Cache-Control', 'private');

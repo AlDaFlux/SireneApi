@@ -24,6 +24,8 @@
 {% for domaine in etablissement.domaines %}
     <h1><a id="domaine_{{domaine.ordre}}" name="domaine_{{domaine.ordre}}">Domaine {{ domaine.ordre}}. {{ domaine}}</a></h1>
  
+    
+        {%  set affichePreuve = true %}
         {% include "Synthese/export/inc/inc_paq_domaine.html.twig" %}
     
         

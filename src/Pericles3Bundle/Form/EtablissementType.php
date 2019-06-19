@@ -24,6 +24,8 @@ class EtablissementType extends AbstractType
 {
     
     private $code_finess;
+    private $gestionnaire;
+    private $edit;
         
         
     /**
@@ -34,6 +36,7 @@ class EtablissementType extends AbstractType
     {
         if (isset($options['code_finess'])) $this->code_finess = $options['code_finess'];
         if (isset($options['gestionnaire'])) $this->gestionnaire = $options['gestionnaire'];
+        if (isset($options['edit'])) $this->edit = $options['edit'];
         
          
         
@@ -72,6 +75,7 @@ class EtablissementType extends AbstractType
             
             $builder->add('creai');
 
+            
             $builder->add('ModeCotisation', EntityType::class, array(
                     'attr' => array('class' => 'alert alert-danger'),
                     'class' => 'Pericles3Bundle:ModeCotisation',
@@ -79,7 +83,12 @@ class EtablissementType extends AbstractType
                         'query_builder' => function(modeCotisationRepository $repository) 
                         {
                             $qb = $repository->createQueryBuilder('cotis');
-                            return $qb->where('cotis.id>=0');
+                            $qb->where('cotis.id>=0');
+                            if (! $this->edit)
+                            {
+                                $qb->where('cotis.id<>5');
+                            }
+                            return $qb;
                         }   
                     ));
             

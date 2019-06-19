@@ -1,0 +1,194 @@
+
+    {% set note = domaine.MoyenneNotes %} 
+    <h1><a class='domaine_title' id="domaine_{{domaine.ordre}}" name="domaine_{{domaine.ordre}}">
+            {% if  parameters | parametersBoolean("domaine_note_display") and  parameters["domaine_note"] == "2" %}    
+                    {% set img_note = note | formatNoteNuage(true) %}
+                    {{ img_note | getImageExport(typeExport) | raw }}
+            {% endif %}
+            {{ domaine.ordre}}. {{ domaine}}</a>
+            {% if  parameters | parametersBoolean("domaine_note_display") %}    
+             : {{ note | formatNoteSimple }}
+            {% endif %}
+    </h1>
+    
+    {% if  parameters | parametersBoolean("domaine_note_display") %}    
+        {% if    parameters["domaine_note"] == "3" %}    
+           {% include('Synthese/export/inc/inc_bar_note.html.twig') %} 
+       {% endif %}
+    {% endif %}
+  
+
+    {% if  parameters | parametersBoolean("domaine_graphique") %}    
+    <div class='graph_big'>
+        {% set img_note = '/upload/st01/etablissement_' ~ etablissement.id ~ '/synthese/graphs/' ~ domaine.id ~'.jpg' %}
+        {{ img_note | getImageExport(typeExport) | raw }}
+    </div>
+    {% endif %}
+    
+    {% if  parameters | parametersBoolean("domaine_synthese_display") %}    
+            {% include "Synthese/export/inc/domaine_commentaire/commentaires_simple.html.twig"  %}
+    {% endif %}
+    
+    
+    
+    
+    
+    
+        
+    {% if  parameters | parametersBoolean("osa_display") %}    
+                {% if  parameters["objectif_strategique_etat"] == "1" %}    
+                    {%  set ObjectifsSrategiques = domaine.objectifsSrategique %}
+                {% elseif  parameters["objectif_strategique_etat"] == "2" %}    
+                    {%  set ObjectifsSrategiques = domaine.objectifsNonTermines %}
+                {% elseif  parameters["objectif_strategique_etat"] == "3" %}    
+                    {%  set ObjectifsSrategiques = domaine.objectifsTermines %}
+                {% elseif  parameters["objectif_strategique_etat"] == "4" %}    
+                    {%  set ObjectifsSrategiques = domaine.objectifsEnRetard %}
+                {% endif %}
+                
+
+                {% if  parameters["objectif_strategique"] == "2" %}    
+                    {% include "Synthese/export/inc/inc_osa_tab.html.twig"  %}
+                {% else %}    
+                    {% include "Synthese/export/inc/objectifs/inc_osa_simple.html.twig"  %}
+                {% endif %}
+
+
+        
+    
+    {% endif %}
+    
+
+        
+    
+    
+    {% if  parameters | parametersBoolean("domaine_preuve_display") %}    
+        {%  set preuves = domaine.preuves  %}
+        
+        {% if preuves | length > 0 %}
+            <h4>Point de vue de l’usager</h4>
+
+            {% if  parameters["domaine_preuve"] == "1" %}    
+                {% include "Synthese/export/inc/preuves/inc_preuves_sans_link.html.twig"  %}
+            {% elseif   parameters["domaine_preuve"] == "2" %}    
+                {% include "Synthese/export/inc/preuves/inc_preuves_link.html.twig"  %}
+            {% elseif   parameters["domaine_preuve"] == "3" %}    
+                {% include "Synthese/export/inc/preuves/inc_preuves_tableau.html.twig"  %}
+            {% endif %}
+        {% endif %}
+
+    {% endif %}
+    
+    
+    {% if  parameters | parametersBoolean("dimension_display") %}    
+      
+        
+              {% for dimension in domaine.dimensions | order %}
+                    {% set note = dimension.MoyenneNotes %} 
+                  <h2><a id="dimension_{{dimension.numero}}" name="dimension_{{dimension.numero}}">
+                          
+                    {% if  parameters | parametersBoolean("dimension_note_display")  and  parameters["dimension_note"] == "2" %}    
+                        {% set img_note = note | formatNoteNuage(true) %}
+                            {{ img_note | getImageExport(typeExport) | raw }}
+                        {% endif %}
+
+                          
+                          {{ dimension.numero}}. {{ dimension}}</a>
+                                      
+                                    {% if  parameters | parametersBoolean("dimension_note_display") %}    
+                                            : {{ note | formatNoteSimple }}
+                                {% endif %}
+                  </h2>
+                    {% if   parameters | parametersBoolean("dimension_note_display")  and  parameters["dimension_note"] == "3" %}    
+                       {% include('Synthese/export/inc/inc_bar_note.html.twig') %} 
+                  {% endif %}
+                  
+                  
+                    {% if  parameters | parametersBoolean("critere_display") %}    
+                          {% for critere in dimension.criteres  | order %}
+                            {% set note = critere.note %} 
+                              <h3><a id="critere_{{critere.ordre}}" name="critere_{{critere.ordre}}">
+                                      
+                                    {% if  parameters | parametersBoolean("critere_note_display")  and  parameters["critere_note"] == "2" %}    
+                                    {% set img_note = note | formatNoteNuage(true) %}
+                                        {{ img_note | getImageExport(typeExport) | raw }}
+                                    {% endif %}
+                                      
+                                      {{ critere.numero}}. {{ critere}}
+                                  </a>
+                                  
+                                    {% if  parameters | parametersBoolean("critere_note_display") %}    
+                                            :      {{ note | formatNoteSimple }}
+                                    {% endif %}
+                              </h3>
+                                {% if   parameters | parametersBoolean("critere_note_display")  and  parameters["critere_note"] == "3" %}    
+                                   {% include('Synthese/export/inc/inc_bar_note.html.twig') %} 
+                              {% endif %}
+                              
+                                {% if  parameters | parametersBoolean("rbpp_display") %}    
+                                    {% include "Synthese/export/inc/rbpp/rbpp_simple.html.twig"  %}
+                                {% endif %}
+
+                                     
+                                {% if  parameters | parametersBoolean("constats_display") %}    
+                                    {% include "Synthese/export/inc/constats/constats_simple.html.twig" %}
+                                {% endif %}
+
+ 
+                                {% if  parameters | parametersBoolean("question_display") %}    
+                                    <h4>Eléments d'appréciations</h4>
+                                    {% if parameters["question_affiche"] == "0" %}
+                                        {% include "Synthese/export/inc/questions/inc_questions_seules.html.twig" with { "questions" : critere.questions } %}
+                                    {% elseif parameters["question_affiche"] == "1" %}
+                                        {% include "Synthese/export/inc/questions/inc_questions_ouinon.html.twig" with { "questions" : critere.questions } %}
+                                    {% elseif parameters["question_affiche"] == "2" %}
+                                        {% include "Synthese/export/inc/questions/inc_questions_reponses.html.twig" with { "questions" : critere.questions } %}
+                                    {% elseif parameters["question_affiche"] == "3" %}
+                                        {% include "Synthese/export/inc/questions/inc_questions_reponses_conserver_ameliorer.html.twig" with { "questions" : critere.questions } %}
+                                    {% elseif parameters["question_affiche"] == "4" %}
+                                        {% include "Synthese/export/inc/questions/inc_questions_reponses_conserver.html.twig" with { "questions" : critere.questions } %}
+                                    {% elseif parameters["question_affiche"] == "5" %}
+                                        {% include "Synthese/export/inc/questions/inc_questions_reponses_a_ameliorer.html.twig" with { "questions" : critere.questions } %}
+                                        
+                                    {% endif %}
+                                    
+                                    
+                                {% endif %}
+
+                                {% if  parameters | parametersBoolean("oo_display") %}    
+                                    
+                                    
+                                    {% if  parameters["objectif_etat"] == "1" %}    
+                                        {%  set objectifs = critere.objectifs %}
+                                    {% elseif  parameters["objectif_etat"] == "2" %}    
+                                        {%  set objectifs = critere.objectifsNonTermines %}
+                                    {% elseif  parameters["objectif_etat"] == "3" %}    
+                                        {%  set objectifs = critere.objectifsTermines %}
+                                    {% elseif  parameters["objectif_etat"] == "4" %}    
+                                        {%  set objectifs = critere.objectifsEnRetard %}
+                                    {% endif %}
+                                    
+                                    
+                                    
+                                    
+                                    {% if objectifs | length  > 0 %}
+                                        
+                                        {% if  parameters["objectif"] == "1" %}    
+                                           {% include "Synthese/export/inc/objectifs/inc_ooa_simple.html.twig"   %}
+                                        {% elseif  parameters["objectif"] == "2" %}    
+                                           {% include "Synthese/export/inc/objectifs/inc_ooa_tabcomplet.html.twig" with {   "affichePreuve" : false  } %}
+                                        {% elseif  parameters["objectif"] == "3" %}    
+                                           {% include "Synthese/export/inc/objectifs/inc_ooa_tabcomplet.html.twig" with {   "affichePreuve" : true } %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif%}
+                        
+                        
+                              
+                          {% endfor %}
+                  {% endif %}
+                  
+                  
+              {% endfor %}
+      {% endif %}
+

@@ -1,0 +1,12 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>  <a href="{{ path('backoffice_editorial_mentionslegales_index') }}">Editorial Mentions legales</a></h1>
+
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <input class='btn btn-block btn-primary'   type="submit" value="Create" />
+    {{ form_end(form) }}
+
+{% endblock %}

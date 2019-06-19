@@ -25,6 +25,10 @@
 	border-bottom: 1px solid #e5e5e5;
 }
 
+.radio-group
+{
+    border-bottom: #007699 solid 1px;
+}
 
     
     </style>
@@ -46,19 +50,67 @@
 
 <!-- Form Name -->
 <legend>Page de garde</legend>
-<div class="form-group">
-  <label class="col-md-4 control-label" for="logo">Logo Etablissement</label>
-  <div class="col-md-4"> <div class="checkbox">
-    <label for="logo-0">
-      <input type="checkbox" name="logo" id="logo-0" value="1"> </label>
-	</div>
-  </div>
-</div>
+    <div class="form-group">
+      <div class="col-md-6"> <div class="checkbox">
+        <label for="logo-0">
+          <input type="checkbox" name="logo" id="logo-0" value="1">Logo de l'établissement </label>
+            </div>
+      </div>
+      <div class="col-md-6"> <div class="checkbox">
+        <label for="logo-0">
+          <input type="checkbox" name="info_etablissement" id="logo-0" value="1">Infos</label>
+            </div>
+      </div>
+      <div class="col-md-6"> <div class="checkbox">
+        <label for="menu-0">
+            <input type="checkbox" name="etablissement_menu" id="menu-0" value="1"> Menu</label>
+        </div>
+      </div>
+      <div class="col-md-6"> <div class="checkbox">
+        <label for="etablissement_graphique">
+            <input type="checkbox" name="etablissement_graphique" id="etablissement_graphique" value="1">Graphique</label>
+        </div>
+      </div>
+      <div class="col-md-12"> <div class="checkbox">
+        <label for="etablissement_graphique">
+            <input type="checkbox" name="textes_princips" id="textes_princips" value="1">Cadre d'action des activités déployées / Population concernée</label>
+        </div>
+      </div>
+    </div>
+ 
+
+
+
+
+
+
 
 
 
 <legend>Domaines</legend>
 <!-- Multiple Radios (inline) -->
+
+
+<div class="form-group">
+    <label class="col-md-4 control-label" for="domaine_all">Tous les domaines</label>
+    <div class="col-md-4"> <div class="checkbox">
+    <label for="domaine_all">
+      <input data-display='.domaine_select' class='display_inverse' type="checkbox" name="domaine_all"  checked="checked" id="domaine_all" value="1"></label>
+	</div>
+    </div>
+    <div class="domaine_select hidethis col-md-12">
+        <label class="col-md-2 control-label"  ></label>
+        <div class="col-md-10"> 
+            {% set  first = true %}
+            {% for domaine in etablissement.domaines %}
+                <br><label><input type="radio" name="domaine_one"   value="{{ domaine.ordre }}" {% if first %} checked="checked" {% endif %}>{{ domaine.ordre }} : {{ domaine }}</label> 
+                {% set  first = false %}
+            {% endfor %}
+        </div>
+      </div>
+</div>
+
+
 <div class="form-group">
   <label class="col-md-4 control-label" for="domaine_note_display">Afficher la note</label>
   <div class="col-md-4"> <div class="checkbox">
@@ -66,53 +118,93 @@
       <input data-display='.domaine_note' class='display' type="checkbox" name="domaine_note_display" id="domaine_note_display" value="1"></label>
 	</div>
   </div>
-</div>
-
-
-
-<div class="form-group domaine_note hidethis">
-  <label class="col-md-4 control-label" for="domaine_note">Note</label>
-  <div class="col-md-4"> 
-    <label for="radios-1"><input type="radio" name="domaine_note" id="radios-1" value="1"  checked="checked">Note Simple</label> 
-    <label  for="radios-2"><input type="radio" name="domaine_note" id="radios-2" value="2">Note avec Picto</label> 
-    <label  for="radios-3"><input type="radio" name="domaine_note" id="radios-3" value="3">Note avec Histo</label> 
+<div class="domaine_note hidethis col-md-12">
+    <label class="col-md-2 control-label" for="domaine_note"></label>
+    <div class="col-md-6"> 
+      <label for="radios-1"><input type="radio" name="domaine_note" id="radios-1" value="1"  checked="checked">Note Simple</label> 
+      <br><label  for="radios-2"><input type="radio" name="domaine_note" id="radios-2" value="2">Note avec Picto</label> 
+      <br><label  for="radios-3"><input type="radio" name="domaine_note" id="radios-3" value="3">Note avec Histo</label> 
+    </div>
   </div>
 </div>
 
+
 <div class="form-group">
-  <label class="col-md-4 control-label" for="domaine_graphique">Graphiques</label>
+  <label class="col-md-2 control-label" for="domaine_graphique">Graphiques</label>
   <div class="col-md-4"> <div class="checkbox">
     <label for="domaine_graphique">
       <input type="checkbox" name="domaine_graphique" id="domaine_graphique" value="1"> </label>
 	</div>
   </div>
+  <label class="col-md-2 control-label" for="domaine_synthese_display">Synthese(s)</label>
+  <div class="col-md-4"> <div class="checkbox">
+    <label for="domaine_synthese_display">
+      <input type="checkbox" name="domaine_synthese_display" id="domaine_synthese_display" value="1"> </label>
+	</div>
+  </div>
 </div>
+
+        
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="osa_display">Objectifs Stratégiques</label>
+  <div class="col-md-4"> <div class="checkbox">
+    <label for="osa_display-0">
+      <input data-display='.osa_mode' class='display' type="checkbox" name="osa_display" id="osa_display" value="1"></label>
+	</div>
+  </div>
+  <br> 
+    <div class=" osa_mode hidethis col-md-12">
+        <div class="col-md-2"></div> 
+        <div class="col-md-10">
+            <label for="objectif_strategique-0"><input type="radio" name="objectif_strategique" id="objectif_strategique-1" value="1">Affichage simple</label>
+            /<label for="objectif_strategique-1"><input type="radio" name="objectif_strategique" id="objectif_strategique-2" value="2" checked="checked"  >Affichage complet</label> 
+        </div>
+    </div>
+    <div class=" osa_mode hidethis col-md-12">
+        <div class="col-md-2"></div> 
+        <div class="col-md-10">
+            <label for="objectif_strategique_etat-1"><input type="radio" name="objectif_strategique_etat" id="objectif_strategique_etat-1" value="1" checked="checked" >Tous</label>
+            /<label for="objectif_strategique_etat-2"><input type="radio" name="objectif_strategique_etat" id="objectif_strategique_etat-2" value="2" >En cours  /importants</label> 
+            / <label for="objectif_strategique_etat-3"><input type="radio" name="objectif_strategique_etat" id="objectif_strategique_etat-3" value="3" >Terminés</label> 
+            / <label for="objectif_strategique_etat-4"><input type="radio" name="objectif_strategique_etat" id="objectif_strategique_etat-3" value="4" >En retard</label> 
+        </div>
+    </div>
+</div>
+   
+
 
 
 
 <div class="form-group">
-    <div class="row">
-        <label class="col-md-4 control-label" for="domaine_preuve_display">Points de vue de l'usage</label>
-        <div class="col-md-8"> <div class="checkbox">
-          <label for="domaine_preuve_display-0">
-            <input data-display='.domaine_preuve' class='display' type="checkbox" name="domaine_preuve_display" id="domaine_preuve_display" value="1"></label>
-              </div>
-        </div>
-  </div>
-  
-<div class="row domaine_preuve hidethis">
-    <label class="col-md-4 control-label" for="domaine_preuve">Options</label>
-      <div class="col-md-8"> 
-        <input type="radio" name="domaine_preuve" id="radios-1" value="1" checked="checked">Sans liens
-        <br><input type="radio" name="domaine_preuve" id="radios-2" value="2">Avec liens
-        <br><input type="radio" name="domaine_preuve" id="radios-3" value="3">Complet 
+        <div class="row">
+            <label class="col-md-4 control-label" for="domaine_preuve_display">Points de vue de l'usage</label>
+            <div class="col-md-8"> <div class="checkbox">
+              <label for="domaine_preuve_display-0">
+                <input data-display='.domaine_preuve' class='display' type="checkbox" name="domaine_preuve_display" id="domaine_preuve_display" value="1"></label>
+                  </div>
+            </div>
       </div>
+
+        <div class="row domaine_preuve hidethis">
+            <label class="col-md-4 control-label" for="domaine_preuve">Options</label>
+              <div class="col-md-8"> 
+                <input type="radio" name="domaine_preuve" id="radios-1" value="1" checked="checked">Sans liens
+                <br><input type="radio" name="domaine_preuve" id="radios-2" value="2">Avec liens
+                <br><input type="radio" name="domaine_preuve" id="radios-3" value="3">Complet 
+              </div>
+        </div> 
+  
 </div>
 
-  
-  
-</div>
+        
+        
 
+ 
+
+    
+    
+    
 
 
 
@@ -122,22 +214,22 @@
 
 
 <div class="form-group dimension hidethis">
-  <label class="col-md-4 control-label" for="dimension_note_display">Afficher la note</label>
-  <div class="col-md-4"> <div class="checkbox">
-    <label for="dimension_note_display">
-      <input data-display='.dimension_note' class='display' type="checkbox" name="dimension_note_display" id="domaine_note_display" value="1"></label>
-	</div>
-  </div>
-</div>
+    <label class="col-md-4 control-label" for="dimension_note_display">Afficher la note</label>
+    <div class="col-md-4"> <div class="checkbox">
+      <label for="dimension_note_display">
+        <input data-display='.dimension_note' class='display' type="checkbox" name="dimension_note_display" id="domaine_note_display" value="1"></label>
+          </div>
+    </div>
 
 
 
-<div class="form-group dimension_note hidethis">
-  <label class="col-md-4 control-label" for="dimension_note">Note</label>
-  <div class="col-md-4"> 
-    <label for="radios-1"><input type="radio" name="dimension_note" id="radios-1" value="1"  checked="checked">Note Simple</label> 
-    <label  for="radios-2"><input type="radio" name="dimension_note" id="radios-2" value="2">Note avec Picto</label> 
-    <label  for="radios-3"><input type="radio" name="dimension_note" id="radios-3" value="3">Note avec Histo</label> 
+  <div class="col-md-12 dimension_note hidethis">
+    <label class="col-md-2 control-label" for="dimension_note"></label>
+    <div class="col-md-4"> 
+      <label for="radios-1"><input type="radio" name="dimension_note" id="radios-1" value="1"  checked="checked">Note Simple</label> 
+      <label  for="radios-2"><input type="radio" name="dimension_note" id="radios-2" value="2">Note avec Picto</label> 
+      <label  for="radios-3"><input type="radio" name="dimension_note" id="radios-3" value="3">Note avec Histo</label> 
+    </div>
   </div>
 </div>
 
@@ -149,28 +241,79 @@
     <div class='legendStyle'><input data-display='.critere' class='display' type="checkbox" name="critere_display"   value="1"> Critère</div> 
     <!-- Multiple Radios (inline) -->
     <div class='hidethis critere'>
-    <div class="form-group">
-        <label class="col-md-4 control-label" for="critere_note">Critères</label>
-        <div class="col-md-4"> 
-          <label for="radios-0"><input type="radio" name="critere_note" id="radios-0" value="0" checked="checked">Sans note</label> 
-          <label for="radios-1"><input type="radio" name="critere_note" id="radios-1" value="1">Note Simple</label> 
-          <label  for="radios-2"><input type="radio" name="critere_note" id="radios-2" value="2">Note avec Picto</label> 
-          <label  for="radios-3"><input type="radio" name="critere_note" id="radios-3" value="3">Note avec Histo</label> 
+     
+        
+        
+<div class="form-group">
+    <label class="col-md-4 control-label" for="critere_note_display">Afficher la note</label>
+    <div class="col-md-4"> <div class="checkbox">
+      <label for="critere_note_display-0">
+        <input data-display='.critere_note' class='display' type="checkbox" name="critere_note_display" id="domaine_note_display" value="1"></label>
+          </div>
+    </div>
+  <div class="col-md-12  critere_note hidethis">
+      <label class="col-md-2 control-label" for="critere_note"></label>
+      <div class="col-md-4"> 
+      <label for="radios-1">
+          <input type="radio" name="critere_note" id="radios-1" value="1" checked="checked">Note Simple</label> 
+              <label  for="radios-2"><input type="radio" name="critere_note" id="radios-2" value="2">Note avec Picto</label> 
+              <label  for="radios-3"><input type="radio" name="critere_note" id="radios-3" value="3">Note avec Histo</label> 
+      </div>
+  </div>
+</div>
+
+        
+        
+<div class="form-group">
+  <label class="col-md-4 control-label" for="oo_display">Objectifs opérationnels</label>
+  <div class="col-md-4"> <div class="checkbox">
+    <label for="critere_note_display-0">
+      <input data-display='.oo_mode' class='display' type="checkbox" name="oo_display" id="domaine_note_display" value="1"></label>
+	</div>
+  </div>
+  <br> 
+    <div class=" oo_mode hidethis col-md-12">
+        <div class="col-md-2"></div> 
+        <div class="col-md-10 radio-group">
+            <label for="objectif-0"><input type="radio" name="objectif" id="objectif-1" value="1" checked="checked" >Affichage simple</label>
+            /<label for="objectif-1"><input type="radio" name="objectif" id="objectif-2" value="2" >complet</label> 
+            / <label for="objectif-2"><input type="radio" name="objectif" id="objectif-3" value="3" >Complet avec preuve</label> 
         </div>
     </div>
-
-        <div class="form-group ">
-          <label class="col-md-4 control-label" for="objectif">Objectifs opérationnels</label>
-          <div class="col-md-4">
-          <div class="checkbox">
-            <label for="objectif-0">
-              <label for="objectif-null"><input type="radio" name="objectif" id="objectif-null" value="0" checked="checked">Ne pas afficher</label> 
-              <label for="objectif-0"><input type="radio" name="objectif" id="objectif-0" value="1" >simple</label> 
-              <label for="objectif-1"><input type="radio" name="objectif" id="objectif-1" value="2" >complete</label> 
-              <label for="objectif-1"><input type="radio" name="objectif" id="objectif-1" value="3" >Complet avec preuve</label> 
-            </div>
-          </div>
+ 
+    <div class="oo_mode hidethis col-md-12">
+        <div class="col-md-2"></div> 
+        <div class="col-md-10 radio-group">
+            <label for="objectif_etat-1"><input type="radio" name="objectif_etat" id="objectif_etat-1" value="1" checked="checked" >Tous</label>
+            /<label for="objectif_etat-2"><input type="radio" name="objectif_etat" id="objectif_etat-2" value="2" >En cours</label> 
+            / <label for="objectif_etat-3"><input type="radio" name="objectif_etat" id="objectif_etat-3" value="3" >Complétés</label> 
+            / <label for="objectif_etat-4"><input type="radio" name="objectif_etat" id="objectif_etat-3" value="4" >En retard</label> 
         </div>
+    </div>
+</div>
+   
+<div class="form-group">
+    <label class="col-md-2 control-label" for="rbpp_display">RBPP</label>
+      <div class="col-md-2"> <div class="checkbox">
+        <label for="rbpp_display">
+          <input type="checkbox" name="rbpp_display" id="rbpp_display" value="1"> </label>
+	</div>
+  </div>
+    <label class="col-md-6 control-label" for="constats_display">Constats et analyses</label>
+      <div class="col-md-2"> <div class="checkbox">
+        <label for="constats_display">
+          <input type="checkbox" name="constats_display" id="constats_display" value="1"> </label>
+	</div>
+  </div>
+</div>
+        
+        
+        
+
+
+
+
+
     </div>
 </div>
 
@@ -181,14 +324,14 @@
     <!-- Multiple Radios (inline) -->
     <div class='hidethis question'>
     <div class="form-group">
-        <label class="col-md-4 control-label" for="question_affiche"></label>
-        <div class="col-md-4"> 
-            <label for="radios-0"><input type="radio" name="question_affiche" id="radios-0" value="0" checked="checked">Question seulement</label> 
-            <label for="radios-1"><input type="radio" name="question_affiche" id="radios-1" value="1">Question : oui / non </label> 
-            <label for="radios-2"><input type="radio" name="question_affiche" id="radios-2" value="2">Libellé des Réponses</label> 
-            <label for="radios-3"><input type="radio" name="question_affiche" id="radios-3" value="3">Eléments qualité à conserver  / Points qualité à améliorer </label> 
-            <label for="radios-4"><input type="radio" name="question_affiche" id="radios-4" value="4">Eléments qualité à conserver uniquement </label> 
-            <label for="radios-5"><input type="radio" name="question_affiche" id="radios-5" value="5"> Points qualité à améliorer uniquement </label> 
+        <label class="col-md-2 control-label" for="question_affiche"></label>
+        <div class="col-md-10"> 
+            <label for="radios-0"><input type="radio" name="question_affiche" id="radios-0" value="0">Question seulement</label> 
+            <br><label for="radios-1"><input type="radio" name="question_affiche" id="radios-1" value="1">Question : oui / non </label> 
+            <br><label for="radios-2"><input type="radio" name="question_affiche" id="radios-2" value="2"  checked="checked">Libellé des Réponses</label> 
+            <br><label for="radios-3"><input type="radio" name="question_affiche" id="radios-3" value="3">Eléments qualité à conserver  / Points qualité à améliorer </label> 
+            <br><label for="radios-4"><input type="radio" name="question_affiche" id="radios-4" value="4">Eléments qualité à conserver uniquement </label> 
+            <br><label for="radios-5"><input type="radio" name="question_affiche" id="radios-5" value="5"> Points qualité à améliorer uniquement </label> 
         </div>
     </div>
     </div>
@@ -207,7 +350,39 @@
 </div>
         
             <div class='col-md-8'>
-                <div class='btn btn-block btn-primary' id='recalc'>recalc</div>
+                
+                
+                
+ <div class="row">
+    <div class="col-sm-12">
+       <div class="panel panel-primary">
+           <div class="panel-heading"><h3 class="panel-title">Téléchargement</h3></div>
+           <div class="panel-body link_export">
+               <div class='col-md-6'>
+                   <a  class='btn btn-lg btn-primary btn-block' href="javascript:generate_document_synthese_parameters_doc();" >
+                       Format Word
+                       <br>
+                       <i class='mega_ico icon-file-word'></i>
+                   </a>
+               </div>
+               <div class='col-md-6'>
+                   <a  class='btn btn-lg btn-primary btn-block' href="javascript:generate_document_synthese_parameters_pdf();">
+                       Format PDF
+                        <br>
+                       <i class='mega_ico icon-file-pdf mega_ico'></i>
+                   </a>
+               </div>
+           </div>
+       </div>
+   </div>  
+</div>  
+
+                
+            {#  <div class='btn btn-block btn-primary' id='recalc'>recalc</div> #}
+             
+                                                
+            <p>
+            <h2>Prévisualisation : </h2>
                 
                 <div class="iframe">
                     <iframe width='100%' height='2000px' name="ifrm" id="ifrm" src="tabs.html" frameborder="0">
@@ -253,6 +428,22 @@
             });
             
             
+            
+            $('.display_inverse').click(function() 
+            {
+                disp_selector=$(this).data('display');
+                if ($(this).prop('checked'))
+                {
+                    $(disp_selector).hide(500);
+                }
+                else
+                {
+                    $(disp_selector).show(500);
+                }
+                recalc_preview();
+            });
+            
+            
         });
         
         function maj_parameters()
@@ -262,11 +453,32 @@
         
         function recalc_preview()
         {
-           url="{{ path('pericles3_generate_export_etablissement', {'id': etablissement.id}) }}";
+           url="{{ path('pericles3_generate_export_etablissement_preview', {'id': etablissement.id}) }}";
            var parameters = $('#parameters').serialize();
            url= url + '?' + parameters;
            $("#ifrm").attr("src", url);
         }
+        
+        
+        function generate_document_synthese_parameters_pdf()
+        {
+           url="{{ path('pericles3_generate_export_etablissement', {'id': etablissement.id, 'synthese_extension':'pdf'}) }}";
+           var parameters = $('#parameters').serialize();
+           url= url + '?' + parameters;
+           window.open(url, '_blank');
+        }
+        
+        function generate_document_synthese_parameters_doc()
+        {
+           url="{{ path('pericles3_generate_export_etablissement', {'id': etablissement.id, 'synthese_extension':'doc'}) }}";
+           var parameters = $('#parameters').serialize();
+           url= url + '?' + parameters;
+           window.open(url, '_blank');
+        }
+        
+        
+
+        
 
     recalc_preview();
 

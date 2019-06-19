@@ -4,6 +4,8 @@ namespace Pericles3Bundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use DateTime;
+
 
 /**
  * DomaineObjectifStrategique
@@ -249,7 +251,21 @@ class DomaineObjectifStrategique
         else {return("Terminé");}
     }
     
-
+    public function getTermine()
+    {
+        return($this->statut==3);
+    }
+    
+    
+    public function getEnRetard()
+    {
+        if ($this->getDateEcheance())
+        {
+            return(! $this->getTermine() && $this->getDateEcheance()<=new DateTime('now'));
+        }
+    }
+    
+    
            
     /**
      * toString

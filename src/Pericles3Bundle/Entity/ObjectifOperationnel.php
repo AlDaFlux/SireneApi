@@ -148,6 +148,12 @@ class ObjectifOperationnel
         else return("non commencé");
     }
     
+    public function getCompleteFini()
+    {
+        return($this->complete==100);
+    }
+    
+    
     
     
     public function getCSSGantClasse()

@@ -1,0 +1,53 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1><a href="{{ path('backoffice_editorial_clu_index') }}">CLU</a></h1>
+
+    <table class='table table-bordered table-triable_desc'>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date create</th>
+                <th>Date update</th>
+                <th>datePublication</th>
+                <th>Commentaire</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for editorialCLU in editorialCLUs %}
+            {%  if lastCGU == editorialCLU %}
+                <tr class='alert-success'>
+                {%  elseif editorialCLU.datePublication | date('Y-m-d') > 'now' | date('Y-m-d') %}
+                <tr class='alert-danger'>
+            {%  else  %}
+                <tr class='alert-warning'>
+            {%  endif %}
+                <td><a href="{{ path('backoffice_editorial_clu_show', { 'id': editorialCLU.id }) }}">{{ editorialCLU.id }}</a></td>
+                <td>{% if editorialCLU.dateCreate %}{{ editorialCLU.dateCreate|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if editorialCLU.dateUpdate %}{{ editorialCLU.dateUpdate|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <th>{% if editorialCLU.datePublication %}{{ editorialCLU.datePublication|date('Y-m-d') }}{% endif %}</th>
+                <td>{{ editorialCLU.commentaire | raw }}
+                </td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('backoffice_editorial_clu_show', { 'id': editorialCLU.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('backoffice_editorial_clu_edit', { 'id': editorialCLU.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+            <a  class='btn btn-primary'  href="{{ path('backoffice_editorial_clu_new') }}">Create a new editorialCLU</a>
+
+            
+    <iframe id="iframepdf" src="/clu/{{ lastCGU.fichier }}"></iframe>       
+
+
+{% endblock %}

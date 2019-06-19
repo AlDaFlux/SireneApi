@@ -52,3 +52,5 @@ parameters:
     advanced_module_gestionnaire: false
     cache_biblio_directory: '%kernel.project_dir%/web/cache_biblio'
     patch_eval_directory: '%kernel.project_dir%/web/patchs/evals'
+    clu_directory: '%kernel.project_dir%/web/clu'
+

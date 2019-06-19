@@ -12,11 +12,13 @@
     
     <div class='alert alert-warning'>
         Vous devez lire et accepter les nouvelles conditions générales d'utilisation.
+        <br>
+        {{   lastCGU.commentaire | raw  }}
     </div>
-    <a href="/conditions_generales_de_licence.pdf" target='blank' class='btn btn-primary full-width'>Télécharger les conditions (besoin d'Acrobat Reader)</a>
-    <p>
+    <a href="{{ path('arsene_getlast_cgu') }}" target='blank' class='btn btn-primary full-width'>Télécharger les conditions en PDF</a>
+        <p>
     <br>
-    <iframe id="iframepdf" src="/conditions_generales_de_licence.pdf"></iframe>
+    <iframe id="iframepdf" src="/clu/{{ lastCGU.fichier }}"></iframe>
     
     
 
@@ -25,7 +27,7 @@
                 <a class="btn btn-danger active full-width" href="{{ path('login_logout') }}">Je refuse les conditions d'utilisation</a>
     </div>
       <div class="col-sm-6">
-                <a class="btn btn-success active full-width" href="{{ path('arsene_accepted_conditions') }}">J'accepte les conditions d'utilisation</a>
+                <a class="btn btn-success active full-width" href="{{ path('arsene_accepted_conditions', {'id':lastCGU.id}) }}">J'accepte les conditions d'utilisation</a>
     </div>
 </div>
     

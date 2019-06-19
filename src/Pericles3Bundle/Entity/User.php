@@ -226,6 +226,14 @@ class User implements UserInterface
     
 
     /**
+     * @ORM\ManyToOne(targetEntity="Pericles3Bundle\Entity\EditorialCLU", inversedBy="users")
+     */
+    private $lastCluChecked;
+    
+    
+    
+
+    /**
      * @ORM\ManyToMany(targetEntity="Pericles3Bundle\Entity\Etablissement", inversedBy="userPole")
      * @ORM\JoinTable(name="pole_user_etablissement")
      */
@@ -1644,5 +1652,30 @@ class User implements UserInterface
     public function getStatsUserConnect()
     {
         return $this->statsUserConnect;
+    }
+
+
+    /**
+     * Set lastCluChecked
+     *
+     * @param \Pericles3Bundle\Entity\EditorialCLU $lastCluChecked
+     *
+     * @return User
+     */
+    public function setLastCluChecked(\Pericles3Bundle\Entity\EditorialCLU $lastCluChecked = null)
+    {
+        $this->lastCluChecked = $lastCluChecked;
+
+        return $this;
+    }
+
+    /**
+     * Get lastCluChecked
+     *
+     * @return \Pericles3Bundle\Entity\EditorialCLU
+     */
+    public function getLastCluChecked()
+    {
+        return $this->lastCluChecked;
     }
 }

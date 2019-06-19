@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 use Pericles3Bundle\Entity\User;
 use Pericles3Bundle\Entity\Etablissement;
-
+use Pericles3Bundle\Entity\EditorialCLU;
 
 use Symfony\Component\Validator\Constraints\Email as EmailConstraint;
 use Symfony\Component\Validator\Constraints\NotBlank as NotBlankConstraint;
@@ -61,46 +61,45 @@ class IndexController extends Controller
         if ($result)  return($result);
         else return $this->render('Index/accueil_ehpad.html.twig', array());
     }
-    
-
+     
     
     function logUser()
     {
         if ($this->getUser()) {   $editorials = $this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:Editorial')->findByUser($this->getUser(),3); }
+        else {return("");}
+        
+        $lastCGU= $this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:EditorialCLU')->findLast();        
+        
         
         if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN') )
         {
                 return $this->redirectToRoute('pericles3_backoffice');
         }
-        elseif ($this->get('security.authorization_checker')->isGranted('ROLE_GESTIONNAIRE'))
+        else
         {
-            if ($this->getUser()->getConditionsAcceppted())
+            if ($lastCGU != $this->getUser()->getLastCluChecked())
             {
-                             
-                if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_POLE'))
-                {
-                    $Etablissements=$this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:Etablissement')->findEtablissementParPole($this->getUser());
-                }
-                else 
-                {
-                    $Etablissements=$this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:Etablissement')->findEtablissementParGestionnaire($this->getUser()->GetGestionnaire());
-                }
-                return $this->render('Index/indexGestionnaire.html.twig',['etablissements' =>$Etablissements,"editorials"=>$editorials]);
+                return $this->render('Index/conditions_generales.html.twig', ['lastCGU'=>$lastCGU]);
             }
             else
             {
-                return $this->render('Index/conditions_generales.html.twig');
-            }
-        }
-        elseif($this->getUser())
-        {
-            if ($this->getUser()->getConditionsAcceppted())
-            {
-                return $this->render('Index/index.html.twig',["editorials"=>$editorials]);
-            }
-            else
-            {
-                return $this->render('Index/conditions_generales.html.twig');
+                    if ($this->get('security.authorization_checker')->isGranted('ROLE_GESTIONNAIRE'))
+                    {
+
+                        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_POLE'))
+                        {
+                            $Etablissements=$this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:Etablissement')->findEtablissementParPole($this->getUser());
+                        }
+                        else 
+                        {
+                            $Etablissements=$this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:Etablissement')->findEtablissementParGestionnaire($this->getUser()->GetGestionnaire());
+                        }
+                        return $this->render('Index/indexGestionnaire.html.twig',['etablissements' =>$Etablissements,"editorials"=>$editorials]);
+                    }
+                    elseif($this->getUser())
+                    {
+                            return $this->render('Index/index.html.twig',["editorials"=>$editorials]);
+                    }        
             }
         }
     }
@@ -111,13 +110,13 @@ class IndexController extends Controller
     /**
      * Finds and displays a User entity.
      *
-     * @Route("/accepted", name="arsene_accepted_conditions")
+     * @Route("/accepted/{id}", name="arsene_accepted_conditions")
      * @Method("GET")
      */
-    public function acceptedAction()
+    public function acceptedAction(EditorialCLU $clu)
     {
         $em = $this->getDoctrine()->getManager();
-        $this->getUser()->setConditionsAcceppted(true);
+        $this->getUser()->setLastCluChecked($clu);
         $em->persist($this->getUser());
         $this->addFlash('success', "Vous avez bien accepté les conditions générales d'utilisation ! ");
         $em->flush();
@@ -147,9 +146,33 @@ class IndexController extends Controller
      */
     public function MentionsAction()
     {
-        return $this->render('Index/mentions.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $lastMention= $em->getRepository('Pericles3Bundle:EditorialMentionsLegales')->findLast();
+        return $this->render('Index/mentions.html.twig', ['lastMention'=>$lastMention]);
+    }
+    
+    
+
+    
+     
+    
+    /**
+     * Index Evaluation
+     *
+     * @Route("/cgu", name="arsene_getlast_cgu")
+     * @Method("GET")
+     */
+    public function CguAction()
+    {
+        $lastCGU= $this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:EditorialCLU')->findLast();
+         return $this->file(WEB_DIR.'/clu/'.$lastCGU->GetFichier());
     }
 
+    
+    
+    
+
+    
   
  
     /**

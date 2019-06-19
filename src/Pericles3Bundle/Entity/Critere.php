@@ -542,6 +542,36 @@ class Critere
     }
     
     
+    
+           
+    public function getObjectifsTermines()
+    {
+        $objectifs=  new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->getObjectifs() as $objectif ) 
+        {
+            if ($objectif->getCompleteFini())
+            {
+                $objectifs->Add($objectif);
+            }
+        }
+        return $objectifs;
+    }
+    
+    public function getObjectifsNonTermines()
+    {
+        $objectifs=  new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->getObjectifs() as $objectif ) 
+        {
+            if (! $objectif->getCompleteFini())
+            {
+                $objectifs->Add($objectif);
+            }
+        }
+        return $objectifs;
+    }
+    
+    
+    
            
     public function getObjectifsSince(\DateTime $date_since)
     {
@@ -555,6 +585,21 @@ class Critere
         }
         return $objectifs;
     }
+    
+    public function getObjectifsEnRetard()
+    {
+        $objectifs=  new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->getObjectifs() as $objectif ) 
+        {
+            if ($objectif->getEnRetard())
+            {
+                $objectifs->Add($objectif);
+            }
+        }
+        return $objectifs;
+    }
+    
+    
     
     public function getNbObjectifsSince(\DateTime $date_since)
     {

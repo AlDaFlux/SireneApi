@@ -69,7 +69,7 @@
                         
                         {% if objectif.NbPreuves %}
                             <div><b>Preuves : </b>
-                            {% include "Synthese/export/inc/inc_preuves_link.html.twig" with {'preuves':objectif.Preuves %}
+                            {% include "Synthese/export/inc/preuves/inc_preuves_link.html.twig" with {'preuves':objectif.Preuves } %}
                             </div>
                         {% endif %}
 

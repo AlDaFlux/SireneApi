@@ -226,6 +226,14 @@ class User implements UserInterface
     
 
     /**
+     * @ORM\ManyToOne(targetEntity="Pericles3Bundle\Entity\EditorialCLU", inversedBy="users")
+     */
+    private $lastCluChecked;
+    
+    
+    
+
+    /**
      * @ORM\ManyToMany(targetEntity="Pericles3Bundle\Entity\Etablissement", inversedBy="userPole")
      * @ORM\JoinTable(name="pole_user_etablissement")
      */
@@ -1611,4 +1619,39 @@ class User implements UserInterface
     
     
     
+
+    /**
+     * Add statsUserConnect
+     *
+     * @param \Pericles3Bundle\Entity\StatUserConnect $statsUserConnect
+     *
+     * @return User
+     */
+    public function addStatsUserConnect(\Pericles3Bundle\Entity\StatUserConnect $statsUserConnect)
+    {
+        $this->statsUserConnect[] = $statsUserConnect;
+
+        return $this;
+    }
+
+    /**
+     * Remove statsUserConnect
+     *
+     * @param \Pericles3Bundle\Entity\StatUserConnect $statsUserConnect
+     */
+    public function removeStatsUserConnect(\Pericles3Bundle\Entity\StatUserConnect $statsUserConnect)
+    {
+        $this->statsUserConnect->removeElement($statsUserConnect);
+    }
+
+    /**
+     * Get statsUserConnect
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getStatsUserConnect()
+    {
+        return $this->statsUserConnect;
+    }
+
 }

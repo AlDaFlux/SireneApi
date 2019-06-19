@@ -345,6 +345,7 @@ class BibliothequeAncreaiController extends Controller
         $form = $this->createForm('Pericles3Bundle\Form\BibliothequeAncreaiType', $bibliothequeAncreai,["avec_public" => false]);
         $form->handleRequest($request);
 
+        
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $bibliothequeAncreai->setDateUpdate(new \DateTime());

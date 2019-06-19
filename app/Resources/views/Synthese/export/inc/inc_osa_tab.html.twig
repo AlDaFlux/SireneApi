@@ -1,0 +1,27 @@
+
+    {% if ObjectifsSrategiques |length > 0 %}
+        
+        
+      <h4>Objectifs Stratégiques</h4>
+        <table class='osa' width="100%">
+            <tr>
+                <th colspan='2'></th>
+                <th>Echéance</th>
+            </tr>
+        {% for ObjectifStrategique in ObjectifsSrategiques %}
+                        {# <td> {{ ObjectifStrategique.dateEcheance|date("Y/m/d") ~ '>=' ~ dateMin|date("Y/m/d") }} - {{ ObjectifStrategique }}</td> #}
+            
+            {% if (dateMin is defined  and ObjectifStrategique.dateEcheance|date("Y/m/d") >  dateMin|date("Y/m/d")) or dateMin is not defined %}
+                <tr>
+                    <td class='date'><span class='{{ObjectifStrategique.CSSClasse}}'>{{ ObjectifStrategique.StatutLib }}</span></td>
+                    <td>{{ ObjectifStrategique }}</td>
+                    <td class='date'>{{ ObjectifStrategique.dateEcheance is empty ? "" : ObjectifStrategique.dateEcheance|date("d-m-Y") }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        
+        
+        
+        </table> 
+        <br>
+    {% endif %}

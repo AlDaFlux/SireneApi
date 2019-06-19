@@ -1,0 +1,50 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>  <a href="{{ path('backoffice_editorial_mentionslegales_index') }}">Editorial Mentions legales</a></h1>
+
+
+    <table class='table table-bordered table-triable_desc'>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Datecreate</th>
+                <th>Dateupdate</th>
+                <th>datePublication</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for editorialMentionsLegale in editorialMentionsLegales %}
+        {%  if lastMention == editorialMentionsLegale %}
+                <tr class='alert-success'>
+                {%  elseif editorialMentionsLegale.datePublication | date('Y-m-d') > 'now' | date('Y-m-d') %}
+                <tr class='alert-danger'>
+            {%  else  %}
+                <tr class='alert-warning'>
+            {%  endif %}             
+                <td><a href="{{ path('backoffice_editorial_mentionslegales_show', { 'id': editorialMentionsLegale.id }) }}">{{ editorialMentionsLegale.id }}</a></td>
+                <td>{% if editorialMentionsLegale.dateCreate %}{{ editorialMentionsLegale.dateCreate|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if editorialMentionsLegale.dateUpdate %}{{ editorialMentionsLegale.dateUpdate|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <th>{% if editorialMentionsLegale.datePublication %}{{ editorialMentionsLegale.datePublication|date('Y-m-d') }}{% endif %}</th>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('backoffice_editorial_mentionslegales_show', { 'id': editorialMentionsLegale.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('backoffice_editorial_mentionslegales_edit', { 'id': editorialMentionsLegale.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('backoffice_editorial_mentionslegales_new') }}">Create a new editorialMentionsLegale</a>
+        </li>
+    </ul>
+{% endblock %}

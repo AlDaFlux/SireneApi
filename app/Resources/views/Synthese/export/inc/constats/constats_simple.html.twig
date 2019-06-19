@@ -1,0 +1,9 @@
+
+ {% if critere.constats|length > 0 %}
+    <h4>Constats et analyses</h4>
+    <ul>
+    {% for constat in critere.constats %}
+        <li>{{ constat.commentaire }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}

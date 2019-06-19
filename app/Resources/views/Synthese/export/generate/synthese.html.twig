@@ -9,12 +9,31 @@
     {% include "Synthese/export/inc/export.css.html.twig" %}
     
     <style>
+        
+        h1
+        {
+            height: 50px;
+        }
+        
+        
+        
+        {#
         .note_in
         {
             float:right;
             width: 20%;
             text-align: right;
+            border: 1px solid #00d000;
         }
+        
+        .domaine_title
+        {
+            border: 1px solid #d00000;
+            float:left;
+            width: 75%;
+            text-align: left;
+        }
+        #}
     </style>
 </HEAD>
 <BODY> 
@@ -22,10 +41,30 @@
     {{    "/img/header_doc.jpg" | getImageExport(typeExport,"100%") | raw }}
     <div class='main_titre'>{{titre_synthese}}<br></div>
     <h2 class='center'>{{etablissement}}</h2>
-    <div class='date_eval'>
-    export du {{ 'now'|date('d-m-Y  H:i') }}
-    </div>
 
+    
+     
+    {% if   parameters | parametersBoolean("domaine_all")  %}
+        {% if  parameters | parametersBoolean("etablissement_menu") %}
+            {% include "Synthese/export/inc/inc_menu_domaine.html.twig" %}
+        {% endif %}
+    {% else %}
+        {% set domaine = etablissement.getDomaineByOrdre(parameters["domaine_one"]) %}
+        <h2 class='center'>{{domaine}}</h2>
+    {% endif %}
+
+     
+    
+
+    {% if  parameters | parametersBoolean("info_etablissement") %}    
+        {% include "Synthese/export/inc/inc_etablissement.html.twig" %}
+    {% endif %}
+    
+        
+    {% if  parameters | parametersBoolean("etablissement_graphique") %}    
+        {% include "Synthese/export/inc/inc_graph_etablissement.html.twig" %}
+    {% endif %}
+    
 
     
     
@@ -38,144 +77,31 @@
     {% endif %}
 
 
-    
- 
-{% for domaine in etablissement.domaines %}
-    <h1><a id="domaine_{{domaine.ordre}}" name="domaine_{{domaine.ordre}}">{{ domaine.ordre}}. {{ domaine}}</a>
-                    {% set note = domaine.MoyenneNotes %} 
-                    <span class='note_in'>
-
-                        {% if  parameters | parametersBoolean("domaine_note_display") %}    
-                             {{ note | formatNoteSimple }}
-                        {% endif %}
-                        {% if  parameters["domaine_note"] == "2" %}    
-                        {% set img_note = note | formatNoteNuage(true) %}
-                            {{ img_note | getImageExport(typeExport) | raw }}
-                        {% endif %}
-                    </span>
-  {% if  parameters["domaine_note"] == "3" %}    
-     {% include('Synthese/export/inc/inc_bar_note.html.twig') %} 
-{% endif %}
-    </h1>
-    
-  
-
-    {% if  parameters | parametersBoolean("domaine_graphique") %}    
-    <div class='graph_big'>
-        {% set img_note = '/upload/st01/etablissement_' ~ etablissement.id ~ '/synthese/graphs/' ~ domaine.id ~'.jpg' %}
-        {{ img_note | getImageExport(typeExport) | raw }}
+    <div class='date_eval'>
+    export du {{ 'now'|date('d-m-Y  H:i') }}
     </div>
+    
+    {% if  parameters | parametersBoolean("textes_princips") %}    
+        {% include "Synthese/export/inc/inc_textes_princips.html.twig" %}
+    {% endif %}
+ 
+    
+    
+
+    {% if  parameters | parametersBoolean("domaine_all") %}    
+        {% for domaine in etablissement.domaines | order %}
+           {%  include 'Synthese/export/generate/synthese_domaine.html.twig' %}
+        {% endfor %}
+    {% else %}
+        {%  include 'Synthese/export/generate/synthese_domaine.html.twig' %}
+        
     {% endif %}
     
     
-    {% if  parameters | parametersBoolean("domaine_preuve_display") %}    
-        {%  set preuves = domaine.preuves  %}
-        
-        {% if preuves | length > 0 %}
-            <h4>Point de vue de l’usager</h4>
 
-            {% if  parameters["domaine_preuve"] == "1" %}    
-                {% include "Synthese/export/inc/preuves/inc_preuves_sans_link.html.twig"  %}
-            {% elseif   parameters["domaine_preuve"] == "2" %}    
-                {% include "Synthese/export/inc/preuves/inc_preuves_link.html.twig"  %}
-            {% elseif   parameters["domaine_preuve"] == "3" %}    
-                {% include "Synthese/export/inc/preuves/inc_preuves_tableau.html.twig"  %}
-            {% endif %}
-        {% endif %}
-
-    {% endif %}
-    
-    
-    {% if  parameters | parametersBoolean("dimension_display") %}    
-      
-        
-              {% for dimension in domaine.dimensions %}
-                  <h2><a id="dimension_{{dimension.numero}}" name="dimension_{{dimension.numero}}">{{ dimension.numero}}. {{ dimension}}</a>
-                                  {% set note = dimension.MoyenneNotes %} 
-                                  <span class='note_in'>
-                                      
-                                    {% if  parameters | parametersBoolean("dimension_note_display") %}    
-                                           {{ note | formatNoteSimple }}
-                                      {% endif %}
-                                      {% if  parameters["dimension_note"] == "2" %}    
-                                      {% set img_note = note | formatNoteNuage(true) %}
-                                          {{ img_note | getImageExport(typeExport) | raw }}
-                                      {% endif %}
-                                  </span>
-                          {% if  parameters["dimension_note"] == "3" %}    
-                             {% include('Synthese/export/inc/inc_bar_note.html.twig') %} 
-                        {% endif %}
-                  </h2>
-                  
-                  
-                    {% if  parameters | parametersBoolean("critere_display") %}    
-                          {% for critere in dimension.criteres %}
-                              <h3><a id="critere_{{critere.ordre}}" name="critere_{{critere.ordre}}">{{ critere.numero}}. {{ critere}}</a>
-                                              {% set note = critere.note %} 
-                                              <span class='note_in'>
-                                                  {% if  parameters["critere_note"] > "0" %}    
-                                                       {{ note | formatNoteSimple }}
-                                                  {% endif %}
-                                                  {% if  parameters["critere_note"] == "2" %}    
-                                                  {% set img_note = note | formatNoteNuage(true) %}
-                                                      {{ img_note | getImageExport(typeExport) | raw }}
-                                                  {% endif %}
-                                              </span>
-                                      {% if  parameters["critere_note"] == "3" %}    
-                                         {% include('Synthese/export/inc/inc_bar_note.html.twig') %} 
-                                    {% endif %}
-                              </h3>
-                              
-                              
-                                {% if  parameters["question_display"] != "0" %}    
-                                    {% if parameters["question_affiche"] == "0" %}
-                                        {% include "Synthese/export/inc/questions/inc_questions_seules.html.twig" with { "questions" : critere.questions } %}
-                                    {% elseif parameters["question_affiche"] == "1" %}
-                                        {% include "Synthese/export/inc/questions/inc_questions_ouinon.html.twig" with { "questions" : critere.questions } %}
-                                    {% elseif parameters["question_affiche"] == "2" %}
-                                        {% include "Synthese/export/inc/questions/inc_questions_reponses.html.twig" with { "questions" : critere.questions } %}
-                                    {% elseif parameters["question_affiche"] == "3" %}
-                                        {% include "Synthese/export/inc/questions/inc_questions_reponses_conserver_ameliorer.html.twig" with { "questions" : critere.questions } %}
-                                    {% elseif parameters["question_affiche"] == "4" %}
-                                        {% include "Synthese/export/inc/questions/inc_questions_reponses_conserver.html.twig" with { "questions" : critere.questions } %}
-                                    {% elseif parameters["question_affiche"] == "5" %}
-                                        {% include "Synthese/export/inc/questions/inc_questions_reponses_a_ameliorer.html.twig" with { "questions" : critere.questions } %}
-                                        
-                                    {% endif %}
-                                    
-                                    
-                                {% endif %}
-
-                                {% if  parameters["objectif"] != "0" %}    
-                                    {% if critere.NbObjectifsOperationnel > 0 %}
-                                        {% if  parameters["objectif"] == "1" %}    
-                                           {% include "Synthese/export/inc/objectifs/inc_ooa_simple.html.twig" with { "objectifs" : critere.objectifs } %}
-                                        {% elseif  parameters["objectif"] == "2" %}    
-                                           {% include "Synthese/export/inc/objectifs/inc_ooa_tabcomplet.html.twig" with { "objectifs" : critere.objectifs, "affichePreuve" : false  } %}
-                                        {% elseif  parameters["objectif"] == "3" %}    
-                                           {% include "Synthese/export/inc/objectifs/inc_ooa_tabcomplet.html.twig" with { "objectifs" : critere.objectifs, "affichePreuve" : true } %}
-                                        {% endif %}
-                                    {% endif %}
-                                {% endif%}
-                        
-                        
-                              
-                          {% endfor %}
-                  {% endif %}
-                  
-                  
-              {% endfor %}
-      {% endif %}
-
-{% endfor %}
-
-      
-    {{ dump(parameters) }}
-    
-
-
-
-
+ 
+    {# dump(parameters) #}
+     
              
  </body>
 </html>

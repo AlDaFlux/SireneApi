@@ -413,6 +413,51 @@ class Domaine
         return $objectifs;
     }
     
+    
+    public function getObjectifsTermines()
+    {
+        $objectifs=  new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->getObjectifsSrategique() as $objectif ) 
+        {
+            if ($objectif->getTermine())
+            {
+                $objectifs->Add($objectif);
+            }
+        }
+        return $objectifs;
+    }
+    
+    public function getObjectifsNonTermines()
+    {
+        $objectifs=  new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->getObjectifsSrategique() as $objectif ) 
+        {
+            if (! $objectif->getTermine())
+            {
+                $objectifs->Add($objectif);
+            }
+        }
+        return $objectifs;
+    }
+    
+    
+    
+    public function getObjectifsEnRetard()
+    {
+        $objectifs=  new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->getObjectifsSrategique() as $objectif ) 
+        {
+            if ($objectif->getEnRetard())
+            {
+                $objectifs->Add($objectif);
+            }
+        }
+        return $objectifs;
+    }
+    
+    
+    
+    
     public function getNbObjectifsSrategiqueSince(\DateTime $date_since)
     {
         return count($this->getObjectifsSrategiqueSince($date_since));

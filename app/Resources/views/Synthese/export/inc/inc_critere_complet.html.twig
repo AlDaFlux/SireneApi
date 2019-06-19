@@ -39,31 +39,22 @@
             <div class='critere_detail'>
                 
                 
-                           
-       {% if critere.rbpp   %}
-            <h4>RBPP</h4>
-                <ul>
-                    <li><a target='blank' href='{{critere.rbpp.href}}'>{{critere.rbpp}}</a>  <i>{{critere.RbpppComment}}</i>
-                </ul>  
-       {% endif  %}
 
-                 
+                
+       {% include "Synthese/export/inc/rbpp/rbpp_simple.html.twig"  %}
        
        {% include "Synthese/export/inc/questions/inc_questions_reponses_conserver_ameliorer.html.twig" with { "questions" : critere.questions } %}
 
        
-                {% if critere.constats|length > 0 %}
-                    <h4>Constats et analyses</h4>
-                    <ul>
-                    {% for constat in critere.constats %}
-                        <li>{{ constat.commentaire }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
+        {% include "Synthese/export/inc/constats/constats_simple.html.twig" %}
+           
+           
+                
+                
                 {% if critere.preuves|length > 0 %}
                     <h4>Portefeuille de preuves</h4>
-                            {% include "Synthese/export/inc/inc_preuves_link.html.twig" with {'preuves':critere.preuves%}
-                {% endif %}
+                            {% include "Synthese/export/inc/preuves/inc_preuves_link.html.twig" with {'preuves':critere.preuves }%}
+                {% endif %} 
                 
                 
                 
