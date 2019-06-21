@@ -59,7 +59,7 @@ class EditorialRepository extends \Doctrine\ORM\EntityRepository
             if ($user->getIsAdminPole())
             {
                 $qb->LeftJoin('etablissements.userPole', 'userPole');
-                $qb->where('referentielPublics.id IS NULL OR  userPole.id = :user_id')->setParameter('user_id', $user->getId());
+                $qb->AndWhere('referentielPublics.id IS NULL OR  userPole.id = :user_id')->setParameter('user_id', $user->getId());
             }
             else
             {
