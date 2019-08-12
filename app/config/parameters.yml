@@ -11,6 +11,7 @@ parameters:
     allowedRoles:
         - ROLE_USER
         - ROLE_ADMIN
+    app.version: 1.0.1
     upload.max_file_size: 52428800
     upload.max_size_total_upload: 41943040
     upload.max_size_total_upload_gestionnaire: 125829120
