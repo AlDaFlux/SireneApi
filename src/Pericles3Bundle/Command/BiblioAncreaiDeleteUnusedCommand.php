@@ -39,7 +39,7 @@ class BiblioAncreaiDeleteUnusedCommand extends ContainerAwareCommand
             {
                 $output->writeln("".$bibliothequeAncreai."");
             }
-            if (! $bibliothequeAncreai->NbCriteres() && ! $bibliothequeAncreai->NbReferentiels())
+            if ((! $bibliothequeAncreai->NbCriteres()) && (! $bibliothequeAncreai->NbReferentiels()))
             {
                 $output->writeln("<info>Supression : ".$bibliothequeAncreai."</info>");
                 $em->remove($bibliothequeAncreai);
