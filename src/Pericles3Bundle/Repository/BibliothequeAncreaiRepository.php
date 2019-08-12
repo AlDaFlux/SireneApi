@@ -16,7 +16,6 @@ class BibliothequeAncreaiRepository extends \Doctrine\ORM\EntityRepository
 
 	public function findLast($limit=5)
 	{
-            
             $qb = $this->createQueryBuilder('ba');
             if ($limit) { $qb->setMaxResults($limit); }
             $qb->orderBy("ba.dateUpdate","DESC");
@@ -70,7 +69,7 @@ class BibliothequeAncreaiRepository extends \Doctrine\ORM\EntityRepository
             }
             return $qb->getQuery()->getResult();
 	}
-        
+
         
         
 	public function findByReferentielPublic(ReferentielPublic $ReferentielPublic, $limit=0)
@@ -86,7 +85,7 @@ class BibliothequeAncreaiRepository extends \Doctrine\ORM\EntityRepository
             return $qb->getQuery()->getResult();
 	}
 
-
+        
         public function findByReferentielPublicArray(ReferentielPublic $ReferentielPublic, $limit=0)
 	{
             $qb = $this->createQueryBuilder('ba');

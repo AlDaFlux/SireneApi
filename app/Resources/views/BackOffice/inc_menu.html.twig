@@ -131,6 +131,7 @@
                                     {% endif %}                                              
                                      </ul>
                              </li>
+                             {%  if activate_creai %}
                              <li class="dropdown-submenu">
                                       <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Par CREAI</a>
                                       <ul class="dropdown-menu">
@@ -142,6 +143,7 @@
                                         
                                       </ul>
                               </li>
+                              {%  endif  %}
                             <li class="dropdown-submenu">
                                      <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Réels / Tests</a>
                                      <ul class="dropdown-menu">
@@ -161,32 +163,38 @@
                              
                             <li role="separator" class="divider"></li>
 
-                            <li><a href="{{ path('pericles3_backoffice_etablissement_reelssansfiness')  }}">   {{ 'finess' | get_icon | raw }} Etablissements Réels Sans Finess</a></li>
+
+                            {%  if activate_finess %}
+                                <li><a href="{{ path('pericles3_backoffice_etablissement_reelssansfiness')  }}">   {{ 'finess' | get_icon | raw }} Etablissements Réels Sans Finess</a></li>
+                            {%  endif  %}
                             <li><a href="{{ path('backoffice_etablissement_sansdepartements')  }}">Etablissements Réels Sans département</a></li>
                             
                             <li role="separator" class="divider"></li>
 
                             
                     {% endif %}
-                    {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')  %}
-                            <li><a href="{{ path('pericles3_backoffice_etablissement_reelssansfacture')  }}"> <i class='glyphicon glyphicon-euro'></i> Etablissements Réels Sans Factures</a></li>
-                            <li><a href="{{ path('pericles3_backoffice_etablissement_factures_impayees')  }}"> <i class='glyphicon glyphicon-euro'></i> Etablissements avec impayés</a></li>
-                            <li role="separator" class="divider"></li>
+                    {%  if activate_facturation %}
+                        {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')  %}
+                                <li><a href="{{ path('pericles3_backoffice_etablissement_reelssansfacture')  }}"> <i class='glyphicon glyphicon-euro'></i> Etablissements Réels Sans Factures</a></li>
+                                <li><a href="{{ path('pericles3_backoffice_etablissement_factures_impayees')  }}"> <i class='glyphicon glyphicon-euro'></i> Etablissements avec impayés</a></li>
+                                <li role="separator" class="divider"></li>
+                        {% endif %}
+                        {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT')  %}                            
+                                <li><a href="{{ path('pericles3_backoffice_etablissement_tests_with_facture')  }}"><i class='glyphicon glyphicon-euro'></i> Etablissements Tests avec factures </a></li>
+                        {% endif %}
                     {% endif %}
-                    {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT')  %}                            
-                            <li><a href="{{ path('pericles3_backoffice_etablissement_tests_with_facture')  }}"><i class='glyphicon glyphicon-euro'></i> Etablissements Tests avec factures </a></li>
-                    {% endif %}
                     
                     
                     
                     
+                    {%  if activate_facturation %}
                                                 
                     {% if is_granted('ROLE_ADMIN_SUPERVISOR')  %}  
                         <li role="separator" class="divider"></li>
                            <li class="dropdown-submenu">
                                      <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Pericles</a>
                                      <ul class="dropdown-menu">
-                                       <li><a  href="{{ path('backoffice_pericles_index', {}) }}">Pericles</a></li>
+                                            <li><a  href="{{ path('backoffice_pericles_index', {}) }}">Pericles</a></li>
                                             <li><a  href="{{ path('backoffice_pericles_comparaison', {}) }}">Etab pericles pas dans le fichier</a></li>
                                             <li><a  href="{{ path('backoffice_pericles_prospects', {}) }}">Pericles sans établissements (prospects)</a></li>
                                      </ul>
@@ -196,10 +204,12 @@
                     {% else  %}
                         {% if app.user.isCreai %}
                         <li role="separator" class="divider"></li>
+                            <li><a  href="{{ path('backoffice_pericles_index', {}) }}">Anciens utilisateurs Pericles</a></li>
                             <li><a  href="{{ path('backoffice_prospection_index', {}) }}">Prospection</a></li>
                             <li><a  href="{{ path('backoffice_pericles_prospects', {}) }}">Pericles sans établissements (prospects)</a></li>
                         {% endif %}
                     {% endif %}
+                {% endif %}
                     
                     
                     
@@ -249,6 +259,7 @@
                     
                     
 
+                    {%  if activate_finess %}
                    <li role="separator" class="divider"></li>
                    <li><a   href="{{ path('backoffice_finess_index', {}) }}">  {{ 'finess' | get_icon | raw }}  Finess</a></li>
                    
@@ -256,12 +267,14 @@
                         <li><a  href="{{ path('backoffice_finess_categorie_index', {}) }}">{{ 'finess' | get_icon | raw }} Categories Finess</a></li>
                         <li><a  href="{{ path('pericles3_backoffice_etablissement_a_migrer', {}) }}">{{ 'finess' | get_icon | raw }} etablissements à migrer </a></li>
                     {% endif %}      
-                             
+                    {% endif %}      
+          
                    
                  </ul> 
                </li>
                 
                
+                {%  if activate_creai %}
                 {% if is_granted('ROLE_ADMIN_SUPERVISOR')  %}   
                              <li class="dropdown">
                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> {{'creai' | get_icon | raw}} CREAI<span class="caret"></span></a>
@@ -283,6 +296,7 @@
                         </li>
                         </ul> 
                 
+                {% endif %}   
                 {% endif %}   
                             
                 <li class="dropdown">
@@ -315,13 +329,15 @@
                 </li>
 
                 
-             
+                    {%  if activate_demandes %}
+
                     <li>
                         <a  href="{{ path('backoffice_demande_index', {}) }}">Demandes
                                 {% include "BackOffice/Demande/inc_notif_demande_main_creation.html.twig" %}
                                 {% include "BackOffice/Demande/inc_notif_demande_main_info.html.twig" %}        
                         </a>
                     </li>
+                {% endif  %} {#ancreai or creai#}
                     
            
         
@@ -435,9 +451,8 @@
                 </li>
 
                  
-      
-                
-                {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')  %}
+       
+                {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW') and activate_facturation  %}
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class='glyphicon glyphicon-euro'></i> Factures <span class="caret"></span></a>
                            <ul class="dropdown-menu">

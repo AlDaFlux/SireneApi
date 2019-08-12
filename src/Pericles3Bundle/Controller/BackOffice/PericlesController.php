@@ -27,9 +27,28 @@ class PericlesController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-        $pericles = $em->getRepository('Pericles3Bundle:Pericles')->findAll();
+        
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_SUPERVISOR')) 
+        {
+            $pericles = $em->getRepository('Pericles3Bundle:Pericles')->findAll();
+            $creai=null;
+        }
+        else
+        {
+            if ($this->GetUser()->GetCreai())
+            {
+                $pericles = $em->getRepository('Pericles3Bundle:Pericles')->findParCreai($this->GetUser()->GetCreai());
+                $creai=$this->GetUser()->GetCreai();
+            }
+            else
+            {
+                throw $this->createAccessDeniedException("Vous n'avez pas les droits suffisants");
+            }
+            
+        }
         return $this->render('BackOffice/pericles/index.html.twig', array(
             'pericles' => $pericles,
+            'creai' => $creai,
         ));
     }
 

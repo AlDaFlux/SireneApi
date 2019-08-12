@@ -26,9 +26,10 @@ class ReferentielAddQuestionCommand extends ContainerAwareCommand
         $this->setHelp("Ajoute une question  à un référentiel et tous ces établissement");
         $this->addOption('referentiel_id',null,InputOption::VALUE_REQUIRED,"L'identifiant de du régérentiel",0);
         $this->addOption('critere_numero',null,InputOption::VALUE_REQUIRED,"Le numéro du critre",0);
-        $this->addOption('libelle',null,InputOption::VALUE_REQUIRED,"Libelle de la question",0);
-        $this->addOption('reponse-oui',null,InputOption::VALUE_REQUIRED,"Libelle de la question",0);
-        $this->addOption('reponse-non',null,InputOption::VALUE_REQUIRED,"Libelle de la question",0);
+        $this->addOption('libelle',null,InputOption::VALUE_OPTIONAL,"Libelle de la question",0);
+        $this->addOption('reponse-oui',null,InputOption::VALUE_OPTIONAL,"Libelle de la question",0);
+        $this->addOption('reponse-non',null,InputOption::VALUE_OPTIONAL,"Libelle de la question",0);
+        $this->addOption('referentiel_node_source',null,InputOption::VALUE_OPTIONAL,"Id de la node pour le lib  /oui / non",0);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -70,6 +71,28 @@ class ReferentielAddQuestionCommand extends ContainerAwareCommand
                     }
                 }
                 
+                if ($input->getOption('referentiel_node_source'))
+                {
+                    $questionRefSource= $em->getRepository('Pericles3Bundle:Referentiel')->findOneById($input->getOption('referentiel_node_source'));
+                    
+                    if (! $questionRefSource)
+                    {
+                        $output->writeln("<error>Référentiel Source non trouvé : --referentiel_node_source=".$input->getOption('referentiel_node_source')."<error>");
+                        return(0);
+                    }
+                    $libelle=$questionRefSource->getNom();
+                    $reponse_oui=$questionRefSource->getReponseOui();
+                    $reponse_non=$questionRefSource->getReponseNon();
+                }
+                else
+                {
+                    $libelle=$input->getOption('libelle');
+                    $reponse_oui=$input->getOption('reponse-oui');
+                    $reponse_non=$input->getOption('reponse-non');
+                }
+                
+                        
+                
                 if ($critereRefchoisi)
                 {
                     $output->writeln("<info> Dimensions : ".$critereRefchoisi->GetNumero()." : ".$critereRefchoisi." (".$critereRefchoisi->GetId().")</info>");
@@ -79,20 +102,37 @@ class ReferentielAddQuestionCommand extends ContainerAwareCommand
                         $output->writeln("Criteres exitants : ".$quest->GetNumero()." : ".$quest);
                         $ordre++;
                     }
-                    if (! $input->getOption('libelle'))
+                    if (! $libelle)
                     {
                         $output->writeln("<error>Vous devez choisir un intitulé pour le critere : --libelle=? <error>");
                         return(0);
                     }
-                    $output->writeln("<info> Nouvelle dimensions : ".$critereRefchoisi->GetNumero().".".$ordre." : ".$input->getOption('libelle')."</info>");
+                    if (! $reponse_oui)
+                    {
+                        $output->writeln("<error>Vous devez choisir une réponse positive pour le critere : --reponse-oui=?  ou --referentiel_node_source=? <error>");
+                        return(0);
+                    }
+                    
+                    if (! $reponse_non)
+                    {
+                        $output->writeln("<error>Vous devez choisir une réponse négative pour le critere : --reponse-non=?  ou --referentiel_node_source=? <error>");
+                        return(0);
+                    }
+                    
+                    
+                    
+                    $output->writeln("<info> Nouvelle question : ".$critereRefchoisi->GetNumero().".".$ordre." : ".$libelle."</info>");
+                    $output->writeln("OUI : ".$reponse_oui."</info>");
+                    $output->writeln("NON : ".$reponse_non."</info>");
 
                     $questionRef = new \Pericles3Bundle\Entity\Referentiel();
                     $questionRef->setReferentielPublic($referentielPublic);
-                    $questionRef->setNom($input->getOption('libelle'));
-                    $questionRef->setNomCourt($input->getOption('libelle'));
+                    $questionRef->setNom($libelle);
+                    $questionRef->setNomCourt($libelle);
                     $questionRef->setOrdre($ordre);
-                    $questionRef->setReponseOui($input->getOption('reponse-oui'));
-                    $questionRef->setReponseNon($input->getOption('reponse-non'));
+                    $questionRef->setReponseOui($reponse_oui);
+                    $questionRef->setReponseNon($reponse_non);
+                    
                     $questionRef->setParent($critereRefchoisi);
                     $questionRef->setTypeReferentiel($em->getRepository('Pericles3Bundle:TypeReferentiel')->findOneById(4));
                     $questionRef->setVerifie(true);
@@ -110,6 +150,11 @@ class ReferentielAddQuestionCommand extends ContainerAwareCommand
                         $question->setReponse(null);
                         $em->persist($question);
                         $em->flush();
+
+                        $crit->modifieReferentiel();
+                        $em->persist($crit);
+                        $em->flush();
+                        
                         $output->writeln("-->  (".$question->GetEtablissement().")");
                     }
                     //$output->writeln("Dimensions exitantes : ".$domaineRefChoisi->GetOrdre().".".$ordre." : !! NEW !! ");

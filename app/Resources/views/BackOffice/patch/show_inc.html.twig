@@ -60,7 +60,7 @@
                 {% if stats.source_a_verifie == 0 %}
                     <td class='alert-success'>0</td>
                 {% else %}
-                    <td class='alert-warning'>  <a class='full-width btn' href="{{ path('patch_show_source_unlink', { 'id': patch.id }) }}">{{stats.source_a_verifie}}</a></td>
+                    <td class='alert-warning'>  <a class='full-width btn' href="{{ path('patch_show_source_unlink_to_validate', { 'id': patch.id }) }}">{{stats.source_a_verifie}}</a>++</td>
                 {% endif %}
                 <td class='alert-{% if stats.cible_verifie == 0 %}danger{% endif%}'>{{stats.cible_verifie}}</td>
                 {% if stats.cible_a_verifie == 0 %}

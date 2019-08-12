@@ -63,5 +63,41 @@ class FinessRepository extends \Doctrine\ORM\EntityRepository
         return $qb->getQuery()->getResult();
     }
     
-    
+            
+        public function findSupprimerDansImport() 
+        {
+                $qb = $this->createQueryBuilder('anciens');
+                $qb->leftJoin('Pericles3Bundle:FinessImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
+                $qb->Where('nouveaux.codeFiness IS NULL');
+		return $qb->getQuery()->getResult();
+	}
+        
+            
+        public function findSupprimerDansImportAvecEtablissement() 
+        {
+                $qb = $this->createQueryBuilder('anciens');
+                $qb->InnerJoin('anciens.etablissement', 'etablissementArsene');
+                $qb->leftJoin('Pericles3Bundle:FinessImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
+                $qb->Where('nouveaux.codeFiness IS NULL');
+		return $qb->getQuery()->getResult();
+	}
+        
+        
+        
+        public function findImportDifferentEtablissement() 
+        {
+                $qb = $this->createQueryBuilder('anciens');
+                $qb->select('etablissementArsene.id as etablissement_id, etablissementArsene.nom as etablissementRaisonSociale, anciens.raisonSociale as oldRaisonSociale','nouveaux.raisonSociale as newRaisonSociale','anciens.ville as oldVille','nouveaux.ville as newVille');
+                $qb->InnerJoin('anciens.etablissement', 'etablissementArsene');
+                $qb->InnerJoin('Pericles3Bundle:FinessImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
+                $qb->Where('anciens.ville <> nouveaux.ville ');
+                $qb->OrWhere('anciens.raisonSociale<> nouveaux.raisonSociale AND etablissementArsene.nom <> nouveaux.raisonSociale ');
+		return $qb->getQuery()->getResult();
+	}
+        
+        
+        
+
+        
+        
 }

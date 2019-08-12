@@ -3,8 +3,15 @@
 {% block body %}
     <h1>Pericles</h1>
 
+    {%  if creai is not empty %}
+        <h2>{{ creai }}</h2>
+    {%  else %}
+        <h2>France</h2>
+    {%  endif %}
     
-    <a class='btn btn-warning' href="{{ path('backoffice_pericles_cotisation') }}">MAJ cotisation</a>
+    {% if  is_granted('ROLE_MEGA_ADMIN')  %}
+        <a class='btn btn-warning' href="{{ path('backoffice_pericles_cotisation') }}">MAJ cotisation</a>
+    {%  endif %}
     
 
 

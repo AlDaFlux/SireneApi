@@ -1,0 +1,48 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>FINESS</h1>
+    <h2>Importation</h2>
+    
+    
+    
+    {#
+    {{ dump(json) }}
+    #}
+    
+    <div class='alert alert-info'>
+        Dernière modification : {{last_maj }}
+    </div>
+  
+    
+    
+    
+    {% if is_granted('ROLE_MEGA_ADMIN') %}
+        
+        <h2>Etablissements</h2>
+        <li>{{ communs | length }} En communs 
+        <li>{{ nouveaux | length }} nouveaux
+        <li>{{ deleted | length }} supprimés
+        <li>{{ deletedWithEtab | length }} avec établissement !!
+
+            
+        {% include "BackOffice/finess/inc_liste.html.twig"  with {'finesses': deletedWithEtab}   %} 
+
+        <h2>Gestionnaires</h2>
+        <li>{{ communsGestionnaire | length }} En communs 
+        <li>{{ nouveauxGestionnaire | length }} nouveaux
+        <li>{{ deletedGestionnaire | length }} supprimés
+        <li>{{ deletedWithGestionnaire | length }} avec établissement !!
+
+
+            <br>
+            <a class='btn btn-block btn-default' href="{{ path('backoffice_finess_import_diff') }}">Diférence</a>
+            
+            
+                
+    {% endif %}
+    
+    
+
+{% endblock %}
+

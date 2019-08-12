@@ -22,7 +22,7 @@ class ReferentielOsoleteSupressionEtablissementCommand extends ContainerAwareCom
 {
     protected function configure()
     {
-        $this->setName('patch:etablissement-del-obs-ref');
+        $this->setName('referentiel:etablissement-del-obs-ref');
         $this->setDescription("Supprimme les référentiels désuets pour un établissement");
         $this->setHelp("Supprimme les référentiels désuets pour un établissement");
         $this->addOption('etablissement_id',null,InputOption::VALUE_REQUIRED,"L'identifiant de l'établissement",0);

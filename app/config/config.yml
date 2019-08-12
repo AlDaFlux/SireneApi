@@ -50,6 +50,12 @@ twig:
         enmaintenace: "%enmaintenace%"
         ganz: "%ganz%"
         advanced_module_gestionnaire: "%advanced_module_gestionnaire%"
+        activate_creai: "%activate.creai%"
+        activate_facturation: "%activate.facturation%"
+        activate_pericles: "%activate.pericles%"
+        activate_finess: "%activate.finess%"
+        activate_demandes: "%activate.demandes%"
+        
         
   
 

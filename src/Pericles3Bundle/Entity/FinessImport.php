@@ -7,10 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Finess
  *
- * @ORM\Table(name="finess", uniqueConstraints={@ORM\UniqueConstraint(name="code_finess_2", columns={"code_finess"})}, indexes={@ORM\Index(name="code_finess", columns={"code_finess"})})
- * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\FinessRepository")
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="code_finess_2", columns={"code_finess"})}, indexes={@ORM\Index(name="code_finess", columns={"code_finess"})})
+ * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\FinessImportRepository")
  */
-class Finess
+class FinessImport
 {
     /**
      * @var string
@@ -62,17 +62,12 @@ class Finess
     
     
     /**
-     * @ORM\ManyToOne(targetEntity="Pericles3Bundle\Entity\FinessCategorie",  inversedBy="finess")
+     * @ORM\ManyToOne(targetEntity="Pericles3Bundle\Entity\FinessCategorie",  inversedBy="finessImport")
      * @ORM\JoinColumn(name="code_categorie", nullable=true)
      */
     private $codeCategorie;
 
-    
-    
-    /**
-     * @ORM\OneToOne(targetEntity="Pericles3Bundle\Entity\Etablissement" ,  mappedBy="finess")
-    */
-    private $etablissement;
+     
     
 
     
@@ -102,66 +97,26 @@ class Finess
         
     
     /**
-     * @ORM\ManyToOne(targetEntity="Pericles3Bundle\Entity\Departement",  inversedBy="finess")
+     * @ORM\ManyToOne(targetEntity="Pericles3Bundle\Entity\Departement",  inversedBy="finessImport")
      * @ORM\JoinColumn(name="departement_id", nullable=false)
      */
     private $departement;
     
-
-    
-    
-    
-    /**
-     * @ORM\OneToOne(targetEntity="Pericles3Bundle\Entity\DemandeEtablissement", mappedBy="finess")
-     */
-    private $demandesEtablissement;
-    
-    
-    
-
-    
+ 
     
     
     /**
-     * @ORM\ManyToOne(targetEntity="Pericles3Bundle\Entity\FinessGestionnaire",  inversedBy="etablissements")
+     * @ORM\ManyToOne(targetEntity="Pericles3Bundle\Entity\FinessGestionnaireImport",  inversedBy="etablissements")
      * @ORM\JoinColumn(referencedColumnName="code_finess", nullable=true) 
      */
     private $gestionnaire;
     
-    
-       
-    /**
-     * @ORM\OneToMany(targetEntity="Pericles3Bundle\Entity\Pericles", mappedBy="finessEtablissement")
-     */
-    private $pericles;
-    
- 
+     
     
     
     
     
     
-    
-       /**
-     * Get libCategorie
-     *
-     * @return string
-     */
-    public function getLibCategorie()
-    {
-        return $this->codeCategorie;
-    }
-    
-    public function getReferentielPublicDefaut()
-    {
-        
-        return $this->codeCategorie->getReferentielPublicDefault();
-    }
-    
-    
-    
-    
-       
     
 
     /**
@@ -169,7 +124,7 @@ class Finess
      *
      * @param string $codeFiness
      *
-     * @return Finess
+     * @return FinessImport
      */
     public function setCodeFiness($codeFiness)
     {
@@ -193,7 +148,7 @@ class Finess
      *
      * @param string $raisonSociale
      *
-     * @return Finess
+     * @return FinessImport
      */
     public function setRaisonSociale($raisonSociale)
     {
@@ -217,7 +172,7 @@ class Finess
      *
      * @param string $complementAdresse
      *
-     * @return Finess
+     * @return FinessImport
      */
     public function setComplementAdresse($complementAdresse)
     {
@@ -241,7 +196,7 @@ class Finess
      *
      * @param string $adresse
      *
-     * @return Finess
+     * @return FinessImport
      */
     public function setAdresse($adresse)
     {
@@ -265,7 +220,7 @@ class Finess
      *
      * @param string $codePostal
      *
-     * @return Finess
+     * @return FinessImport
      */
     public function setCodePostal($codePostal)
     {
@@ -289,7 +244,7 @@ class Finess
      *
      * @param string $ville
      *
-     * @return Finess
+     * @return FinessImport
      */
     public function setVille($ville)
     {
@@ -313,7 +268,7 @@ class Finess
      *
      * @param integer $capaciteTotale1
      *
-     * @return Finess
+     * @return FinessImport
      */
     public function setCapaciteTotale1($capaciteTotale1)
     {
@@ -333,46 +288,11 @@ class Finess
     }
 
     /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->codeFiness;
-    }
-
-    /**
-     * Set codeCategorie
-     *
-     * @param \Pericles3Bundle\Entity\FinessCategorie $codeCategorie
-     *
-     * @return Finess
-     */
-    public function setCodeCategorie(\Pericles3Bundle\Entity\FinessCategorie $codeCategorie = null)
-    {
-        $this->codeCategorie = $codeCategorie;
-
-        return $this;
-    }
-
-    /**
-     * Get codeCategorie
-     *
-     * @return \Pericles3Bundle\Entity\FinessCategorie
-     */
-    public function getCodeCategorie()
-    {
-        return $this->codeCategorie;
-    }
- 
- 
-    /**
      * Set tel
      *
      * @param string $tel
      *
-     * @return Finess
+     * @return FinessImport
      */
     public function setTel($tel)
     {
@@ -396,7 +316,7 @@ class Finess
      *
      * @param string $fax
      *
-     * @return Finess
+     * @return FinessImport
      */
     public function setFax($fax)
     {
@@ -414,27 +334,37 @@ class Finess
     {
         return $this->fax;
     }
-    
-          
+
     /**
-     * toString
-     * @return string
+     * Set codeCategorie
+     *
+     * @param \Pericles3Bundle\Entity\FinessCategorie $codeCategorie
+     *
+     * @return FinessImport
      */
-    public function __toString() 
+    public function setCodeCategorie(\Pericles3Bundle\Entity\FinessCategorie $codeCategorie = null)
     {
-        return $this->codeFiness;
+        $this->codeCategorie = $codeCategorie;
+
+        return $this;
     }
-    
-     
-            
-            
+
+    /**
+     * Get codeCategorie
+     *
+     * @return \Pericles3Bundle\Entity\FinessCategorie
+     */
+    public function getCodeCategorie()
+    {
+        return $this->codeCategorie;
+    }
 
     /**
      * Set departement
      *
      * @param \Pericles3Bundle\Entity\Departement $departement
      *
-     * @return Finess
+     * @return FinessImport
      */
     public function setDepartement(\Pericles3Bundle\Entity\Departement $departement)
     {
@@ -453,81 +383,14 @@ class Finess
         return $this->departement;
     }
 
-    
-    /**
-     * Set etablissement
-     *
-     * @param \Pericles3Bundle\Entity\Etablissement $etablissement
-     *
-     * @return Finess
-     */
-    public function setEtablissement(\Pericles3Bundle\Entity\Etablissement $etablissement = null)
-    {
-        $this->etablissement = $etablissement;
-
-        return $this;
-    }
-
-    /**
-     * Get etablissement
-     *
-     * @return \Pericles3Bundle\Entity\Etablissement
-     */
-    public function getEtablissement()
-    {
-        return $this->etablissement;
-    }
-    
-    
-    public function getHaveEtablissement()
-    {
-        if ($this->getEtablissement()) return (true);
-    }
-    
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->demandesEtablissement = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    
-    
-    
-
-    /**
-     * Set demandesEtablissement
-     *
-     * @param \Pericles3Bundle\Entity\DemandeEtablissement $demandesEtablissement
-     *
-     * @return Finess
-     */
-    public function setDemandesEtablissement(\Pericles3Bundle\Entity\DemandeEtablissement $demandesEtablissement = null)
-    {
-        $this->demandesEtablissement = $demandesEtablissement;
-
-        return $this;
-    }
-
-    /**
-     * Get demandesEtablissement
-     *
-     * @return \Pericles3Bundle\Entity\DemandeEtablissement
-     */
-    public function getDemandesEtablissement()
-    {
-        return $this->demandesEtablissement;
-    }
-
     /**
      * Set gestionnaire
      *
-     * @param \Pericles3Bundle\Entity\FinessGestionnaire $gestionnaire
+     * @param \Pericles3Bundle\Entity\FinessGestionnaireImport $gestionnaire
      *
-     * @return Finess
+     * @return FinessImport
      */
-    public function setGestionnaire(\Pericles3Bundle\Entity\FinessGestionnaire $gestionnaire = null)
+    public function setGestionnaire(\Pericles3Bundle\Entity\FinessGestionnaireImport $gestionnaire = null)
     {
         $this->gestionnaire = $gestionnaire;
 
@@ -537,52 +400,10 @@ class Finess
     /**
      * Get gestionnaire
      *
-     * @return \Pericles3Bundle\Entity\FinessGestionnaire
+     * @return \Pericles3Bundle\Entity\FinessGestionnaireImport
      */
     public function getGestionnaire()
     {
         return $this->gestionnaire;
     }
-
-    /**
-     * Add pericle
-     *
-     * @param \Pericles3Bundle\Entity\Pericles $pericle
-     *
-     * @return Finess
-     */
-    public function addPericle(\Pericles3Bundle\Entity\Pericles $pericle)
-    {
-        $this->pericles[] = $pericle;
-
-        return $this;
-    }
-
-    /**
-     * Remove pericle
-     *
-     * @param \Pericles3Bundle\Entity\Pericles $pericle
-     */
-    public function removePericle(\Pericles3Bundle\Entity\Pericles $pericle)
-    {
-        $this->pericles->removeElement($pericle);
-    }
-
-    /**
-     * Get pericles
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getPericles()
-    {
-        return $this->pericles;
-    }
-    
-    public function getHasPericles()
-    {
-        return count($this->pericles);
-    }
-
-    
-    
 }

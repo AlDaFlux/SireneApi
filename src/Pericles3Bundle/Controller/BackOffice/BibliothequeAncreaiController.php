@@ -354,14 +354,15 @@ class BibliothequeAncreaiController extends Controller
             $bibliothequeAncreai->setLastModifiedBy($this->GetUser());
             $bibliothequeAncreai->addReferentielPublic($ReferentielPublic);
             
-            
+            /*
             $file = $bibliothequeAncreai->getCache();
             $fileName = $file->getClientOriginalName();
             $bibliothequeAncreai->setCache($fileName);
             $file->move(
                 $this->getParameter('cache_biblio_directory'),
                 $fileName
-            );
+            );*/
+            
             $em->persist($bibliothequeAncreai);
             $em->flush();
 

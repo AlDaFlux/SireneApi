@@ -1610,7 +1610,7 @@ class EtablissementController extends AdminController
         }
         elseif ($etape==4)
         {
-            $this->OutputOrFlash("----->Etape 3 : ");
+            $this->OutputOrFlash("----->Etape 4 : ");
             $nb_questions=0;
             foreach($Etablissement->getDomainesReferentiel($ReferentielPublicCible) as $domaine)
             {
@@ -1636,7 +1636,7 @@ class EtablissementController extends AdminController
                                 }
                                 else
                                 {
-                                    $critere->getModifieReferentiel();
+                                    $critere->modifieReferentiel();
                                     $em->persist($critere);
                                 }
                             }

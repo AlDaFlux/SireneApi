@@ -26,8 +26,16 @@ class PericlesRepository extends \Doctrine\ORM\EntityRepository
         $qb = $this->createQueryBuilder('pericles');
         $qb->Join('pericles.departement', 'departement');
         $qb->Join('departement.creai', 'creai');
-        
         $qb->Where("pericles.etablissement IS NULL and creai.id=".$creai->getId());
+        return $qb->getQuery()->getResult();
+    }
+    
+    public function findParCreai(\Pericles3Bundle\Entity\Creai $creai) 
+    {
+        $qb = $this->createQueryBuilder('pericles');
+        $qb->Join('pericles.departement', 'departement');
+        $qb->Join('departement.creai', 'creai');
+        $qb->Where("creai.id=".$creai->getId());
         return $qb->getQuery()->getResult();
     }
     

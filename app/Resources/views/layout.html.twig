@@ -71,8 +71,10 @@
              {% set etablissement = Sauvegarde.etablissement %}
         {% elseif bibliotheque is defined  %}
             
-            {% if bibliotheque.etablissement is not empty %}
-                 {% set etablissement = bibliotheque.etablissement %}
+            {% if bibliotheque.etablissement is defined %}
+                {% if bibliotheque.etablissement is not empty %}
+                     {% set etablissement = bibliotheque.etablissement %}
+                {% endif %}
             {% endif %}
              
 {% endif %}

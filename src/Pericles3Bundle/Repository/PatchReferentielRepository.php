@@ -57,7 +57,7 @@ class PatchReferentielRepository extends \Doctrine\ORM\EntityRepository
     {
         $qb = $this->createQueryBuilder('ref');
         $qb->Where("ref.patch = ".$patch->GetId());
-        $qb->Where("ref.patcheRefCible = ".$RefCible->GetId());
+        $qb->AndWhere("ref.patcheRefCible = ".$RefCible->GetId());
         return ($qb->getQuery()->getOneOrNullResult());
 
     }
@@ -113,6 +113,19 @@ class PatchReferentielRepository extends \Doctrine\ORM\EntityRepository
         return $qb->getQuery()->getResult();
     }
     
+    
+    
+    public function findUnlinkSourceToValidate(\Pericles3Bundle\Entity\Patch $patch) 
+    {
+        $qb = $this->createQueryBuilder('ref');
+        $qb->Where("ref.patch = ".$patch->GetId());
+        $qb->AndWhere("ref.valide = false ");
+        $qb->AndWhere("ref.patcheRefCible IS NULL ");
+        return $qb->getQuery()->getResult();
+    }
+    
+    
+
     
     
      

@@ -2,7 +2,7 @@
     <div class='alert alert-warning'>
             Aucune sauvegarde pour l'établissement
     </div>
-    {% if  etablissement.getStatus==3 %}
+    {% if  etablissement.SaisieTerminee   %}
          <div class='alert alert-danger'>
                  Vous n'avez effectué aucune sauvegarde ! Il est conseillé d'effecuter une sauvegarde lorsque la l'évaluation est finie ! Il faut avoir fait au moins une sauvegarde pour générer une annexe au rapport d'activité.
          </div> 
@@ -10,7 +10,7 @@
         {%  include 'Synthese/Sauvegardes/inc_sauvegardes_btn.html.twig' %}
      {% else %}
              <div class='alert alert-danger'>
-                +++  L'évaluation n'est pas terminée ! Les sauvegardes ne sont pas disponibles. Il faut avoir fait au moins une sauvegarde pour générer une annexe au rapport d'activité.
+                L'évaluation n'est pas terminée ! Les sauvegardes ne sont pas disponibles. Il faut avoir fait au moins une sauvegarde pour générer une annexe au rapport d'activité.
               </div> 
      {% endif  %}
             

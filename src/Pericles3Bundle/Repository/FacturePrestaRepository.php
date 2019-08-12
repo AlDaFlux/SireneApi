@@ -133,11 +133,9 @@ class FacturePrestaRepository extends \Doctrine\ORM\EntityRepository
             $qb->Where("facture.finalise=1"); 
             $qb->Select('SUM(facturePrestas.montant) as total ');
             return $qb->getQuery()->getOneOrNullResult();
+            
 	} 
-        
-        
-        
-        
+
         
         
 

@@ -636,18 +636,19 @@ class Creai
         {
             foreach ($gestionnaire->getFactures() as $facture)
             {
-                if ($facture->getConcerneGestionnaire()) $factures->Add($facture);
+                if ($facture->getEstFinalise() && $facture->getConcerneGestionnaire()) $factures->Add($facture);
             }
         }
         foreach ($this->getEtablissementsReels() as $etablissement)
         {
             foreach ($etablissement->getFactures() as $facture)
             {
-                if (! $facture->getConcerneGestionnaire()) $factures->Add($facture);
+                if ($facture->getEstFinalise() && ! $facture->getConcerneGestionnaire()) $factures->Add($facture);
             }
         }
         return ($factures);
     }
+    
     
     
     public function getFacturesMontant()

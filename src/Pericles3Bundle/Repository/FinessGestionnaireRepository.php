@@ -22,5 +22,28 @@ class FinessGestionnaireRepository extends \Doctrine\ORM\EntityRepository
         
         
         
+        public function findSupprimerDansImport() 
+        {
+                $qb = $this->createQueryBuilder('anciens');
+                $qb->leftJoin('Pericles3Bundle:FinessGestionnaireImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
+                $qb->Where('nouveaux.codeFiness IS NULL');
+		return $qb->getQuery()->getResult();
+	}
+        
+            
+        public function findSupprimerDansImportAvecGestionnaire() 
+        {
+                $qb = $this->createQueryBuilder('anciens');
+                $qb->InnerJoin('anciens.gestionnaire', 'gestionnaireArsene');
+                $qb->leftJoin('Pericles3Bundle:FinessGestionnaireImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
+                $qb->Where('nouveaux.codeFiness IS NULL');
+		return $qb->getQuery()->getResult();
+	}
+        
+        
+        
+        
+        
+        
         
 }

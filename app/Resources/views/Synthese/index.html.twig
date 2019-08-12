@@ -7,30 +7,27 @@
 
     
 {% if etablissement is not defined %}
-    <h2> Par public</h2>
-        <div class="row">
 
-        {% if app.user.isGestionnaire and appVersion>'1.0.0' %}
+    {% if app.user.isGestionnaire and appVersion>'1.0.0' %}
+            <h2> Par public</h2>
+                <div class="row">
 
-        {% for public in app.user.GestionnaireReferentielsPublic %}
-    
-                  <div class="col-sm-6">
-                      <div class="panel panel-primary">
-                          <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_referentiel_menu", {'id' : public.id }) }}">{{public}}</a></h3></div>
-                              <div class="panel-body">
-                                    <div class="GraphSyntheseContainer">    
-                                            <canvas id="chartCanvasEtablissements_{{public.id}}"  height="220" width="220"></canvas>
+                        {% for public in app.user.GestionnaireReferentielsPublic %}
+
+                                  <div class="col-sm-6">
+                                      <div class="panel panel-primary">
+                                          <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_referentiel_menu", {'id' : public.id }) }}">{{public}}</a></h3></div>
+                                              <div class="panel-body">
+                                                    <div class="GraphSyntheseContainer">    
+                                                            <canvas id="chartCanvasEtablissements_{{public.id}}"  height="220" width="220"></canvas>
+                                                  </div>
+                                          </div>
+                                      </div>
                                   </div>
-                          </div>
-                      </div>
-                  </div>
-            
+                        {% endfor %}    
 
-        {% endfor %}    
-        
-                  </div>
-        <hr>
-        
+                          </div>
+                <hr>
     {% endif %}
 
     <h2> Par établissement</h2>

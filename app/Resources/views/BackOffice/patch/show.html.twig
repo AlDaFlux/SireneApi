@@ -73,7 +73,25 @@
                                 </div>
                             </div>
                                 
+                                
+                                
+                            {{ patch.NbEtablissements }} Etablissements
+                            {% for etablissement in patch.etablissements %}
+                                <li><a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}">{{ etablissement  }}</a>
+                            {% else  %}
+                                PAS Etablissements
+                            {% endfor  %}
+                            <hr>
+                            {% for patchToDo in patch.patchToDo %}
+                                <li> {{ dump(patchToDo)  }}</a>
+                            {% else  %}
+                                PAS patchToDo
+                            {% endfor  %}
+                            
+                            
                         {% if PatchReferentiels | length == 0 %}
+                            
+                            
                                 <p>
                                 <span  data-invite="Voulez-vous supprimer le patch de manière définitive"    data-url_delete="{{ path('patch_delete', {'id': patch.id }) }}"  class = " DeleteBoxBefore btn  btn-danger full-width">supprmmer le patch : {{patch}}</span>
                         {% endif %}
@@ -182,5 +200,45 @@
     {% endfor %}
         </tbody>
     </table>
+        
+        
+        
+        
+        
+    {% if wscriptajout is defined  and    is_granted('ROLE_MEGA_ADMIN') %}
 
+
+        <table class='table table-bordered table-triable'>
+            <thead>
+            <tr>
+                <th> Ref Cible</th>
+                <th> Source id</th>
+                <th> Source Critere</th>
+                <th> Source </th>
+
+            </tr>    
+        </thead>
+        <tbody>
+
+        
+    {% set nb = 0  %}
+        
+    {% for patchRef in PatchReferentiels %}
+        {% set nb = nb  + 1   %}
+            <tr> 
+            <td>{{patch.cible.id}}</a></td>
+            <td>{{patchRef.PatcheRefSource.id}}</td>
+            <td>{{patchRef.PatcheRefSource.parent.numero}} - {{patchRef.PatcheRefSource.parent}}</td>
+            <td>{{patchRef.PatcheRefSource}}</td>
+        </tr>    
+    {% endfor %}
+        </tbody>
+    </table>
+        
+        
+        
+        
+    {% endif %}
+    
+    
 {% endblock %}

@@ -1,0 +1,59 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block body %}
+    <h1>FINESS</h1>
+    <h2>Importation Différence</h2>
+     
+    
+    
+    <div class='alert alert-info'>
+        {{ finesses | length }} établissements
+    </div>
+        
+    
+    
+    {% if is_granted('ROLE_MEGA_ADMIN') %}
+        <table class='table table-bordered table-triable'>
+            <thead>
+            <tr>
+                <th>etablissement_id </th>
+                <th>etablissementRaisonSociale </th>
+                <th>oldRaisonSociale</th>
+                <th>newRaisonSociale</th>
+                <th>oldVille</th>
+                <th>newVille</th>
+            </tr>
+            </thead>
+            <tbody>
+
+        {% for finess in finesses %}
+            <tr>
+                <td>{{ finess.etablissement_id }}</td>
+                {%  if finess.etablissementRaisonSociale == finess.newRaisonSociale == finess.oldRaisonSociale %}
+                    <td class='alert-success'>{{ finess.etablissementRaisonSociale }}</td>
+                    <td class='alert-success'>{{ finess.oldRaisonSociale}}</td>
+                    <td class='alert-success'>{{ finess.newRaisonSociale}}</td>
+               {%  else %}
+                    <td class='alert-danger'>{{ finess.etablissementRaisonSociale }}</td>
+                    <td class='alert-danger'>{{ finess.oldRaisonSociale}}</td>
+                    <td class='alert-danger'>{{ finess.newRaisonSociale}}</td>
+                {%  endif %}
+                
+                {%  if finess.oldVille != finess.newVille %}
+                    <td class='alert-danger'>{{ finess.oldVille}}</td>
+                    <td class='alert-danger'>{{ finess.newVille}}</td>
+                {%  else %}
+                    <td class='alert-success'>{{ finess.oldVille}}</td>
+                    <td class='alert-success'>{{ finess.newVille}}</td>
+                {%  endif %}
+            </tr>
+        {% endfor %}
+            </tbody>
+
+        </table> 
+    {% endif %}
+    
+    
+
+{% endblock %}
+

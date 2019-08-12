@@ -1255,6 +1255,14 @@ class ReferentielPublic
         return $this->patchSources;
     }
 
+    
+    public function getPatchAll()
+    {
+        return new ArrayCollection((array)$this->patchSources->toArray() + $this->patchCibles->toArray());
+    }
+
+    
+    
     /**
      * Add patchCible
      *
@@ -1311,13 +1319,14 @@ class ReferentielPublic
 
     
     
+    public function hasPatch()
+    {
+        return (count($this->getPatchSources()) + count($this->getPatchCibles()));
+    }
+           
+            
     
-    
-    
-    
-    
-    
-
+     
     
     
     

@@ -42,7 +42,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class UserStatCommand extends ArseneCommand
 {
     // a good practice is to use the 'app:' prefix to group all your custom application commands
-    protected static $defaultName = 'user:list';
+    protected static $defaultName = 'connection:stats';
 
     
 

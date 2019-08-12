@@ -60,6 +60,113 @@ class FinessController extends Controller
      
     
     
+    
+    
+    
+    
+    
+    /**
+     * Lists all Finess entities.
+     *
+     * @Route("/import", name="backoffice_finess_import")
+     * @Method("GET")
+     */
+    public function indexImportAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+       
+        
+        $nouveaux=$em->getRepository('Pericles3Bundle:FinessImport')->findNouveaux();
+        $deleted=$em->getRepository('Pericles3Bundle:Finess')->findSupprimerDansImport();
+        $communs=$em->getRepository('Pericles3Bundle:FinessImport')->findCommuns();
+        $deletedWithEtab=$em->getRepository('Pericles3Bundle:Finess')->findSupprimerDansImportAvecEtablissement();
+        
+        
+        /*
+        $nouveaux=null;
+        $deleted=null;
+        $communs=null;
+        $deletedWithEtab=null;
+        
+        $nouveauxGestionnaire=null;
+        $deletedGestionnaire=null;
+        $communsGestionnaire=null;
+        $deletedWithGestionnaire=null;
+        */
+
+        
+        $nouveauxGestionnaire=$em->getRepository('Pericles3Bundle:FinessGestionnaireImport')->findNouveaux();
+        $communsGestionnaire=$em->getRepository('Pericles3Bundle:FinessGestionnaireImport')->findCommuns();
+        $deletedWithGestionnaire=$em->getRepository('Pericles3Bundle:FinessGestionnaire')->findSupprimerDansImportAvecGestionnaire();
+        $deletedGestionnaire=$em->getRepository('Pericles3Bundle:FinessGestionnaire')->findSupprimerDansImport();
+
+                
+        /*
+      
+        $code="finess-extraction-des-entites-juridiques";
+        //$code="finess-extraction-des-equipements-sociaux-et-medico-sociaux";
+        $code="finess-extraction-du-fichier-des-etablissements";
+         
+        $url= "https://www.data.gouv.fr/api/1/datasets/".$code."/";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL,$url);
+        $result=curl_exec($ch);
+        curl_close($ch);
+        $json=json_decode($result, true);
+        $resources_tmp=$json["resources"];
+        $resources= array();
+        foreach ($resources_tmp as $resource_tmp)
+        {
+            if ($resource_tmp["format"]=="csv") 
+            {
+                $resource= $resource_tmp;
+                $resources[]=$resource;
+                break;
+            }
+        } 
+        $lastMaj = $resource["last_modified"]
+        */
+        $lastMaj=null;
+        
+        return $this->render('BackOffice/finess/import.html.twig', array(
+            'nouveaux'=>$nouveaux,
+            'deleted'=>$deleted,
+            'communs'=>$communs,
+            'deletedWithEtab'=>$deletedWithEtab,
+            
+            'nouveauxGestionnaire'=>$nouveauxGestionnaire,
+            'deletedGestionnaire'=>$deletedGestionnaire,
+            'communsGestionnaire'=>$communsGestionnaire,
+            'deletedWithGestionnaire'=>$deletedWithGestionnaire,
+            'last_maj'=>$lastMaj
+        ));
+    } 
+
+    
+    
+    /**
+     * Lists all Finess entities.
+     *
+     * @Route("/import/diff", name="backoffice_finess_import_diff")
+     * @Method("GET")
+     */
+    public function indexImportDiffAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        
+        /*
+        $nouveaux=$em->getRepository('Pericles3Bundle:FinessImport')->findNouveaux();
+        $nouveauxGestionnaire=
+         * 
+         */
+        
+        return $this->render('BackOffice/finess/import_diff.html.twig', array(
+            'finesses'=>$em->getRepository('Pericles3Bundle:Finess')->findImportDifferentEtablissement(),
+            'last_maj'=>null
+        ));
+    } 
 
     /**
      * Creates a new Finess entity.

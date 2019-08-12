@@ -82,12 +82,12 @@
  
         {% if critere.preuvesSince(dateSince) | length > 0 %}
             <h2>Preuves</h2>
-                {% include "Synthese/export/inc/inc_preuves_sans_link.html.twig" with {'preuves': critere.preuvesSince(dateSince) %}
+                {% include "Synthese/export/inc/preuves/inc_preuves_sans_link.html.twig" with {'preuves': critere.preuvesSince(dateSince) } %}
         {% endif %}
         
     
       {% if critere.objectifsSince(dateSince) | length > 0 %}
-        <h2>Objectifs Opérationnels d'Amélioration</h2>
+        <h2>Objectifs Opérationnels d’Amélioration</h2>
                 <ul>
                    {% for objectif in critere.objectifsSince(dateSince) %}
                         <li>{{ objectif }} - {{ objectif.DateDebut|date('Y-m-d') }}-->{{ objectif.DateFin|date('Y-m-d') }}</li>

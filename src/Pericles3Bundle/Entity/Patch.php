@@ -461,6 +461,12 @@ class Patch
     {
         return $this->etablissements;
     }
+    
+    
+    public function getNbEtablissements()
+    {
+        return count($this->etablissements);
+    }
  
 
     /**

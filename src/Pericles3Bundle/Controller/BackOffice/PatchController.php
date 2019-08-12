@@ -775,6 +775,30 @@ class PatchController extends AdminController
         ));
     }
     
+    
+    
+    /**
+     * Finds and displays a patch entity.
+     *
+     * @Route("/{id}/source_unlink_to_validate", name="patch_show_source_unlink_to_validate")
+     * @Method("GET")
+     */
+    public function showUnlinkValidateSourceAction(Patch $patch)
+    {
+    
+        $em = $this->getDoctrine()->getManager();
+        $PatchReferentiels = $em->getRepository('Pericles3Bundle:PatchReferentiel')->findUnlinkSourceToValidate($patch);
+        
+        return $this->render('BackOffice/patch/show.html.twig', array(
+            'patch' => $patch,
+            'wscriptajout' => true,
+            'PatchReferentiels' => $PatchReferentiels
+        ));
+    }
+    
+ 
+    
+    
     public function DeleteRef(Patch $patch)
     {
         $em = $this->getEm();
@@ -821,6 +845,7 @@ class PatchController extends AdminController
               {
                 $i++;
                 $this->addFlash('success', $Refcible." trouvé ");
+                
                 $patchRefCible=$em->getRepository('Pericles3Bundle:PatchReferentiel')->findFromPatchRefCible($patch,$Refcible);
                 if (! $patchRefCible)
                 {

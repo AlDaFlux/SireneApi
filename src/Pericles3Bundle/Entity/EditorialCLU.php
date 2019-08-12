@@ -98,7 +98,7 @@ class EditorialCLU
     /**
      * @var string
      *
-     * @ORM\Column(name="commentaire", type="text")
+     * @ORM\Column(name="commentaire", type="text",nullable=true)
      */
     private $commentaire;
     

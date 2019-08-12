@@ -94,10 +94,7 @@
                 <div class="panel panel-primary">
                     <div class="panel-heading"><h3 class="panel-title">Patchs</h3></div>
                      <table class='table'>
-                            {% for patch in referentielPublic.getPatchCibles %}
-                                    <tr><td><a href="{{ path('patch_show', { 'id': patch.id }) }}">{{patch}}</a></td></tr>
-                                {% endfor %}
-                                {% for patch in referentielPublic.getPatchSources %}
+                            {% for patch in referentielPublic.getPatchAll %}
                                     <tr><td><a href="{{ path('patch_show', { 'id': patch.id }) }}">{{patch}}</a></td></tr>
                                 {% endfor %}
                  </table>

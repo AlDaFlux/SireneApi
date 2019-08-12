@@ -94,8 +94,6 @@ class FactureRepository extends \Doctrine\ORM\EntityRepository
         $subquery->OrderBy('numFacture');
         $subquery->having("dateEmission < '". date('Y-m-d',strtotime(date("Y-m-d", mktime()) . " - 365 day"))."'");
         return $subquery->getQuery()->getResult();
-        
-        
     }
     
     
