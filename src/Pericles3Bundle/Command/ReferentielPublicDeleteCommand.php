@@ -35,7 +35,9 @@ class ReferentielPublicDeleteCommand extends ContainerAwareCommand
 
                 
         $em = $doctrine->getEntityManager();
+        $em->getFilters()->disable('softdeleteable');
         $refPublicId = $input->getOption('referentiel_public_id');
+        
         $refPublic = $em->getRepository("Pericles3Bundle:ReferentielPublic")->findOneById($refPublicId);
         if (! $refPublic)
         {
