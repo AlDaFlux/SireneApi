@@ -179,6 +179,15 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
     }
 
         
+    public function FindByEtablissement(\Pericles3Bundle\Entity\Etablissement $etablissement) 
+    {
+            $qb = $this->createQueryBuilder('user');
+            $qb->Join('user.etablissement', 'etablissement');
+            $qb->where("etablissement.id = ".$etablissement->GetId());
+            return $qb->getQuery()->getResult();
+    }
+
+        
 
         
         

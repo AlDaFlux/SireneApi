@@ -957,6 +957,11 @@ class Etablissement
         else return($this->domaines);
     }
     
+    public function getDomainesAll()
+    {
+        return($this->domaines);
+    }
+    
     
     public function getNbDomaines()
     {

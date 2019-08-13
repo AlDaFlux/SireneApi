@@ -369,8 +369,9 @@ class BibliothequeAncreai
     
     public function NbCriteres()
     {
-        return(count($this->Criterereferentiel));
+        return(count($this->getCriterereferentiel()));
     }
+    
             
     public function NbCriteresByRefPublic(ReferentielPublic $referentielPublic)
     {

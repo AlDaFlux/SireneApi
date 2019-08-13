@@ -25,6 +25,7 @@ class ReferentielPublicDeleteCommand extends ContainerAwareCommand
         $this->setHelp("suprimme un Référentiel !!! !Atention ");
         $this->addOption('referentiel_public_id',null,InputOption::VALUE_REQUIRED,"L'identifiant du référentiel public ",0);
         $this->addOption('force-delete-patch',null,InputOption::VALUE_NONE,"supprimme les patchs si il y en a ");
+        $this->addOption('softdeleteable',null,InputOption::VALUE_NONE,"désactive softdeleteable");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

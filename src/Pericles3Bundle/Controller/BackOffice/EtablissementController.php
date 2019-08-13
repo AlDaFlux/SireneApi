@@ -2072,66 +2072,32 @@ class EtablissementController extends AdminController
      */
     public function deleteURLAction(Etablissement $Etablissement)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->GetEm();
         
-        $demande= $Etablissement->getDemandeEtablissement();
-        if ($demande)
-        {
-//            $Etablissement->setDemandeEtablissement(null);
-            $demande->setEtablissement(null);
-        }
-        
-                
+
+        $this->unlinkDemande($Etablissement);
         if ($Etablissement->getNbUsers()>0)
         {
-            $this->addFlash('error', "Vous devez supprimer manuellement tous les utilisateurs avant de supprimer l'établissement");
+            $this->OutputOrFlashError("Vous devez supprimer manuellement tous les utilisateurs avant de supprimer l'établissement");
             return $this->redirectToRoute('backoffice_etablissement_view', array('id' => $Etablissement->getId()));
         }
         else
         {
-       
-            foreach ($Etablissement->getDomaines() as $Domaine )
-            {
-                foreach ($Domaine->getDimensions() as $Dimension  )
-                {
-                    foreach ($Dimension->getCriteres() as $Critere )
-                    {
-                        foreach ($Critere->GetQuestions() as $Question)
-                        {
-                             $em->remove($Question);
-                        }
-                        $em->flush();
-                        $em->remove($Critere);
-                    }
-                    $em->flush();
-                    $em->remove($Dimension);
-                }
-                $em->flush();
-                $em->remove($Domaine);
-            }
-            $em->flush();
-            $this->addFlash('success', "Les domaines / dimensions / critères ont bien été supprimés");
-            
-            
-             $this->addFlash('success', "Vérification de la suppression");
+            $this->OutputOrFlash("Supression domaines / dimensions / critères ");
+            $this->deleteReferentielEtablissement($Etablissement);
+            $this->OutputOrFlashSuccess("Les domaines / dimensions / critères ont bien été supprimés");
+            $this->OutputOrFlashSuccess("Vérification de la suppression");
+            $this->deleteReferentielExterne($Etablissement);
              
-            foreach ($Etablissement->getDomainesExterne() as $domaineExterne ) 
-            {
-                $em->remove($domaineExterne);
-            }
             $em->flush();
-            $this->addFlash('success', "Les domaines externes ont bien été supprimés");
-            
+            $this->OutputOrFlashSuccess("Les domaines externes ont bien été supprimés");
             $em->remove($Etablissement);
             $em->flush();
         }
-     
-        
         return $this->redirectToRoute('pericles3_backoffice_etablissement');
     }
     
-
-    
+     
     
     /**
      * Deletes a Etablissment entity.
@@ -2141,55 +2107,76 @@ class EtablissementController extends AdminController
      */
     public function deleteURLForceAction(Etablissement $Etablissement)
     {
-        $em = $this->getDoctrine()->getManager();
-        
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN'))
+        {
+            $this->JustDeleteEtablissementForce($Etablissement);
+        }
+        else
+        {
+            $this->OutputOrFlashError(("Vous n'avez pas les droits"));
+        }
+        return $this->redirectToRoute('pericles3_backoffice_etablissement');
+    }
+    
+    function unlinkDemande(Etablissement $Etablissement)
+    {
+        $em = $this->getEm();
         $demande= $Etablissement->getDemandeEtablissement();
         if ($demande)
         {
-//            $Etablissement->setDemandeEtablissement(null);
             $demande->setEtablissement(null);
             $em->persist($demande);
         }
-        $finess= $Etablissement->getFiness();
-        if ($finess)
-        {
-            $finess->setEtablissement(null);
-            $Etablissement->setFiness(null);
+        $em->flush();
+    }
+    
+    function unlinkFiness(Etablissement $Etablissement)
+    {
+            $em = $this->getEm();
+            $finess= $Etablissement->getFiness();
+            if ($finess)
+            {
+                $finess->setEtablissement(null);
+                $Etablissement->setFiness(null);
+                $em->persist($finess);
+                $em->persist($Etablissement);
+                $em->flush();
+            } 
+        }
+    
+    public function JustDeleteEtablissementForce(Etablissement $Etablissement)
+    {
+            $em = $this->getEm();
+            $this->unlinkDemande($Etablissement);
+            $this->unlinkFiness($Etablissement);
+            $this->deleteUsers($Etablissement);
+            
             $Etablissement->setNom($Etablissement->getNom()." - Supprimé");
-            $this->addFlash('success', "l'établissement a bien été supprimé ! ");
-            $em->persist($finess);
+
+            $this->$this->OutputOrFlashSuccess("l'établissement a bien été supprimé ! ");
             $em->persist($Etablissement);
             $em->flush();
-      
-        } 
-        
-        
-                 
+ 
+            $em->remove($Etablissement);
+            $em->flush();
+    }
+    
+    function deleteUsers(Etablissement $Etablissement,$softdeletable=true)
+    {
+            $em = $this->getEm();
             foreach ($Etablissement->getUsers() as $user)
             {
                 $user->SetEmail(null);
                 $user->SetUsername($user->getUsername(). (" - suprimmé le : ". date("d/m/Y h:i:s")));
-                $this->addFlash('success', "Supression de USER : ".$user);
+                $this->OutputOrFlashSuccess("Supression de USER : ".$user);
                 $em->remove($user);
             }
- 
-            
 
 
-//            $Etablissement->getFiness()->setEtablissement(null);
-            
-            
-            
-            
-            $em->remove($Etablissement);
-            $em->flush();
         
-        
-        return $this->redirectToRoute('pericles3_backoffice_etablissement');
     }
     
-
-    
+     
     
     
       
@@ -2316,9 +2303,25 @@ class EtablissementController extends AdminController
     {
         if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN_ETABLISSEMENT'))
         {
-        $em = $this->getDoctrine()->getManager();
-        $em->flush();       
-        foreach ($Etablissement->getDomaines() as $Domaine )
+            $this->deleteSaisiesEtablissement($Etablissement);
+        }
+
+        return $this->redirectToRoute('backoffice_etablissement_view', array('id' => $Etablissement->getId()));
+    }
+    
+    function deleteSaisiesEtablissement(Etablissement $Etablissement,$withObsolete=false)
+    {
+         $em = $this->GetEm();
+         if ($withObsolete)
+         {
+             $domaines=$Etablissement->getDomainesAll();
+         }
+         else
+         {
+             $domaines=$Etablissement->getDomaines();
+         }
+         
+        foreach ($domaines as $Domaine )
         {
             foreach ($Domaine->getObjectifsSrategique() as $ObjectifSrategique )
             {
@@ -2359,27 +2362,31 @@ class EtablissementController extends AdminController
                     }
                 }
             }
+            $em->flush();
         }
+        
         foreach ($Etablissement->getObjectifsOperationnel() as $oo)
         {
+            foreach ($oo->GetPreuves() as  $preuve)
+            {
+                    $em->remove($preuve);
+                    $em->flush();
+            }
+            $em->persist($oo);
             foreach ($oo->GetCriteres() as $crit)
             {
-                $this->addFlash('success', "Supression du critere : ".$crit);
+                $this->OutputOrFlashSuccess("Supression du critere : ".$crit);
                 $oo->removeCritere($crit);
                 $crit->removeObjectif($oo);
             }
             $em->persist($oo);
+            $em->flush();
         }
-        
-        $this->deleteSauvegarde($Etablissement);
-            
         $em->flush();
-        $this->addFlash('success', "Les domaines / dimensions / critères ont bien été rebootés");
-       
-                
-        }
-       return $this->redirectToRoute('backoffice_etablissement_view', array('id' => $Etablissement->getId()));
-
+        $this->deleteSauvegarde($Etablissement);
+        $em->flush();
+        $this->OutputOrFlashSuccess('success', "Les domaines / dimensions / critères ont bien été rebootés ! ");
+        
     }
     
     
@@ -2397,22 +2404,25 @@ class EtablissementController extends AdminController
     {
         if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN_ETABLISSEMENT'))
         {
-        $em = $this->getDoctrine()->getManager();
-        $em->flush();       
+            $this->deleteObjectifsOperationnelEtablissement($Etablissement);
+        }
+       return $this->redirectToRoute('backoffice_etablissement_view', array('id' => $Etablissement->getId()));
+    }
+    
+    function deleteObjectifsOperationnelEtablissement(Etablissement $Etablissement)
+    {
+        $em = $this->getEm();
         foreach ($Etablissement->getObjectifsOperationnel() as $oo )
         {
             $em->remove($oo);
-            $this->addFlash('success', "Supression de ".$oo);
+            $this->OutputOrFlashSuccess("Supression de ".$oo);
         }
-            
         $em->flush();
-        $this->addFlash('success', "objectifs opérationnels  supprimés");
-                
-        }
-       return $this->redirectToRoute('backoffice_etablissement_view', array('id' => $Etablissement->getId()));
-
+        $this->OutputOrFlashSuccess("objectifs opérationnels  supprimés");
     }
     
+    
+
     
     
       
@@ -2426,20 +2436,23 @@ class EtablissementController extends AdminController
     {
         if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN_ETABLISSEMENT'))
         {
-            $em = $this->getDoctrine()->getManager();
-            $em->flush();       
-            foreach ($Etablissement->getBibliotheques() as $biblio )
-            {
-                $em->remove($biblio);
-                $this->addFlash('success', "Supression de ".$biblio);
-            }
-
-            $em->flush();
-            $this->addFlash('success', "Les bibliothèques de l'établissement ont été été supprimés");
-
+            $this->JustDeleteBiblio($Etablissement);
         }
        return $this->redirectToRoute('backoffice_etablissement_view', array('id' => $Etablissement->getId()));
 
+    }
+    
+    public function JustDeleteBiblio(Etablissement $Etablissement)
+    {
+        $em = $this->getEm();
+        foreach ($Etablissement->getBibliotheques() as $biblio )
+        {
+            $em->remove($biblio);
+            $this->OutputOrFlashSuccess("Supression de ".$biblio);
+        }
+
+        $em->flush();
+        $this->OutputOrFlashSuccess("Les bibliothèques de l'établissement ont été été supprimés !!");
     }
     
     
@@ -2474,7 +2487,8 @@ class EtablissementController extends AdminController
     
     function deleteSauvegarde(Etablissement $Etablissement)
     {
-          $em = $this->getDoctrine()->getManager();
+        $em = $this->GetEm();
+        
         foreach ($Etablissement->getSauvegardes() as $Sauvegarde )
         {          
             foreach ($Sauvegarde->getDomaines() as $Domaine) 
@@ -2497,7 +2511,7 @@ class EtablissementController extends AdminController
                 $em->remove($Domaine);
                 $em->flush();
             }
-        $this->addFlash('success', "La sauvegarde ".$Sauvegarde." à bien été supprimée");
+        $this->OutputOrFlashSuccess("La sauvegarde ".$Sauvegarde." à bien été supprimée");
         $em->remove($Sauvegarde);
         }
         $em->flush();
@@ -2506,7 +2520,7 @@ class EtablissementController extends AdminController
     
     function deleteReferentielEtablissement(Etablissement $Etablissement)
     {
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->getEm();
             foreach ($Etablissement->getDomaines() as $Domaine )
             {
                 foreach ($Domaine->getDimensions() as $Dimension  )
@@ -2527,18 +2541,45 @@ class EtablissementController extends AdminController
                 $em->remove($Domaine);
                 $em->flush();
             }
-       
-            
-            
             $em->flush();
-            $this->addFlash('success', "Les domaines / dimensions / critères ont bien été supprimés");
-            foreach ($Etablissement->getDomainesExterne() as $domaineExterne ) 
-            {
-                $em->remove($domaineExterne);
-            }
+            $this->OutputOrFlashSuccess("Les domaines / dimensions / critères ont bien été supprimés");
+            $this->deleteReferentielExterne($Etablissement);
             $em->flush();
-            $this->addFlash('success', "Les domaines externes ont bien été supprimés");
+            $this->OutputOrFlashSuccess("Les domaines externes ont bien été supprimés");
         }
+        
+        
+    
+    function deleteReferentielObsoleteEtablissement(Etablissement $Etablissement)
+    {
+            $em = $this->getEm();
+            foreach ($Etablissement->getDomainesObsolete() as $Domaine )
+            {
+                foreach ($Domaine->getDimensions() as $Dimension  )
+                {
+                    foreach ($Dimension->getCriteres() as $Critere )
+                    {
+                        foreach ($Critere->GetQuestions() as $Question)
+                        {
+                             $em->remove($Question);
+                        }
+                        $em->flush();
+                        $em->remove($Critere);
+                    }
+                    $em->flush();
+                    $em->remove($Dimension);
+                }
+                $em->flush();
+                $em->remove($Domaine);
+                $em->flush();
+            }
+            $this->OutputOrFlashSuccess("Les domaines externes obsolete ont bien été supprimés");
+        }
+        
+        
+        
+        
+        
     
     
         
