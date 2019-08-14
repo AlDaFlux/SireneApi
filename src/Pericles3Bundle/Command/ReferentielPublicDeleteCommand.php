@@ -16,15 +16,29 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 
-class ReferentielPublicDeleteCommand extends ContainerAwareCommand
+class ReferentielPublicDeleteCommand extends ArseneCommand
 {
     protected function configure()
     {
         $this->setName('referentiel:public:delete');
         $this->setDescription('suprimme un Référentiel !!! !Atention ');
-        $this->setHelp("suprimme un Référentiel !!! !Atention ");
+        $this->setHelp(<<<'HELP'
+<info>%referentiel:public:delete%</info> supprime un référentiel 
+<error>TRES DANGEREUX !!! </error>
+
+  <info>bin/console referentiel:public:delete</info> <comment> --referentiel_public_id=?</comment>
+  <info>bin/console referentiel:public:delete</info> <comment> --referentiel_public_id=? --force-delete-patch</comment>   supprimme les patchs si il y en a 
+  <info>bin/console referentiel:public:delete</info> <comment> --referentiel_public_id=? --force-delete-etablissement</comment>   supprimme les etablissements <error>  !!! TRES DANGEREUX !!!!"</error>
+  <info>bin/console referentiel:public:delete</info> <comment> --referentiel_public_id=? --softdeleteable</comment>   désactive softdeleteable  <error>!!! TRES DANGEREUX !!!!"</error>
+ 
+HELP
+            )
+            
+        ;
+            
         $this->addOption('referentiel_public_id',null,InputOption::VALUE_REQUIRED,"L'identifiant du référentiel public ",0);
         $this->addOption('force-delete-patch',null,InputOption::VALUE_NONE,"supprimme les patchs si il y en a ");
+        $this->addOption('force-delete-etablissement',null,InputOption::VALUE_NONE,"supprimme les etablissements !!! TRES DANGEREUX !!!!");
         $this->addOption('softdeleteable',null,InputOption::VALUE_NONE,"désactive softdeleteable");
     }
 
@@ -33,16 +47,26 @@ class ReferentielPublicDeleteCommand extends ContainerAwareCommand
         $doctrine = $this->getContainer()->get('doctrine');
                 
         $forcePatch = $input->getOption('force-delete-patch');
+        $forceDeleteEtablissement= $input->getOption('force-delete-etablissement');
+        $softdeleteable = $input->getOption('softdeleteable');
 
+        $this->output=$output;
+        
                 
         $em = $doctrine->getEntityManager();
         $refPublicId = $input->getOption('referentiel_public_id');
         
-        $em->getFilters()->disable('softdeleteable');
-        $refPublic = $em->getRepository("Pericles3Bundle:ReferentielPublic")->findOneById($refPublicId);
+        if ($softdeleteable)
+        {
+            $em->getFilters()->disable('softdeleteable');
+        }
+
+        
+        $refPublic = $this->GetReferentielPublicById($refPublicId);
         if (! $refPublic)
         {
-            $output->writeln("<error>Le référentiel Public  ".$refPublicId." n'exites pas<error>");
+            $output->writeln("<error>Le référentiel Public  ".$refPublicId." n'exites pas</error>");
+            $output->writeln($this->GetHelp());
         }
         else
         {         
@@ -50,8 +74,26 @@ class ReferentielPublicDeleteCommand extends ContainerAwareCommand
             $output->writeln("<info>".$refPublic."</info>");
             if ($refPublic->getNbEtablissements())
             {
-                $output->writeln("<error>Le référentiel Public  ".$refPublic." a ".$refPublic->getNbEtablissements()." établissements il est donc impossible a suprimmé</error>");
-                return(0);
+                if ($forceDeleteEtablissement)
+                {
+                    
+                
+                    foreach ($refPublic->Etablissements() as $etablissement)
+                    {
+                        $output->writeln("<info> SUPPRESION ETABLISSEMENT".$etablissement."</info>");
+                        $command = $this->getApplication()->find('etablissement:delete');
+                        $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId());
+                        $PatchEtabInput = new ArrayInput($arguments);
+                        $command->run($PatchEtabInput, $output);
+                    }
+                    return(0);
+                }
+                else
+                {
+                    $output->writeln("<error>Le référentiel Public  ".$refPublic." a ".$refPublic->getNbEtablissements()." établissements il est donc impossible a suprimmé</error>");
+                    return(0);
+                    
+                }
             }
             if ($refPublic->hasPatch())
             {

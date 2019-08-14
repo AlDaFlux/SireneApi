@@ -11,6 +11,7 @@
 
 namespace Pericles3Bundle\Command;
 use Pericles3Bundle\Entity\User;
+use Pericles3Bundle\Entity\ReferentielPublic;
 use Pericles3Bundle\Entity\Etablissement;
 
 use Symfony\Component\Console\Command\Command;
@@ -147,6 +148,21 @@ abstract class ArseneCommand extends ContainerAwareCommand
 
     
     
+    public function GetReferentielPublicById($id)
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+        $em = $doctrine->getEntityManager();
+        $referentielPublic = $em->getRepository('Pericles3Bundle:ReferentielPublic')->findOneById($id);
+        if ($referentielPublic)
+        {
+            return($referentielPublic);
+        }
+        else
+        {
+            $this->listAllReferentielPublic();
+        }
+        
+    }
 
     public function GetEtablissementById($id)
     {
@@ -170,11 +186,22 @@ abstract class ArseneCommand extends ContainerAwareCommand
         $em = $doctrine->getEntityManager();
         return($em->getRepository('Pericles3Bundle:Etablissement')->findAll());
     }
+    public function GetAllReferentielsPublic()
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+        $em = $doctrine->getEntityManager();
+        return($em->getRepository('Pericles3Bundle:ReferentielPublic')->findVeryAll());
+    }
     
     public function listAllEtablissement()
     {
         $this->listEtablissement($this->GetAllEtablissements());
     }
+    public function listAllReferentielPublic()
+    {
+        $this->listReferentielPublic($this->GetAllReferentielsPublic());
+    }
+    
     
     public function listEtablissement($etablissements)
     {
@@ -186,12 +213,40 @@ abstract class ArseneCommand extends ContainerAwareCommand
         ;
         $table->render();
     }
+       
+    public function listReferentielPublic($refs)
+    {
+        $table = new Table($this->output);
+        $etablissementsAsPlainArrays = array_map(array('self',"arrayMapReferentielPublic") , $refs);
+        $table
+            ->setHeaders(['id', 'public', 'annne', 'Etablissements', 'version', 'obsolete', 'en cours de dev', 'actif'])
+            ->setRows($etablissementsAsPlainArrays)
+        ;
+        $table->render();
+    }
+    
+    
     
     public function arrayMapEtablissement(Etablissement $etablissement) 
     {
         return [
                $etablissement->getId(),
                $etablissement->getNom(),
+           ]; 
+    }
+     
+    
+    public function arrayMapReferentielPublic(ReferentielPublic $ref) 
+    {
+        return [
+               $ref->getId(),
+               $ref->getPublic(),
+               $ref->getYear(),
+               $ref->GetNbEtablissements(),
+               $ref->getVersion(),
+               ($ref->getObsolete() ? "X":""),
+               ($ref->getFini() ? "":"X"),
+               ($ref->getFiniAndLast() ? "X":""),
            ]; 
     }
      
