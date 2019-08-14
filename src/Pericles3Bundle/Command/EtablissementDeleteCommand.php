@@ -92,6 +92,11 @@ class EtablissementDeleteCommand extends ContainerAwareCommand
                         $em->remove($biblio);
                         $em->flush();
                     }
+                    foreach ($user->GetNbConstats() as $constat)
+                    {
+                        $em->remove($constat);
+                        $em->flush();
+                    }
                     foreach ($user->getStatsUserConnect() as $stats)
                     {
                         $output->writeln("<info>Stats</info>");
