@@ -1447,7 +1447,7 @@ class EtablissementController extends AdminController
         $em=$this->GetEm();
         foreach ($Etablissement->getDomainesExterne() as $domaineExterne)
         {
-            $this->Output("-->".$domaineExterne);
+//            $this->Output("-->".$domaineExterne);
             foreach ($domaineExterne->getCriteres() as $critere)
             {
                 $domaineExterne->removeCritere($critere);
