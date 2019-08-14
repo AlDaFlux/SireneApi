@@ -78,7 +78,7 @@ HELP
                 {
                     
                 
-                    foreach ($refPublic->Etablissements() as $etablissement)
+                    foreach ($refPublic->GetEtablissements() as $etablissement)
                     {
                         $output->writeln("<info> SUPPRESION ETABLISSEMENT".$etablissement."</info>");
                         $command = $this->getApplication()->find('etablissement:delete');
