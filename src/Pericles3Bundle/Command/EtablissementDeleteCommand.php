@@ -66,6 +66,7 @@ class EtablissementDeleteCommand extends ContainerAwareCommand
             $etablissementController->SetEm($em);
             $etablissementController->deleteSaisiesEtablissement($etablissement,true);
             $etablissementController->deleteObjectifsOperationnelEtablissement($etablissement);
+            
             $etablissementController->JustDeleteBiblio($etablissement);
             $etablissementController->unlinkDemande($etablissement);
             $etablissementController->deleteReferentielEtablissement($etablissement);
@@ -74,7 +75,8 @@ class EtablissementDeleteCommand extends ContainerAwareCommand
             
 //            $etablissementController->deleteReferentielExterne($etablissement);
             $etablissementController->unlinkFiness($etablissement);
-            $etablissementController->deleteUsers($etablissement,false);
+            $etablissementController->deleteOOUsers($etablissement,false);
+//            $etablissementController->deleteUsers($etablissement,false);
             /*
             $em->remove($etablissement);
             

@@ -71,18 +71,24 @@ HELP
         else
         {         
             $output->writeln("referentiel choisi : ");
-            $output->writeln("<info>".$refPublic."</info>");
+            $output->writeln("".$refPublic."");
             if ($refPublic->getNbEtablissements())
             {
                 if ($forceDeleteEtablissement)
                 {
-                    
-                
                     foreach ($refPublic->GetEtablissements() as $etablissement)
                     {
                         $output->writeln("<info> SUPPRESION ETABLISSEMENT".$etablissement."</info>");
                         $command = $this->getApplication()->find('etablissement:delete');
-                        $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId());
+                        if ($softdeleteable)
+                        {
+                            $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId(), "--force-softdeleteable");
+                        }
+                        else
+                        {
+                            $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId());
+                        }
+                            
                         $PatchEtabInput = new ArrayInput($arguments);
                         $command->run($PatchEtabInput, $output);
                     }

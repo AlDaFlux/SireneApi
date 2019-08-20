@@ -2161,6 +2161,22 @@ class EtablissementController extends AdminController
             $em->flush();
     }
     
+    
+    
+    function deleteOOUsers(Etablissement $Etablissement,$softdeletable=true)
+    {
+            $em = $this->getEm();
+            foreach ($Etablissement->getUsers() as $user)
+            {
+                foreach ($user->getObjectifsOperationnel() as $ObjectifOperationnel)
+                {
+                    $em->remove($ObjectifOperationnel);
+                }
+            }
+            $em->flush();                
+    }
+    
+    
     function deleteUsers(Etablissement $Etablissement,$softdeletable=true)
     {
             $em = $this->getEm();
@@ -2171,6 +2187,7 @@ class EtablissementController extends AdminController
                 $this->OutputOrFlashSuccess("Supression de USER : ".$user);
                 $em->remove($user);
             }
+            $em->flush();                
 
 
         
