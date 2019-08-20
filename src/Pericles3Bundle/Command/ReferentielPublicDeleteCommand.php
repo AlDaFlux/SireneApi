@@ -92,7 +92,6 @@ HELP
                         $PatchEtabInput = new ArrayInput($arguments);
                         $command->run($PatchEtabInput, $output);
                     }
-                    return(0);
                 }
                 else
                 {
