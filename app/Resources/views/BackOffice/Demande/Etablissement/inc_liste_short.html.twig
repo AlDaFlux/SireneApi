@@ -7,7 +7,9 @@
                 {% if  is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
                         <th>Creai</th>
                 {% endif %}
+                <th>Gestionnaire</th>
                 <th>Etat</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -23,12 +25,19 @@
 
             {% if etab is not empty and demandeEtablissement.etat.id != 3 %}
                 <tr title="la demande n'est pas terminée mais l'établissement est créer" class='alert-danger'>
-            {% else %}
+            {% elseif demandeEtablissement.getDemandeHasOneGestionnaire  %} 
+                <tr class='grisee'>
+            {%  else %}                 
                 <tr>
             {% endif  %}
                 <td>{{ demandeEtablissement.dateDemande|hiddenDate("d-m-Y") | raw }}</td>
                 <td>
+                    {%  if demandeEtablissement.getDemandeHasOneGestionnaire  %} 
+                        {{ demandeEtablissement.etablissementNom }}
+                    {%  else %} 
                         <a href="{{ path('backoffice_demande_etablissement_show', { 'id': demandeEtablissement.id }) }}">{{ demandeEtablissement.etablissementNom }} </a>
+                    {%  endif %} 
+                        
                 </td>
                   
                     
@@ -36,7 +45,31 @@
                     <td>{{ demandeEtablissement.creai  }}</td>
                 {% endif %}
 
-                <td><a href="{{ path('backoffice_demande_etablissement_show', { 'id': demandeEtablissement.id }) }}">{{ demandeEtablissement.etat|  afficheDemandeEtat | raw }}</a></td>
+                {%  if demandeEtablissement.gestionnaire %}
+                    <td>
+                        <i class='glyphicon glyphicon-king'></i>{{ demandeEtablissement.gestionnaire }}
+                    </td>
+                {%  elseif demandeEtablissement.demandeGestionnaire %}
+                    <td>
+                        <i class='glyphicon glyphicon-plus'></i> {{ demandeEtablissement.demandeGestionnaire.gestionnaireNom }}</td>
+                {%  else %}
+                    <td></td>
+                {%  endif %}
+ 
+                
+                
+                <td>
+                    <a href="{{ path('backoffice_demande_etablissement_show', { 'id': demandeEtablissement.id }) }}">{{ demandeEtablissement.etat|  afficheDemandeEtat | raw }}</a>
+                </td>
+                <td>
+                    <a title='voir la demande' href="{{ path('backoffice_demande_etablissement_show', { 'id': demandeEtablissement.id }) }}">{{ 'demande' | get_icon | raw  }} </a>
+                    {%  if demandeEtablissement.etablissement %}
+                        <a  title="Voir l'établissement" href="{{ path('backoffice_etablissement_view', { 'id': demandeEtablissement.etablissement .id }) }}">{{ 'etablissement' | get_icon | raw  }} </a>
+                    {% endif %}
+                    {%  if demandeEtablissement.gestionnaire %}
+                        <a title='voir le gestionnaire' href="{{ path('backoffice_gestionnaire_show', { 'id': demandeEtablissement.gestionnaire .id }) }}">{{ 'gestionnaire' | get_icon | raw  }} </a>
+                    {% endif %}
+                </td>
             
             </tr>
         {% endfor %}

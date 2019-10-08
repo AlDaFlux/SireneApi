@@ -18,6 +18,7 @@ use Gedmo\Blameable\Traits\BlameableEntity;
  * User
  *
  * @ORM\Table(name="user")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\UserRepository")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
@@ -721,6 +722,12 @@ class User implements UserInterface
     public function isGestionnaire()
     {
         if ($this->gestionnaire) return(true);
+    }
+    
+    
+    function isClient()
+    {
+        return($this->isGestionnaire() or $this->IsAnEtablissement());
     }
     
    
@@ -1678,4 +1685,75 @@ class User implements UserInterface
     {
         return $this->lastCluChecked;
     }
+     
+    
+    public function demandesEtablissementAVoir()
+    {
+        $today=New \DateTime();
+        if ($this->getCreai())
+        {
+            $demandes=  new \Doctrine\Common\Collections\ArrayCollection();
+            foreach ($this->getCreai()->getDemandesEtablissement() as $demande)
+            {
+                if (! $demande->IsFini())
+                {
+                    $demandes->Add($demande);
+                }
+                elseif($today->diff($demande->GetDateDemande())->days<15)
+                {
+                    $demandes->Add($demande);
+                }
+
+            }
+            return($demandes);
+        }
+    }
+    
+       
+    public function demandesGestionnaireAVoir()
+    {
+        $today=New \DateTime();
+        if ($this->getCreai())
+        {
+            $demandes=  new \Doctrine\Common\Collections\ArrayCollection();
+            foreach ($this->getCreai()->getDemandesGestionnaire() as $demande)
+            {
+                if (! $demande->IsFini())
+                {
+                    $demandes->Add($demande);
+                }
+                elseif($today->diff($demande->GetDateDemande())->days<15)
+                {
+                    dump($today->diff($demande->GetDateDemande())->days);
+                    $demandes->Add($demande);
+                }
+            }
+        }
+        return($demandes);
+      
+    }
+    
+    
+    public function gestionnaireExistingAVoir()
+    {
+       
+        $gestionnaires=  new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->demandesEtablissementAVoir() as $demande)
+        {
+            if ($demande->getGestionnaire() && $demande->PasFini())
+            {
+                if (! $gestionnaires->contains($demande->getGestionnaire()))
+                {
+                    $gestionnaires->Add($demande->getGestionnaire());
+                }
+            }
+        }
+        return($gestionnaires);
+    }
+    
+    
+    
+    
+    
+    
 }

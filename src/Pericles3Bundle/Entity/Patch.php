@@ -16,6 +16,7 @@ use Gedmo\Blameable\Traits\BlameableEntity;
  * Bibliotheque
  *
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\PatchRepository")
+ * @Gedmo\Loggable
  */
 class Patch
 {
@@ -656,6 +657,14 @@ class Patch
         }
         return($stats);
     }
+    
+    function isVerif()
+    {
+        $stats=$this->getStats();
+        return(! ($stats["source_a_verifie"] +  $stats["cible_a_verifie"]));
+    }
+    
+    
     
     
     

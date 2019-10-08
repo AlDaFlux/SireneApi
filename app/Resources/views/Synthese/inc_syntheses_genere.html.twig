@@ -53,7 +53,11 @@
              
         </div>
     </div>
-                
+
+
+    {% if  appVersion>'1.0.0'  %}
+        <a href='{{ path("pericles3_synthese_export_config_etablissement", {'id':etablissement.id}) }}'  class ="btn btn-with-big-ico  btn-primary full-width" > Générer une synthèse personalisée pour <b>{{ etablissement }}</b>! <i class="glyphicon glyphicon-wrench"></i> </a>           
+    {% endif %}
                                 
      <div class='graphs graphs_calculate'> 
         <div class=graph_min_container'>

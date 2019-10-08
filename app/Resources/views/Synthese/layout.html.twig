@@ -1,6 +1,18 @@
 {% extends "::layout.html.twig" %}
 
-{% block title %}{{ parent() }} - Liste{% endblock %}
+{% if app.user.gestionnaire is not empty %}
+    {% if app.user.gestionnaire.NewFonctionnaliteGestionnaire %}
+        {% set advanced_gesionnaire = true %} 
+    {% else  %}
+         {% set advanced_gesionnaire = false %} 
+    {% endif%}
+{% else  %}
+     {% set advanced_gesionnaire = false %} 
+{% endif%}
+
+
+
+{% block title %}{{ parent() }} - Synthèse{% endblock %}
 
   {% block message_flash %}
 {% endblock %}
@@ -46,7 +58,7 @@
             
             
                 {% if is_granted('ROLE_GESTIONNAIRE')  %}        
-                    {% if  appVersion>'1.0.0' %}
+                    {% if  appVersion>'1.0.0' and advanced_gesionnaire %}
                         <li class="dropdown">
                              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                       <i class=' glyphicon glyphicon-knight '></i> Public<span class="caret"></span></a>

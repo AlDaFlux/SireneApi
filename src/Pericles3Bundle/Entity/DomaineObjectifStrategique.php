@@ -2,6 +2,9 @@
 
 namespace Pericles3Bundle\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 use Doctrine\ORM\Mapping as ORM;
 
 use DateTime;
@@ -11,6 +14,7 @@ use DateTime;
  * DomaineObjectifStrategique
  *
  * @ORM\Table(name="domaine_objectifs_strategique")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\DomaineObjectifStrategiqueRepository")
  */
 class DomaineObjectifStrategique
@@ -69,6 +73,13 @@ class DomaineObjectifStrategique
      */
     private $dateEcheance;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetime")
+     */
+    private $dateDebut;
+
  
   
     /**
@@ -77,8 +88,11 @@ class DomaineObjectifStrategique
     private $etablissement;
     
     
+    /**
+     * @ORM\OneToMany(targetEntity="Pericles3Bundle\Entity\ObjectifOperationnel",mappedBy="objectifStrategique")
+     */
+    private $objectifsOperationnel;
  
-    
     
 
     /**
@@ -300,5 +314,75 @@ class DomaineObjectifStrategique
     public function getEtablissement()
     {
         return $this->etablissement;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->objectifsOperationnel = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add objectifsOperationnel
+     *
+     * @param \Pericles3Bundle\Entity\ObjectifOperationnel $objectifsOperationnel
+     *
+     * @return DomaineObjectifStrategique
+     */
+    public function addObjectifsOperationnel(\Pericles3Bundle\Entity\ObjectifOperationnel $objectifsOperationnel)
+    {
+        $this->objectifsOperationnel[] = $objectifsOperationnel;
+
+        return $this;
+    }
+
+    /**
+     * Remove objectifsOperationnel
+     *
+     * @param \Pericles3Bundle\Entity\ObjectifOperationnel $objectifsOperationnel
+     */
+    public function removeObjectifsOperationnel(\Pericles3Bundle\Entity\ObjectifOperationnel $objectifsOperationnel)
+    {
+        $this->objectifsOperationnel->removeElement($objectifsOperationnel);
+    }
+
+    /**
+     * Get objectifsOperationnel
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getObjectifsOperationnel()
+    {
+        return $this->objectifsOperationnel;
+    }
+    
+    public function getNbObjectifsOperationnel()
+    {
+        return count($this->objectifsOperationnel);
+    }
+
+    /**
+     * Set dateDebut
+     *
+     * @param \DateTime $dateDebut
+     *
+     * @return DomaineObjectifStrategique
+     */
+    public function setDateDebut($dateDebut)
+    {
+        $this->dateDebut = $dateDebut;
+
+        return $this;
+    }
+
+    /**
+     * Get dateDebut
+     *
+     * @return \DateTime
+     */
+    public function getDateDebut()
+    {
+        return $this->dateDebut;
     }
 }

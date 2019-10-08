@@ -13,6 +13,10 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 
+use PUGX\AutocompleterBundle\Form\Type\AutocompleteType;
+
+
+
 class DemandeEtablissementType extends AbstractType
 {
     /**
@@ -21,7 +25,19 @@ class DemandeEtablissementType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($options['gestionnaire'])
+        if ($options['finess'])
+        {
+            $builder->add('finess', AutocompleteType::class, 
+                    [
+                'required'    => false ,
+                'attr' => array('placeholder' => "Numéro finess (012345678) ou nom de l'établissement (IME DU BERGERACOIS,..) "),
+                'label' => 'Etablissement',
+                'class' => 'Pericles3Bundle:Finess'
+                ]);
+                    
+
+        }
+        elseif ($options['gestionnaire'])
         {
             $builder->add('etablissementNom')
             //->add('typeClient', ChoiceType::class, array('attr' => array('class' => 'inline'), 'expanded' => true,'choices' => array('Contribuant CREAI  '=>'1','Ancien utilisateur PERICLES  '=>'2','Autre  '=>'3')))
@@ -36,7 +52,6 @@ class DemandeEtablissementType extends AbstractType
                             return $qb->where('cotis.id>0 and cotis.id<5 ');
                         }   
                     ))   
-            ->add('FinessCode')
             ->add('referentielPublic', EntityType::class, array(
                     'attr' => array('class' => 'alert alert-danger'),
                     'class' => 'Pericles3Bundle:referentielPublic',
@@ -61,10 +76,11 @@ class DemandeEtablissementType extends AbstractType
         {
             
 
+            
         $builder
-            ->add('demandeur_nom', TextType::class, ['required' => true])
-            ->add('demandeur_prenom', TextType::class, ['required' => true])
-            ->add('etablissementNom', TextType::class, ['required' => true])
+            ->add('demandeur_nom', TextType::class, ['required' => $options['required']])
+            ->add('demandeur_prenom', TextType::class, ['required' => $options['required']])
+            ->add('etablissementNom', TextType::class, ['required' => $options['required']])
 //            ->add('typeClient', ChoiceType::class, array('attr' => array('class' => 'inline'), 'expanded' => true,'choices' => array('Contribuant CREAI  '=>'1','Ancien utilisateur PERICLES  '=>'2','Autre  '=>'3')))
           
       
@@ -80,7 +96,9 @@ class DemandeEtablissementType extends AbstractType
                     ))   
                 
             ->add('email', TextType::class, ['required' => true])
-            ->add('FinessCode')
+                ->add('adresse')
+                ->add('codePostal')
+                ->add('ville')
             ->add('referentielPublic', EntityType::class, array(
                     'attr' => array('class' => 'alert alert-danger'),
                     'class' => 'Pericles3Bundle:referentielPublic',
@@ -106,6 +124,8 @@ class DemandeEtablissementType extends AbstractType
             'data_class' => 'Pericles3Bundle\Entity\DemandeEtablissement',
             'ancreai' => false,
             'gestionnaire' => false,
+            'finess' => false,
+            'required' => false,
         ));
     }
 }

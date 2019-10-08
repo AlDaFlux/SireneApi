@@ -15,24 +15,7 @@
 
             $(".gantt").gantt({
                 source: [
-                    
-                               
-     {% for objectifOperationnel in objectifOperationnels %}
-            {% if objectifOperationnel.dateDebut is not empty  and objectifOperationnel.dateFin is not empty %} 
-                   { name: "{{objectifOperationnel.etablissement}}",
-                                
-                                values: [{
-                                from: "/Date({{objectifOperationnel.dateDebut.timestamp}}000)/",
-                                to: "/Date({{objectifOperationnel.dateFin.timestamp}}000 )/",
-                                label: "{{objectifOperationnel}}",
-                                customClass: "{{objectifOperationnel.getCSSGantClasse}}",
-                                dataObj: "{{objectifOperationnel.id}}"
-                                }],
-                                },
-            {% endif  %}
-    {% endfor %}
-    
-                    
+                {% include "ObjectifsAmelioration/inc_gantt_oo.js.twig" %} 
                 ],
                 navigate: "scroll",
                 scale: "weeks",
@@ -43,7 +26,10 @@
                 months:	["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre"],
                 dow:["Dim", "Lun","Mar", "Mer", "Jeu", "Ven", "Samedi"],
                 onItemClick: function(data) {
-                    $('#oo_'+data).modal('show');
+                    
+                    var id_oo=data;
+                     show_oo_modal(id_oo);
+                    
                 },
                     onRender: function() {
                     if (window.console && typeof console.log === "function") {

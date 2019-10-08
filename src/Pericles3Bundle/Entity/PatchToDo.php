@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 use Gedmo\Blameable\Traits\BlameableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 
 
@@ -17,6 +18,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  *
  * @ORM\Table 
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\PatchToDoRepository")
+ * @Gedmo\Loggable
  */
 class PatchToDo
 {

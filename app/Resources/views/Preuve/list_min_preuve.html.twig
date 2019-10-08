@@ -1,11 +1,11 @@
 
 {% if preuves | length > 0 %}
     {% for preuve in preuves %}
-    <p class="bubble CommentCore">
         
         
         {% if preuve.bibliotheque %}
-            <a href="{{ path('pericles3_bibliotheque_show', {'id': preuve.bibliotheque.id}) }}"> 
+            <p class="bubble CommentCore">
+            <a  title='voir la bibliothèque'  href="{{ path('pericles3_bibliotheque_show', {'id': preuve.bibliotheque.id}) }}"> 
                 {{'biblio' | get_icon | raw }} {{preuve.bibliotheque}}</a>
                 
                 {% if preuve.bibliotheque.TypeMessage =='fichier' %}
@@ -14,10 +14,12 @@
                     <br><a title='Allez à la page' target="_blank" href="{{ preuve.bibliotheque.href }}">{{ preuve.bibliotheque.TypeMessage | iconeBibliotheque() | raw  }}  {{ preuve.bibliotheque.href }}</a>
                 {% endif %}		  
                 {{ preuve.commentaire }}
+            </p> 
         {% else  %}
+             <p class="bubble CommentCore">
         <a href="{{ asset('upload') }}/{{ preuve.getRelativPath }}" target="_blank">
-            {{ preuve.fichier }}</a></p> {{ preuve.commentaire }}
-
+            {{ preuve.fichier }}</a>   {{ preuve.commentaire }}
+   </p> 
         {% endif %}
         
         

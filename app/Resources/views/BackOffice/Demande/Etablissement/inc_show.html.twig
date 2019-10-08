@@ -5,43 +5,53 @@
             <tr>
                 <th>Etablissement</th>
                 <td>{{ demandeEtablissement.etablissementNom }}</td>
-            </tr>
-            <tr>
                 <th>Public</th>
-                <td>{{ demandeEtablissement.referentielPublic.public  }}</td>
+                <td class='alert-succes'>{{ demandeEtablissement.referentielPublic.public  }}</td>
             </tr>
             <tr>
                 <th>Nom de famille</th>
                 <td>{{ demandeEtablissement.demandeurnom }}</td>
-            </tr>
-            <tr>
                 <th>Prénom</th>
                 <td>{{ demandeEtablissement.demandeurprenom }}</td>
             </tr>
             <tr>
+                <th>Email</th>
+                <td>{{ demandeEtablissement.email }}</td>
                 <th>Saisi par </th>
                 <td>{{ demandeEtablissement.creai }}</td>
             </tr>
             <tr>
-                <th>Email</th>
-                <td>{{ demandeEtablissement.email }}</td>
-            </tr>
-            <tr>
                 <th>Finess</th>
-                <td>{{ demandeEtablissement.finessCode}}</td>
-            </tr>
-            
-            <tr>
+                <td>{{ demandeEtablissement.finess}}</td>
                 <th>Mode Cotisation : </th>
                 <td>{{ demandeEtablissement.modeCotisation  }}</td>
             </tr>
             <tr>
+                <th>Adresse</th>
+                <td>{{ demandeEtablissement.adresse }}</td>
+                <td>{{ demandeEtablissement.codePostal }}</td>
+                <td>{{ demandeEtablissement.ville }}</td>
+            </tr>
+
+            <tr>
                 <th>Etat</th>
                 <td>{{ demandeEtablissement.etat|  afficheDemandeEtat | raw }}</td>
             </tr>
+            <tr>
             <th>Commentaires</th>
-                <td>{{ demandeEtablissement.commentaireAncreai | nl2br}}</td>
+                <td colspan="3">{{ demandeEtablissement.commentaireAncreai | nl2br}}</td>
             </tr>
+            
+            {% if demandeEtablissement.etablissement %}            
+            <tr class='alert-succes'>
+                <th>Etablissement {{ application_name }}</th>
+                <td colspan="3">
+                    <a class='btn btn-primary btn-block btn-with-big-ico' href="{{ path('backoffice_etablissement_view', { 'id': demandeEtablissement.etablissement.id }) }}">  {{ demandeEtablissement.etablissement }}
+                    {{'etablissement'  | get_icon | raw }}
+                    </a></td>
+            </tr>
+            {% endif  %}            
+
         </tbody>
     </table>
  

@@ -1,0 +1,71 @@
+
+            {% if etabFiness.getReferentielPublicDefaut %} 
+                {%  set referentielPublicDefautId = etabFiness.getReferentielPublicDefaut.id %}
+            {% else %}
+                {%  set referentielPublicDefautId = 0 %}
+            {% endif %}
+                    
+          <div class='panel panel-primary'>
+            <div class='panel-heading'><a data-toggle="collapse" href="#collapse_etab_{{etabFiness.codefiness}}"><i class='glyphicon glyphicon-plus'></i> {{ etabFiness.codefiness }} : {{ etabFiness.raisonSociale }} ({{ etabFiness.ville}})</a></div>        
+                <div  id="collapse_etab_{{etabFiness.codefiness}}" class='panel-body panel-collapse collapse'>
+                            
+            <form name="demande_etablissement_{{ etabFiness.codefiness }}" method="post" class="form-horizontal">
+            <div id="demande_etablissement">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="demande_etablissement_etablissementNom">Etablissement nom</label>
+                    <div class="col-sm-10">
+                        <input  value="{{ etabFiness.raisonSociale }}" type="text" id="demande_etablissement_etablissementNom" name="etablissementNom" maxlength="255" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label required">Mode cotisation</label><div class="col-sm-10">
+                        <div id="demande_etablissement_ModeCotisation" class="alert alert-danger">
+                            
+                            {%  for etabModeCotisation in EtabModesCotisationChoix %}
+                            <div class="radio">
+                                <label for="demande_etablissement_ModeCotisation_{{ etabModeCotisation.id }}" class="required">
+                                    <input type="radio" id="demande_etablissement_ModeCotisation_{{ etabModeCotisation.id }}" name="modeCotisation" required="required" value="{{ etabModeCotisation.id }}" />
+                                    {{ etabModeCotisation}}
+                                </label>
+                            </div>
+                            {%  endfor  %}
+                        </div>
+                    </div>
+                </div>
+                        
+                        {#
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="demande_etablissement_FinessCode">Finess code</label>
+                    <div class="col-sm-10">
+                        #}
+                        <input type="hidden" id="demande_etablissement_FinessCode" name="finessCode" class="form-control" value="{{ etabFiness.codefiness }}" />
+{#                </div></div>#}
+
+            <div class="form-group"><label class="col-sm-2 control-label required">Referentiel public</label><div class="col-sm-10">
+                    <div id="demande_etablissement_referentielPublic" class="alert alert-danger">
+                        {%  for  ReferentielPublic in  ReferentielsPublic %}
+                            <div class="radio">
+                                <label for="demande_etablissement_referentielPublic_{{ ReferentielPublic.id }}" class="required">
+                                    <input {%  if referentielPublicDefautId == ReferentielPublic.id %} checked="checked"{% endif %} type="radio" id="demande_etablissement_referentielPublic_{{ ReferentielPublic.id }}" name="referentielPublic" required="required" value="{{ ReferentielPublic.id }}" />
+                                    {{ ReferentielPublic }}
+                                </label>
+                            </div>
+                        {%  endfor %}
+                    </div>
+                </div>
+            </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Commentaire CREAI</label>
+            <div class="col-sm-10">
+                    <div id="demande_etablissement_referentielPublic" >
+                        <input type="text"  id="demande_etablissement_commentaire_{{etabFiness.codefiness}}" name="commentaire"  value=""  maxlength="255" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <button type="submit" id="Valider" class=" btn btn-block btn-primary">Valider</button>
+                  
+            </div>
+                    </form>
+            </div> 
+            </div>
+<hr>

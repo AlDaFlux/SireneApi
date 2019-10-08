@@ -10,6 +10,7 @@
                 <th>Date</th>
                 <th>Demandeur</th>
                 <th>Etablissement</th>
+                <th>Etablissement<br>{{ application_name }}</th>
                 <th>Email</th>
                 <th>Finess</th>
                 
@@ -43,11 +44,18 @@
                     {{ demandeEtablissement.dateDemande|hiddenDate("d-m-Y") | raw }}</td>
 
                 <td><a href="{{ path('backoffice_demande_etablissement_show', { 'id': demandeEtablissement.id }) }}">
-                        {{ demandeEtablissement.demandeurnom }}  {{ demandeEtablissement.demandeurprenom }}</a>
+                        {{ demandeEtablissement.demandeurNom }}  {{ demandeEtablissement.demandeurPrenom }}</a>
                 </td>
                 <td>
                         <a href="{{ path('backoffice_demande_etablissement_show', { 'id': demandeEtablissement.id }) }}">{{ demandeEtablissement.etablissementNom }} </a>
                 </td>
+                
+                {% if demandeEtablissement.etablissement %}
+                    <td title='{{demandeEtablissement.etablissement}}' class='alert alert-success'><a href="{{ path('backoffice_etablissement_view', { 'id': demandeEtablissement.etablissement.id }) }}">{{'etablissement' | get_icon | raw }}</a></td>
+                {% else  %}
+                    <td  class='alert alert-danger'></td>
+                {% endif  %}
+                
                 
                 <td>{{ demandeEtablissement.email }}</td>
                 <td>

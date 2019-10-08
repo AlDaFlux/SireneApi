@@ -6,12 +6,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 
 
 /**
  * Creai
  *
  * @ORM\Table(name="creai")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\CreaiRepository")
  */
 class Creai
@@ -124,6 +128,16 @@ class Creai
     private $dateLastConnect;
 
         
+
+    
+    
+    
+     /**
+     * @ORM\OneToMany(targetEntity="Pericles3Bundle\Entity\ReferentielPublic", mappedBy="creai")
+     */
+    private $publicsFacturation;
+    
+    
 
     
     
@@ -636,14 +650,14 @@ class Creai
         {
             foreach ($gestionnaire->getFactures() as $facture)
             {
-                if ($facture->getEstFinalise() && $facture->getConcerneGestionnaire()) $factures->Add($facture);
+                if ($facture->IsFinalised() && $facture->getConcerneGestionnaire()) $factures->Add($facture);
             }
         }
         foreach ($this->getEtablissementsReels() as $etablissement)
         {
             foreach ($etablissement->getFactures() as $facture)
             {
-                if ($facture->getEstFinalise() && ! $facture->getConcerneGestionnaire()) $factures->Add($facture);
+                if ($facture->IsFinalised() && ! $facture->getConcerneGestionnaire()) $factures->Add($facture);
             }
         }
         return ($factures);
@@ -691,4 +705,43 @@ class Creai
 
     
     
+
+    /**
+     * Add publicsFacturation
+     *
+     * @param \Pericles3Bundle\Entity\ReferentielPublic $publicsFacturation
+     *
+     * @return Creai
+     */
+    public function addPublicsFacturation(\Pericles3Bundle\Entity\ReferentielPublic $publicsFacturation)
+    {
+        $this->publicsFacturation[] = $publicsFacturation;
+        $publicsFacturation->setCreai($this);
+        return $this;
+    }
+
+    /**
+     * Remove publicsFacturation
+     *
+     * @param \Pericles3Bundle\Entity\ReferentielPublic $publicsFacturation
+     */
+    public function removePublicsFacturation(\Pericles3Bundle\Entity\ReferentielPublic $publicsFacturation)
+    {
+        $this->publicsFacturation->removeElement($publicsFacturation);
+    }
+
+    /**
+     * Get publicsFacturation
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPublicsFacturation()
+    {
+        return $this->publicsFacturation;
+    }
+
+    public function getNbPublicsFacturation()
+    {
+        return $this->publicsFacturation;
+    }
 }

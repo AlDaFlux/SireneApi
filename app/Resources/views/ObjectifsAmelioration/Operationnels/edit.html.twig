@@ -13,6 +13,31 @@
                 <form class='well' action="{{ path("paq_ooa_edit", {"id": objectifOperationnel.id}) }}" method="POST" >
                     {% include "MessageFlash/messageFlash.html.twig" %}
                     <h2 class='ooa'>Objectif</h2>
+        
+                {% if  appVersion>'1.0.0' %}
+
+                    {%  if objectifOperationnel.objectifStrategique %}
+                        {%  set objectifStrategique_id = objectifOperationnel.objectifStrategique.id%}
+                    {%  else %}
+                        {%  set objectifStrategique_id = 0 %}
+                    {%  endif  %}
+
+                    <div class="form-group">
+                    <label for="objectif_stragegique">Objectif Strategique </label>
+                        <select class="form-control" id="objectif_stragegique" name="objectif_stragegique">
+                            <option value="">Aucun</option>
+                            {% for objectifStragegique in objectifsStrategique %}
+                                {% if objectifStrategique_id == objectifStragegique.id %}
+                                    <option selected value="{{ objectifStragegique.id }}">{{ objectifStragegique }}</option>
+                                {% else %}
+                                    <option value="{{ objectifStragegique.id }}">{{ objectifStragegique }}</option>
+                                {% endif %}
+                            {% endfor %}
+                            </select>   
+                    </div>
+                    {%  endif  %}
+    
+                    
                       <input type='hidden' name="update" value="true">
                     <div class="form-group">
                         <label class="control-label" for="titre">Titre : </label>

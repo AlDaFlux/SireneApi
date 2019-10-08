@@ -29,25 +29,7 @@ class DomaineObjectifStrategiqueController extends Controller
     }
     
     
-    
-    /**
-     * Lists all DomaineObjectifStrategique entities.
-     *
-     * @Route("/", name="paq_osa_index")
-     * @Method("GET")
-     */
-    public function indexAction()
-    {
-        if ( ! $this->getUser())   throw $this->createAccessDeniedException("Vous n'avez pas les droits suffisants");
-
-        $em = $this->getDoctrine()->getManager();
-        $domaineObjectifStrategiques = $em->getRepository('Pericles3Bundle:DomaineObjectifStrategique')->findAll();
-
-        return $this->render('domaineobjectifstrategique/index.html.twig', array(
-            'domaineObjectifStrategiques' => $domaineObjectifStrategiques,
-        ));
-    }
-
+                    
     
         
      /**

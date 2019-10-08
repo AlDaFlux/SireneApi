@@ -2,15 +2,18 @@
     <table class='table table-bordered table-triable'>
         <thead>
             <tr>
+                
+                {%  if activate_finess %}
                 <th>FINESS</th>
+                {% endif %}
                 <th>Nom</th>
                 <th>Date de <br>Création</th>
                 <th>Dernière accés</th>
-                {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')  %}
+                {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')   and activate_facturation  %}
                     <th title='Facture'><i class='glyphicon glyphicon-euro'></i> </th>
                 {% endif %}
                 
-                {% if is_granted('ROLE_SUPER_ADMIN')  %}
+                {% if is_granted('ROLE_SUPER_ADMIN')  and activate_facturation  %}
                     <th>Type Facture</th>
                 {% endif %}
 
@@ -34,7 +37,7 @@
 
                 
                  
-                {% if is_granted('ROLE_SUPER_ADMIN') and not app.user.IsCreai  %}
+                {% if is_granted('ROLE_SUPER_ADMIN') and not app.user.IsCreai and activate_creai %}
                     <th>Creai</th>
                 {% endif %}
                 
@@ -51,14 +54,16 @@
            
             <tr>
             
-                <td>
-                    
-                {% if occurence is defined %}
-                   {{etablissement.codefiness | HighlightText(occurence) | raw }} 
-                {% else %}
-                     {{ etablissement.codefiness }}
+                {%  if activate_finess %}
+                    <td>
+
+                    {% if occurence is defined %}
+                       {{etablissement.codefiness | HighlightText(occurence) | raw }} 
+                    {% else %}
+                         {{ etablissement.codefiness }}
+                    {% endif %}
+                   </td>
                 {% endif %}
-               </td>
                 
                     
                 {% if etablissement.category.reel %}
@@ -82,7 +87,7 @@
                     
                 {% include "Nuts/inc_td_last_connect.html.twig"  with {'dateLastConnect' : etablissement.dateLastConnect}  %}
                 
-                {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')  %}
+                {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')   and activate_facturation  %}
                     
                         {% if not etablissement.Facturable %}
                             <td class='alert small small  alert-info'></td>
@@ -95,7 +100,7 @@
                         {% endif %}
                 {% endif %}
                 
-                {% if is_granted('ROLE_SUPER_ADMIN')  %}
+                {% if is_granted('ROLE_SUPER_ADMIN') and activate_facturation    %}
                     {% include "BackOffice/Etablissement/inc_td_mode_cotisation.html.twig"    %}
                 {% endif %}
                 
@@ -140,7 +145,7 @@
                 
                 
                 
-                {% if is_granted('ROLE_SUPER_ADMIN') and not app.user.IsCreai  %}
+                {% if is_granted('ROLE_SUPER_ADMIN') and not app.user.IsCreai  and activate_creai  %}
                     {% if etablissement.creaiCascade is empty %}
                         <td class='danger small'>{{ etablissement.creaiCascade}}</td>
                     {% else  %}

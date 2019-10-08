@@ -8,21 +8,43 @@
     
 {% if etablissement is not defined %}
 
-    {% if app.user.isGestionnaire and appVersion>'1.0.0' %}
+    {% if app.user.isGestionnaire and appVersion>'1.0.0' and advanced_gesionnaire %}
             <h2> Par public</h2>
                 <div class="row">
 
-                        {% for public in app.user.GestionnaireReferentielsPublic %}
+                        {% for referentielPublic in app.user.GestionnaireReferentielsPublic %}
 
                                   <div class="col-sm-6">
-                                      <div class="panel panel-primary">
-                                          <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_referentiel_menu", {'id' : public.id }) }}">{{public}}</a></h3></div>
+                                      <div id='loader_{{referentielPublic.id}}' class="panel panel-primary">
+                                          <div class="panel-heading"><h3 class="panel-title"> <a href="{{ path("pericles3_synthese_referentiel_menu", {'id' : referentielPublic.id }) }}">{{referentielPublic}}</a></h3></div>
                                               <div class="panel-body">
-                                                    <div class="GraphSyntheseContainer">    
-                                                            <canvas id="chartCanvasEtablissements_{{public.id}}"  height="220" width="220"></canvas>
-                                                  </div>
+                                                <div class="GraphSyntheseContainer">    
+                                                            <canvas id="chartCanvasEtablissements_{{referentielPublic.id}}"  height="220" width="220"></canvas>
+                                                </div>
+                                                  
+        {% set synthese = 'synthese' %}
+        <div class="row">
+            <div class="col-sm-6">
+              <a  href="javascript:genere_document_referentiel('{{synthese}}','doc',{{referentielPublic.id}});" class = "btn  btn-link full-width">(Re)Générer le DOC</a>
+                <a  id='{{synthese}}_{{referentielPublic.id}}_doc'  class = "lien_synt btn  btn-danger full-width"  target='blank' 
+                    href='{{ path("arsene_synthese_getpath_referentiel", {'id':referentielPublic.id,'synthese_type':synthese,'synthese_extension':'doc'}) }}'>Télécharger le DOC
+                </a>
+            </div>
+            <div class="col-sm-6">
+            <a  href="javascript:genere_document_referentiel('{{synthese}}','pdf',{{referentielPublic.id}});" class = "btn  btn-link full-width">(Re)Générer le PDF</a>
+            <a  id='{{synthese}}_{{referentielPublic.id}}_pdf'  class = "lien_synt  btn  btn-danger full-width"  target='blank' 
+                href='{{ path("arsene_synthese_getpath_referentiel", {'id':referentielPublic.id,'synthese_type':synthese,'synthese_extension':'pdf'}) }}'>Télécharger le PDF</a> 
+            </div>
+        </div>
+
+
+                
+                            
                                           </div>
                                       </div>
+                                                  
+                                     
+                                                  
                                   </div>
                         {% endfor %}    
 
@@ -194,8 +216,9 @@
             {% endfor %}
         {% endif %}
 
+    {% set wgraph =false%}
+    {% include "Synthese/inc_javascritp_export_referentiel.js.twig" %}
+
 
            </script>
-
 {% endblock %}
-

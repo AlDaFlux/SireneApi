@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="gestionnaire")
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\GestionnaireRepository")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
+ * @Gedmo\Loggable
  */
 class Gestionnaire
 {
@@ -36,6 +37,7 @@ class Gestionnaire
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="nom", type="string", length=255)
      */
     private $nom;
@@ -43,6 +45,7 @@ class Gestionnaire
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="adresse", type="string", length=255, nullable=true)
      */
     private $adresse;
@@ -50,6 +53,7 @@ class Gestionnaire
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="codePostal", type="string", length=255, nullable=true)
      */
     private $codePostal;
@@ -57,6 +61,7 @@ class Gestionnaire
       /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="ville", type="string", length=255, nullable=true)
      */
     private $ville;
@@ -65,6 +70,7 @@ class Gestionnaire
      /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $tel;
@@ -179,6 +185,12 @@ class Gestionnaire
     private $dateLastConnect;
 
 
+    /**
+     * @ORM\OneToMany(targetEntity="Pericles3Bundle\Entity\DemandeEtablissement",mappedBy="gestionnaire")
+     */
+    private $demandesEtablissementGestionnaireExistant;
+    
+    
     
     
     
@@ -464,6 +476,18 @@ class Gestionnaire
         return count($this->users);
     }
     
+    public function getIfOneUserNotConeccted()
+    {
+        if ($this->getNbUsers()==1)
+        {
+            if (! $this->users[0]->getDateLastConnect())
+            {
+                return($this->users[0]);
+            }
+        }
+    }
+    
+    
     public function getUsersEtablissements()
     {
         $users=  new \Doctrine\Common\Collections\ArrayCollection();
@@ -742,6 +766,13 @@ class Gestionnaire
     
     
     
+    public function getFinessEtablissements()
+    {
+        if ($this->getFiness()) { return($this->getFiness()->GetEtablissements());} 
+    }
+    
+    
+    
     
 
     /**
@@ -801,6 +832,13 @@ class Gestionnaire
     {
         return $this->factures;
     }
+    
+    public function getNbFactures()
+    {
+        return count($this->factures);
+    }
+    
+    
 
     /**
      * Add facturePresta
@@ -1064,6 +1102,118 @@ class Gestionnaire
         return $this->dateLastConnect;
     }
 
+    
+    
+
+    /**
+     * Add demandesEtablissementGestionnaireExistant
+     *
+     * @param \Pericles3Bundle\Entity\DemandeEtablissement $demandesEtablissementGestionnaireExistant
+     *
+     * @return Gestionnaire
+     */
+    public function addDemandesEtablissementGestionnaireExistant(\Pericles3Bundle\Entity\DemandeEtablissement $demandesEtablissementGestionnaireExistant)
+    {
+        $this->demandesEtablissementGestionnaireExistant[] = $demandesEtablissementGestionnaireExistant;
+
+        return $this;
+    }
+
+    /**
+     * Remove demandesEtablissementGestionnaireExistant
+     *
+     * @param \Pericles3Bundle\Entity\DemandeEtablissement $demandesEtablissementGestionnaireExistant
+     */
+    public function removeDemandesEtablissementGestionnaireExistant(\Pericles3Bundle\Entity\DemandeEtablissement $demandesEtablissementGestionnaireExistant)
+    {
+        $this->demandesEtablissementGestionnaireExistant->removeElement($demandesEtablissementGestionnaireExistant);
+    }
+
+    /**
+     * Get demandesEtablissementGestionnaireExistant
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDemandesEtablissementGestionnaireExistant()
+    {
+        return $this->demandesEtablissementGestionnaireExistant;
+    }
+    
+    public function getDemandesEtablissementGestionnaireExistantNonFini()
+    {
+        $demandes=new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->getDemandesEtablissementGestionnaireExistant() as $demande)
+        {
+            if (! $demande->getEtat()->IsFini()) { $demandes->add($demande); }
+        }
+        return $demandes;
+    }
+    
+    
+    
+    public function getNbDemandesEtablissementGestionnaireExistantNonFini()
+    {
+        return count($this->getDemandesEtablissementGestionnaireExistantNonFini());
+    }
+    
+    public function getDemandesEtablissementGestionnaireExistantNonFiniLastDate()
+    {
+        $demandes=$this->getDemandesEtablissementGestionnaireExistantNonFini();
+        $lastDate=new \DateTime("2000-01-01");
+        if ($demandes)
+        {
+            foreach ($demandes as $demande)
+            {
+                if ($demande->GetDateDemande()>$lastDate)
+                {
+                    $lastDate=$demande->GetDateDemande();
+                }
+            }
+            return ($lastDate);
+        }
+        else
+        {
+            return (null);
+        }
+
+    }
+    
+    
+    
+    public function getDemandesEtablissementGestionnaireExistantDevis()
+    {
+        $demandes=new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->getDemandesEtablissementGestionnaireExistant() as $demande)
+        {
+            if ($demande->getEtat()->IsDevis()) { $demandes->add($demande); }
+        }
+        return $demandes;
+    }
+        public function getNbDemandesEtablissementGestionnaireExistantDevis()
+    {
+        return count($this->getDemandesEtablissementGestionnaireExistantDevis());
+    }
+    
+
+    
+    
+    public function getNbDemandesEtablissementGestionnaireExistant()
+    {
+        return count($this->demandesEtablissementGestionnaireExistant);
+    }
+    
+    
+    public function getGestionnaireExistantEtatIdEtablissements()
+    {
+        $etat=3;
+        foreach ($this->getDemandesEtablissementGestionnaireExistant()  as $Demande)
+        {
+            $etat=min($Demande->getEtat()->GetId(),$etat);
+        }
+        return $etat;
+    }
+    
+    
     
     
 }

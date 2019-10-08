@@ -23,7 +23,18 @@
             <tr>
                 <th>Finess</th>
                 {% if gestionnaire.finess %}
-                                <td class='alert-success'><a href="{{ path('backoffice_gestionnaire_finess_show', { 'id': gestionnaire.finess.codeFiness }) }}">{{ gestionnaire.finess}}</a></td>
+                                <td class='alert-success'>
+                                    <a href="{{ path('backoffice_gestionnaire_finess_show', { 'id': gestionnaire.finess.codeFiness }) }}">{{ gestionnaire.finess}}</a>
+
+                                    
+                                    {%  if  is_granted('ROLE_MEGA_ADMIN') %}
+                                    <i data-invite="Voulez-vous supprimer définitivement la liason entre <b>{{ gestionnaire }}</b> et son finess <b>{{ gestionnaire.finess.codeFiness }}</b> ?"
+                                data-url_delete="{{ path('backoffice_gestionnaire_unlinkfiness', { 'id': gestionnaire.id}) }}" 
+                               class='btn btn-danger DeleteBoxBefore glyphicon glyphicon-trash'></i> 
+                                    {%  endif %}
+                                </td>
+                                
+                                
                 {% else %}
                 <td class='alert-danger'>
                         {% if is_granted('ROLE_SUPER_ADMIN_GESTIONNAIRE') %}

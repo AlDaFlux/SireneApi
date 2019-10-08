@@ -17,6 +17,7 @@ use \Datetime;
  *
  * @ORM\Table
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\FactureRepository")
+ * @Gedmo\Loggable
  */
 class Facture
 {
@@ -51,6 +52,7 @@ class Facture
     /** 
      * @var boolean
      *
+     * @Gedmo\Versioned
      * @ORM\Column(type="boolean")
      */
     private $concerneGestionnaire;
@@ -68,6 +70,7 @@ class Facture
     /** 
      * @var boolean
      *
+     * @Gedmo\Versioned
      * @ORM\Column(type="boolean")
      */
     private $nonRenouvelable;
@@ -77,6 +80,7 @@ class Facture
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $libelle;
@@ -85,6 +89,7 @@ class Facture
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $remise;
@@ -93,6 +98,7 @@ class Facture
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $remise_libelle;
@@ -102,6 +108,7 @@ class Facture
     /** 
      * @var boolean
      *
+     * @Gedmo\Versioned
      * @ORM\Column(type="integer")
      */
     private $finalise;
@@ -239,6 +246,39 @@ class Facture
      * @ORM\OneToMany(targetEntity="Pericles3Bundle\Entity\FacturePresta", mappedBy="facture",orphanRemoval=true, cascade={"all"})
      */
     private $facturePrestas;
+
+    
+     /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $contactFacturationNom;
+
+ 
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, unique=false, nullable=true)
+     * @Assert\Email(
+     *     message = "L'email '{{ value }}' n'est pas valide.",
+     *     checkMX = true
+     * )
+     */
+    private $contactFacturationEmail;
+    
+    
+    
+     /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $contactFacturationTelephone;
+    
+    
+    
+    
 
 
    
@@ -879,6 +919,26 @@ class Facture
         }
     }
     
+    Function OneEtablissement()
+    {
+        $etab=null;
+        foreach($this->getFacturePrestas() as $presta)
+        {
+            if ($presta->getEtablissement())
+            {
+                if ($etab==null)
+                {
+                    $etab=$presta->getEtablissement();
+                }
+                elseif($etab!=$presta->getEtablissement())
+                {
+                    return(null);
+                }
+            }
+        }
+        return($etab);
+    }
+    
     Function getHasNotEtablissement(\Pericles3Bundle\Entity\Etablissement $etab)
     {
         return(! $this->getHasEtablissement($etab));
@@ -975,7 +1035,7 @@ class Facture
         return $this->finalise;
     }
     
-    public function getEstFinalise()
+    public function IsFinalised()
     {
         return $this->finalise==1;
     }
@@ -1195,4 +1255,90 @@ class Facture
     {
         return $this->updatedBy;
     }
+
+    /**
+     * Set contactFacturationNom
+     *
+     * @param string $contactFacturationNom
+     *
+     * @return Facture
+     */
+    public function setContactFacturationNom($contactFacturationNom)
+    {
+        $this->contactFacturationNom = $contactFacturationNom;
+
+        return $this;
+    }
+
+    /**
+     * Get contactFacturationNom
+     *
+     * @return string
+     */
+    public function getContactFacturationNom()
+    {
+        return $this->contactFacturationNom;
+    }
+
+    /**
+     * Set contactFacturationEmail
+     *
+     * @param string $contactFacturationEmail
+     *
+     * @return Facture
+     */
+    public function setContactFacturationEmail($contactFacturationEmail)
+    {
+        $this->contactFacturationEmail = $contactFacturationEmail;
+
+        return $this;
+    }
+
+    /**
+     * Get contactFacturationEmail
+     *
+     * @return string
+     */
+    public function getContactFacturationEmail()
+    {
+        return $this->contactFacturationEmail;
+    }
+
+    /**
+     * Set contactFacturationTelephone
+     *
+     * @param string $contactFacturationTelephone
+     *
+     * @return Facture
+     */
+    public function setContactFacturationTelephone($contactFacturationTelephone)
+    {
+        $this->contactFacturationTelephone = $contactFacturationTelephone;
+
+        return $this;
+    }
+
+    /**
+     * Get contactFacturationTelephone
+     *
+     * @return string
+     */
+    public function getContactFacturationTelephone()
+    {
+        return $this->contactFacturationTelephone;
+    }
+    
+    public function getContact()
+    {
+        $coord= array();
+        if ($this->contactFacturationNom) $coord[]=$this->contactFacturationNom;
+        if ($this->contactFacturationEmail) $coord[]=$this->contactFacturationEmail;
+        if ($this->contactFacturationTelephone) $coord[]=$this->contactFacturationTelephone;
+        if (count($coord))
+        {
+            return(implode(" - ", $coord));
+        }
+    }
+    
+
 }

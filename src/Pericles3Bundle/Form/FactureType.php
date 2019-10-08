@@ -14,13 +14,28 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class FactureType extends AbstractType
 {
+    
+       private $contact_facturation;
+
+        
+        
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('numFacture');
+
+//        $builder->add('numFacture');
     
+        
+        if ( $options['contact_facturation'])
+        {
+            $builder->add('contactFacturationNom');
+            $builder->add('contactFacturationEmail');
+            $builder->add('contactFacturationTelephone');
+        }
+        else
+        {
         $builder->add('dateEmission', DateType::class, array(
                                                 'label' => "Date d'émission" ,
                                                 'widget' => 'single_text',
@@ -55,13 +70,19 @@ class FactureType extends AbstractType
                                                 ));
         $builder->add('MoyenPaiement');
         $builder->add('commentaire');
+        $builder->add('contactFacturationNom');
+        $builder->add('contactFacturationEmail');
+        $builder->add('contactFacturationTelephone');
+        }
+        
     }/**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pericles3Bundle\Entity\Facture'
+            'data_class' => 'Pericles3Bundle\Entity\Facture',
+            'contact_facturation' => false,
         ));
     }
 

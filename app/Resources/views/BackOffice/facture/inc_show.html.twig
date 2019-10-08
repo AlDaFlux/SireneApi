@@ -16,15 +16,36 @@
             <tr>
             <th>Concerne</th>
             {% if facture.Concerne  %}
-                <td colspan='3' class='alert-success'>
+                <td colspan='2' class='alert-success'>
             {% else  %}
-                <td colspan='3' class='alert-danger'>
+                <td colspan='2' class='alert-danger'>
             {% endif %}
                 {% if facture.ConcerneTypeLib =='GESTIONNAIRE' %}
-                    <a   href='{{ path('backoffice_gestionnaire_show', {'id': facture.Concerne.id}) }}'>{{'gestionnaire' | get_icon | raw }} {{facture.Concerne}}  </a> 
+                    <a   href='{{ path('backoffice_gestionnaire_show', {'id': facture.Concerne.id}) }}'>{{'gestionnaire' | get_icon | raw }} {{facture.Concerne}}  </a> </td>
+                    
+                    {% if facture.NotFinalized and is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') %}
+                        {% set etab=facture.OneEtablissement  %}
+                        {%  if etab %}
+                            <td> <span data-invite="Envoyer la facture à l'établissement {{ etab }} plutot qu'a qu'au gestionnaire {{ facture.Concerne }}  ? Cliquez sur Supprimmer pour valider"
+                                                data-url_delete="{{ path('facture_changeetablissement', {'numFacture': facture.numFacture,'id_etablissement':etab.id}) }}"  
+                                               class='btn btn-warning DeleteBoxBefore'>{{'etablissement' | get_icon | raw }}</span> </td>
+                        {%  endif %}
+                    {% endif  %}
+
                     
                 {% else %}
-                    <a   href='{{ path('backoffice_etablissement_view', {'id':facture.Concerne.id}) }}'>{{'etablissement' | get_icon | raw }} {{facture.Concerne}} </a> 
+                    <a   href='{{ path('backoffice_etablissement_view', {'id':facture.Concerne.id}) }}'>{{'etablissement' | get_icon | raw }} {{facture.Concerne}} </a> </td>
+
+                    {% if facture.NotFinalized and is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') %}
+                        {%  if facture.Concerne.Gestionnaire %}
+                            
+                            
+        <td>  <span data-invite="Envoyer la facture au gestionnaire {{ facture.Concerne.Gestionnaire }} plutot qu'a l'établissement {{ facture.Concerne }}  ? Cliquez sur Supprimmer pour valider"
+                                                data-url_delete="{{ path('facture_changetogestionnaire', {'numFacture': facture.numFacture,'id_gestionnaire':facture.Concerne.Gestionnaire.id}) }}"  
+                                               class='btn btn-warning DeleteBoxBefore'>{{'gestionnaire' | get_icon | raw }}</span> </td>
+                        {% endif  %}
+                    {% endif  %}
+                    
                 {% endif  %}
                 </td>
                 
@@ -95,6 +116,15 @@
             <tr>
                 <th>Commentaire</th>
                 <td colspan='3'>{{ facture.commentaire }}</td>
+            </tr>
+            <tr>
+                <th>Contact</th>
+                <td colspan='2'>{{ facture.contact}}</td>
+                <td>
+                    {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') %}
+                        <a class='btn  btn-warning' href="{{ path('facture_edit_contact', { 'numFacture': facture.numFacture }) }}"><i class='glyphicon glyphicon-pencil'></i></a>
+                    {% endif  %}
+                </td>
             </tr>
         </tbody>
     </table>

@@ -67,8 +67,28 @@ class TrashController extends AdminController
         $domaines_desuet =$em->getRepository('Pericles3Bundle:Domaine')->FindReferentielDesuet();
         
         return $this->render('BackOffice/Trash/domaines.html.twig', ['domaines'=>$domaines,'domaines_desuet'=>$domaines_desuet]);
-        
     }
+    
+    
+    
+    /**
+     * Lists all facture entities.
+     *
+     * @Route("/objectifopertionnelanalyse", name="oo_analyse")
+     * @Method("GET")
+     */
+    public function analyseOOAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        
+        
+        $gestionnaire =$em->getRepository('Pericles3Bundle:Gestionnaire')->findOneById(61); // prado
+        
+        $objectifOperationnels =$em->getRepository('Pericles3Bundle:ObjectifOperationnel')->findByGestionnaireGestionnaire($gestionnaire );
+        return $this->render('BackOffice/Trash/analyse_objectifs.html.twig', ['objectifOperationnels'=>$objectifOperationnels]);
+    }
+    
+    
     
     
       /**

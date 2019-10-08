@@ -104,7 +104,7 @@
                                             data-zone_to_reload_whithid='#{{liste_objectif_toreload}}'
                                            class='DeleteBoxBefore glyphicon glyphicon glyphicon-remove iconhead   orangeText active'
                                            ></i> 
-                        {% elseif objectifOperationnel.criteres | length == 1 %}
+                        {% elseif objectifOperationnel.criteres | length == 1 and false %}
                             <i  title="Supprimer la liason entre l'objectif opérationnel et son critere {{objectifOperationnel.getLonelyCritere}}"  data-invite="Supprimer la liason entre l'objectif opérationnel et son critere {{objectifOperationnel.getLonelyCritere}} ? (cela ne supprimera pas l'objectif lui meme) ?"
                                            data-url_delete_ajax="{{ path('pericles3_ooa_unlink_critere_ajax', {'id': objectifOperationnel.id,'id_critere': objectifOperationnel.getLonelyCritere.id}) }}" 
                                             data-zone_to_reload_whithid='#{{liste_objectif_toreload}}'

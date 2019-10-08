@@ -20,11 +20,47 @@
                 </tbody>
             </table>
     </div>
-        <a class='btn btn-danger full-width'  href="{{ path('demande_gestionnaire_show', { 'id': demandeEtablissement.demandeGestionnaire.id }) }}">Voir la demande gestionnaire pour traiter les établissements</a>                    
+        <a class='btn btn-danger full-width btn-with-big-ico'  href="{{ path('demande_gestionnaire_show', { 'id': demandeEtablissement.demandeGestionnaire.id }) }}">
+            Voir la demande gestionnaire pour traiter les établissements
+             <i class='glyphicon glyphicon-king'></i>
+        </a>                    
         <p>
         <p>
                         
 {% endif %}
+{% if demandeEtablissement.Gestionnaire is not empty %}
+  <div class="panel panel-danger">
+        <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-king'></i> Gestionnaire </h3> </div>
+            <table class='table table-bordered'>
+                <tbody>
+                    <tr>
+                        <th>Gestionnaire</th>
+                        <td>  <a class=''  href="{{ path('backoffice_gestionnaire_show', { 'id': demandeEtablissement.Gestionnaire.id }) }}">{{ demandeEtablissement.Gestionnaire}}</a></td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+
+    {% if is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE')  and demandeEtablissement.Gestionnaire is not empty %}
+
+        {% if demandeEtablissement.Gestionnaire.getGestionnaireExistantEtatIdEtablissements != 3 %}
+            <a class='btn btn-danger full-width btn-with-big-ico'  href="{{ path('backoffice_gestionnaire_show', { 'id': demandeEtablissement.Gestionnaire.id }) }}">
+                Voir le gestionnaire <b>{{ demandeEtablissement.Gestionnaire }}</b> pour créer les établisements
+                <i class='glyphicon glyphicon-king'></i>
+            </a>                    
+        {% endif %}
+        <p><br>
+        <a class='btn btn-primary full-width'  href="{{ path('demande_gestionnaire_existant_id', { 'id': demandeEtablissement.Gestionnaire.id }) }}">Voir les demandes en cours pour le gestionnaire <b>{{ demandeEtablissement.Gestionnaire }}</b></a>
+    {% else %}
+        ++
+            <a class='btn btn-danger full-width btn-with-big-ico'  href="{{ path('demande_gestionnaire_existant_id', { 'id': demandeEtablissement.Gestionnaire.id }) }}">
+                Voir les demandes en cours pour le gestionnaire <b>{{ demandeEtablissement.Gestionnaire }}</b>
+                <i class='glyphicon glyphicon-king'></i>
+            </a>                    
+    {% endif %}
+{% endif %}
+        <p>
+        <p>
             
             
             {% include "BackOffice/Demande/Etablissement/inc_show.html.twig" %} 
@@ -61,29 +97,45 @@
                         </div> 
                     {% endif %}
                 </div> 
-
-
-            
-
-    <li>{{demandeEtablissement.finess}}
-    <li>{{demandeEtablissement.finessCode}}
-        
-        
-        
+  
+         
 {% if demandeEtablissement.finess is not empty %}              
         {% set finess  = demandeEtablissement.finess %}              
             
             <p>
-                <div class='panel panel-primary'><div class='panel-heading '>FINESS </div>
+
+            
+                <div class='panel panel-primary'>
+                    <div class='panel-heading'><a data-toggle="collapse" href="#collapse_finess"><i class='glyphicon glyphicon-plus'></i> FINESS </a></div>        
+                    <div  id="collapse_finess" class='panel-body panel-collapse collapse'>
                         {% include "BackOffice/finess/inc_show.html.twig" %} 
+                    </div>
                 </div>
              
-            
+
+{% endif%}
+             
                 {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT') %}
-                
+
+
+                    
+                    
+                    {% if demandeEtablissement.etablissement %}
+                        
+                    {% else  %}
+                        <a class='btn btn-with-big-ico btn-success full-width' href="{{ path('demande_etablissement_create_bydemande', { 'id': demandeEtablissement.id }) }}">
+                                    Créer l'établissement....
+                                     <i class='glyphicon glyphicon-plus'></i>
+                                     
+                                </a>
+                    {% endif %}
+
+
+                    
                 {% else %}
                     {% if demandeEtablissement.creai == app.user.creai %}
 
+                        {% if demandeEtablissement.etat.id == 0  %}
 
                         <div class="row">
                              <div class="col-sm-4">
@@ -92,14 +144,26 @@
                              <div class="col-sm-4">
                                 <a class='btn  btn-danger full-width' href="{{ path('demande_etablissement_delete_get', { 'id': demandeEtablissement.id }) }}">Annuler la demande</a>
                              </div>
-                             <div class="col-sm-4">
-                                <a class='btn  btn-success full-width' href="{{ path('demande_etablissement_valide', { 'id': demandeEtablissement.id }) }}">Valider la demande</a>
-                             </div>
+                            {% if demandeEtablissement.etat.id == 0  %}
+                                <div class="col-sm-4">
+                                   <a  class='btn btn-link full-width' href="{{ path('demande_etablissement_devis', { 'id': demandeEtablissement.id } ) }}"> Imprimer un devis</a>
+                                </div>
+                            {% endif%}
+
+                                
+
                         </div>
+
                     
+                            <p><br>
+                                <a class='btn btn-with-big-ico btn-success full-width' href="{{ path('demande_etablissement_valide', { 'id': demandeEtablissement.id }) }}">
+                                    Valider la demande
+                                     <i class='glyphicon glyphicon-ok'></i>
+                                     
+                                </a>
+                    {% endif%}
+
                 {% endif%}
 
-        {% endif%}
- 
 {% endif %}              
 {% endblock %}

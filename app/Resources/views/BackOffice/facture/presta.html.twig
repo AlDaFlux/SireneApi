@@ -69,12 +69,15 @@
     
     <h2>{{presta.concerne}}</h2>
     
+    
+    
           {% include "BackOffice/Etablissement/inc_show.html.twig" with {'etablissement':presta.concerne}%} 
  
     
     
 {% else  %}
-          {% include "BackOffice/facture/presta_list.html.twig" %} 
+
+    {% include "BackOffice/facture/presta_list.html.twig" %} 
     
                       
     

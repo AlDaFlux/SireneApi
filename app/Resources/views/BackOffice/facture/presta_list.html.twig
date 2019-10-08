@@ -21,7 +21,19 @@
         </tr>
     </thead>
     <tbody>
+    {% set  nb_prestas = 0  %}
+    {% set  nb_renouvellement = 0  %}
+    {% set  montant_total = 0  %}
+    
+    
     {% for presta in prestas %}
+
+    {% set  nb_prestas = nb_prestas + 1  %}
+    {%  if presta.Renouvellement %}
+        {% set  nb_renouvellement = nb_renouvellement + 1  %}
+    {% endif %}
+
+
         
             
             {% if facture is defined %}
@@ -88,13 +100,38 @@
                                 {% endif %}
                             </td>
 
-                            <td>{{presta.Montant}} €</td>
+
+                {% if presta.facture.Avoir %}
+                   <td class='alert-danger facture-annullee'>{{presta.Montant}} €</td>
+                {% else %}
+                    {% set  montant_total = montant_total + presta.Montant  %}
+                    <td>{{presta.Montant}} €</td>
+                {% endif %}
+
+
             {% if  is_granted('ROLE_MEGA_ADMIN')  %}
                  <td> <a href="{{ path('facture_presta_edit', { 'id': presta.id }) }}"><i alt='modifier' class='glyphicon glyphicon-pencil'></i></a> </td>
             {% endif %}
             </tr>
     {% endfor %}
     </tbody>
+    <tfoot>
+        
+          <tr>
+            <th>Total</th>
+            <th>{{ nb_prestas }}</th>
+            <th>{{ nb_renouvellement }}</th>
+            {%  if etablissement is not defined  %}
+            <td colspan='2'></td>
+            {%  endif  %}
+            <td colspan='6'>  
+            <th>{{ montant_total }} €</th>
+            {% if  is_granted('ROLE_MEGA_ADMIN')  %}
+                <td></td>
+            {% endif %}
+        </tr>
+    </tfoot>
+    
 </table>
     
     

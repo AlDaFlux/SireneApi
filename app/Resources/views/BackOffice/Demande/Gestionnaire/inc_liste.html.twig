@@ -9,6 +9,7 @@
                 <th>Date</th>
                 <th>Demandeur</th>
                 <th>Gestionnaire</th>
+                <th>Gestionnaire<br>{{ application_name }}</th>
                 <th>Email</th>
                 {% if  targetCreai  is empty %}
                     <th>Creai</th>
@@ -40,6 +41,17 @@
                 <td>
                         {{ demandeGestionnaire.GestionnaireNom }} 
                 </td>
+                    {%  if demandeGestionnaire.Gestionnaire %}
+                        <td>
+                            <a href="{{ path('backoffice_gestionnaire_show', { 'id': demandeGestionnaire.gestionnaire.id }) }}">   {{ 'gestionnaire' | get_icon | raw  }}   {{ demandeGestionnaire.Gestionnaire}} </a>
+                        </td>
+                    {% else  %}
+                        {% if demandeGestionnaire.etat.id == 3 %}
+                            <td title="Demande finie mais pas de gestionnaire" class='alert-danger'></td>  
+                        {% else  %}
+                            <td title="Pas de gestionnaire, demande en cours..." class='alert-warning'></td>  
+                        {% endif %}
+                    {% endif %}
                 
                 <td>{{ demandeGestionnaire.email }}</td>
 

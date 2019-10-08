@@ -2,12 +2,16 @@
 
 namespace Pericles3Bundle\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Constat
  *
  * @ORM\Table(name="constat")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\ConstatRepository")
  */
 class Constat
@@ -24,6 +28,7 @@ class Constat
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="commentaire", type="text")
      */
     private $commentaire;

@@ -50,8 +50,14 @@
                   <table class='table table-bordered'>
                       <tbody>
                           {% for etablissement_sans_facture in etablissements_sans_facture%}
+                              {% if etablissement_sans_facture.HasGestionnaireSansFacture %} 
+                              <tr class='grisee'>
+                                {% else  %}
                               <tr>
-                                  <td><a href="{{ path('backoffice_etablissement_view', { 'id': etablissement_sans_facture.id }) }}">{{etablissement_sans_facture}}</a</td>
+                                {% endif  %}
+                                  <td><a href="{{ path('backoffice_etablissement_view', { 'id': etablissement_sans_facture.id }) }}">{{etablissement_sans_facture}}</a>
+                                      <p class='small'>{% if etablissement_sans_facture.HasGestionnaireSansFacture %} ({{etablissement_sans_facture.gestionnaire}})</p> {% endif  %}
+                                  </td>
                                 </tr>
                           {% endfor%}
                       </tbody>

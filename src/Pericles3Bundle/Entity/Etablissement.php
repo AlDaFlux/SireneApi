@@ -18,6 +18,7 @@ use Gedmo\Blameable\Traits\BlameableEntity;
  * Etablissement
  *
  * @ORM\Table(name="etablissement")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\EtablissementRepository")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
@@ -40,6 +41,7 @@ class Etablissement
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="nom", type="string", length=255)
      */
     private $nom;
@@ -47,6 +49,7 @@ class Etablissement
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="adresse", type="string", length=255, nullable=true)
      */
     private $adresse;
@@ -54,6 +57,7 @@ class Etablissement
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="code_postal", type="string", length=255, nullable=true)
      */
     private $codePostal;
@@ -61,6 +65,7 @@ class Etablissement
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="ville", type="string", length=255, nullable=true)
      */
     private $ville;
@@ -77,6 +82,7 @@ class Etablissement
     /**
      * @var int
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="capacite_acceuil", type="integer", nullable=true)
      */
     private $capaciteAcceuil;
@@ -84,6 +90,7 @@ class Etablissement
     /**
      * @var int
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="hebergement_complet", type="integer", nullable=true)
      */
     private $hebergementComplet;
@@ -91,6 +98,7 @@ class Etablissement
     /**
      * @var int
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="acceuil_jour", type="integer", nullable=true)
      */
     private $acceuilJour;
@@ -1214,6 +1222,8 @@ class Etablissement
     {
         return $this->objectifsStrategique;
     }
+                
+
     
     public function getNbObjectifsStrategique()
     {
@@ -2003,6 +2013,22 @@ class Etablissement
         return $this->objectifsOperationnel;
     }
     
+    public function getObjectifsOperationnelOrphan() 
+    {
+        $objectifs=  new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->getObjectifsOperationnel() as $objectif)
+        {
+            if (! $objectif->getObjectifStrategique())
+            {
+                $objectifs->add($objectif);
+            }
+            
+        }
+        return $objectifs;
+    }
+    
+    
+    
     public function getNbConstats()
     {
         $nb=0;
@@ -2325,6 +2351,14 @@ class Etablissement
         return $this->category->getId()==6;
     }
                 
+    public function GetImpaye()
+    {
+        if ($this->category)
+        {
+           return $this->category->getId()==7;
+        }
+    }
+                
                 
     
     
@@ -2554,6 +2588,17 @@ class Etablissement
         return(count($this->getFacturesNotAVoir()));
                 
     }
+    
+    public function HasGestionnaireSansFacture()
+    {
+        if ($this->getGestionnaire())
+        {
+            return(! ($this->getGestionnaire()->getNbFactures()));
+        }
+    }
+    
+    
+    
     
     
     
@@ -2959,5 +3004,16 @@ class Etablissement
         return $this->dateLastConnect;
     }
 
+    
+    public function getIfOneUserNotConeccted()
+    {
+        if ($this->getNbUsers()==1)
+        {
+            if (! $this->users[0]->getDateLastConnect())
+            {
+                return($this->users[0]);
+            }
+        }
+    }
     
 }

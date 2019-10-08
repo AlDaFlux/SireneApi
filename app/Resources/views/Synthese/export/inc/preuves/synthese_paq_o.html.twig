@@ -9,17 +9,12 @@
     {% include "Synthese/export/inc/export.css.html.twig" %}
 </HEAD>
 <BODY> 
-
-    
+ 
     {% include "Synthese/export/inc/page_de_garde.html.twig" %}
    
      {% include "Synthese/export/inc/inc_etablissement.html.twig" %}
-     
-     
-
+      
      <h1>Plan d'Amélioration de la qualité<br>Objectifs opérationnels</h1>
-
-
  
 {% for objectif  in etablissement.objectifsOperationnel %}
     <h2> {{ objectif }}

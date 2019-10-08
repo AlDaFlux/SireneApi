@@ -28,6 +28,12 @@ class FinessUpdateCommand extends ArseneCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        
+        $this->input=$input;
+        $this->output=$output;
+        
+        $exec=true;
+        
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getEntityManager();
         $em->getConnection()->getConfiguration()->setSQLLogger(null);
@@ -36,67 +42,84 @@ class FinessUpdateCommand extends ArseneCommand
         
         $force = $input->getOption('force');
 
+    
+        
+        $deletedWithDemande=$em->getRepository('Pericles3Bundle:Finess')->findSupprimerDansImportAvecDemande();
+        $deletedWithPericles=$em->getRepository('Pericles3Bundle:Finess')->findSupprimerDansImportAvecPericles();
         $deletedWithEtab=$em->getRepository('Pericles3Bundle:Finess')->findSupprimerDansImportAvecEtablissement();
+
+        
+        $gestionnaireDeletedWithGestionnaire=$em->getRepository('Pericles3Bundle:FinessGestionnaire')->findSupprimerDansImportAvecGestionnaire();
+        $gestionnaireDeletedWithDemande=$em->getRepository('Pericles3Bundle:FinessGestionnaire')->findSupprimerDansImportAvecDemande();
+        $gestionnaireDeletedWithPericles=$em->getRepository('Pericles3Bundle:FinessGestionnaire')->findSupprimerDansImportAvecPericles();
+        
+
+        if ($deletedWithDemande)
+        {
+            $output->writeln("<error> Des finess ont des demandes</error>");
+            $this->printFinesses($deletedWithDemande);
+            $exec=false;
+        }
+        if ($deletedWithPericles)
+        {
+            $output->writeln("<error> Des finess sont lés a des pericles</error>");
+            $this->printFinesses($deletedWithPericles);
+            $exec=false;
+        }
+        
         if ($deletedWithEtab)
         {
-            foreach ($deletedWithEtab as $finess)
-            {
-                $output->writeln("<error>Etablissement : ".$finess."</error>");
-                if ($force)
-                {
-               
-                    $demande=$finess->getDemandesEtablissement();
-                    if ($demande)
-                    {
-                        $demande->setCommentaireAncreai($demande->getCommentaireAncreai()." - Finess desuet : ".$finess);
-                        $demande->setFiness(null);
-                        $finess->setDemandesEtablissement(null);
-                        $em->persist($finess);
-                        $em->persist($demande);
-                        $em->flush();
-                    }
-                    $pericles=$finess->getPericles();
-                    
-                    print_r(count($pericles));
-                            
-                    if ($pericles)
-                    {
-                        $output->writeln("<error>Pericles: ".$finess."</error>");
-                        foreach ($pericles as $pericle)
-                        {
-                            print_r(count($pericle));
-                            $output->writeln("<error>Pericle: ".$pericle."</error>");
-                            $pericle->setFinessEtablissement(null);
-                            $finess->removePericle($pericle);
-                            $em->persist($finess);
-                            $em->persist($pericle);
-                            $em->flush();
-                        }
-                    }
-                    else
-                    {
-                        $output->writeln("<error>PAS pericles: </error>");
-
-                    }
-                    
-                    /*     $etablissement=$finess->GetEtablissement();
-                    $etablissement->setFiness(null);
-                    $finess->setEtablissement(null);
-                    $em->persist($finess);
-                    $em->persist($etablissement);
-                    $em->flush();
-*/
-                    
-                }
-            }
+            $output->writeln("<error> Des finess ont des établissements</error>");
+            $this->printFinesses($deletedWithEtab);
+            $exec=false;
+        }
+        
+        
+        
+        
+        
+        
+        if ($gestionnaireDeletedWithGestionnaire)
+        {
+            $output->writeln("<error> Des finess gestionnaire ont des gestionnaire</error>");
+            $this->printFinesses($gestionnaireDeletedWithGestionnaire, "Gestionnaire");
+            $exec=false;
+        }
+        
+        if ($gestionnaireDeletedWithDemande)
+        {
+            $output->writeln("<error> Des finess gestionnaire ont des demandes</error>");
+            $this->printFinesses($gestionnaireDeletedWithDemande, "Gestionnaire");
+            $exec=false;
+        }
+        if ($gestionnaireDeletedWithPericles)
+        {
+            $output->writeln("<error> Des finess gestionnaire sont lés a des pericles</error>");
+            $this->printFinesses($gestionnaireDeletedWithPericles, "Gestionnaire");
+            $exec=false;
+        }
+        
+        
+        
+        
+        if (! $exec && ! $force)
+        {
+             $output->writeln("<error>Mise à jour arreté ... uiliser --force</error>");
             return(0);
         }
+         
+        
+        foreach ($deletedWithDemande as $finess) {  $this->unlinkDemande($finess); }
+        foreach ($deletedWithPericles as $finess) { $this->unlinkPericles($finess); }
+        foreach ($deletedWithEtab as $finess) { $this->unlinkEtablissement($finess); }
 
         
-        return(0);
+        foreach ($gestionnaireDeletedWithDemande as $finess) {  $this->unlinkDemandeGestionnaire($finess); }
+        foreach ($gestionnaireDeletedWithPericles as $finess) { $this->unlinkPericlesGestionnaire($finess); }
+        foreach ($gestionnaireDeletedWithGestionnaire as $finess) { $this->unlinkGestionnaire($finess); }
+         
 
-        $deletedWithGestionnaire=$em->getRepository('Pericles3Bundle:FinessGestionnaire')->findSupprimerDansImportAvecGestionnaire();
-        
+        /*
         if ($deletedWithGestionnaire)
         {
         foreach ($deletedWithGestionnaire as $finess)
@@ -112,15 +135,8 @@ class FinessUpdateCommand extends ArseneCommand
                     $em->flush();
                 }
             }
-            return(0);
-        }            
-        
-
-
-//        $sql="SELECT * FROM etablissement";
-        $this->input=$input;
-        $this->output=$output;
-        
+        }            */
+  
         
        $sql="INSERT INTO departement (id, lib_departement) SELECT DISTINCT  finess_gestionnaire_import.departement_id, '???' FROM finess_gestionnaire_import  
 LEFT JOIN departement ON departement_id=departement.id
@@ -173,8 +189,136 @@ WHERE gestionnaire.finess_id IS NULL AND finess_gestionnaire_import.code_finess 
         $output->writeln("<info>supression des  gestionnaires !  </info>");
         $this->runSQL($sql);
  
+        
+  $sql="DELETE FROM `finess_gestionnaire` WHERE (finess_gestionnaire.code_finess NOT IN (SELECT finess.gestionnaire_id FROM finess) AND finess_gestionnaire.code_finess NOT IN (SELECT gestionnaire.finess_id FROM gestionnaire WHERE gestionnaire.finess_id IS NOT NULL));";
+    $this->runSQL($sql);
+    $output->writeln("Supression des pharmacies, etc...");
+
         $output->writeln("Fin de la mise a jour des finess ! ");
 
+    }
+    
+    
+    
+    function unlinkDemande($finess)
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+        $em = $doctrine->getEntityManager();
+        $demande=$finess->getDemandesEtablissement();
+        if ($demande)
+        {
+            $demande->setCommentaireAncreai($demande->getCommentaireAncreai()." - Finess desuet : ".$finess);
+            $demande->setFiness(null);
+            $finess->setDemandesEtablissement(null);
+            $em->persist($finess);
+            $em->persist($demande);
+            $em->flush();
+        }
+    }
+    
+    function unlinkEtablissement($finess)
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+        $em = $doctrine->getEntityManager();
+        $etablissememt=$finess->getEtablissement();
+        if ($etablissememt)
+        {
+            $etablissememt->setFiness(null);
+            $finess->setEtablissement(null);
+            $em->persist($finess);
+            $em->persist($etablissememt);
+            $em->flush();
+        }
+    }
+    
+    
+    function unlinkPericles($finess)
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+        $em = $doctrine->getEntityManager();
+        $pericles=$finess->getPericles();
+                    
+        if ($pericles)
+        {
+            $this->output->writeln("<error>Pericles: ".$finess."</error>");
+            foreach ($pericles as $pericle)
+            {
+                $this->output->writeln("<error>Pericle: ".$pericle."</error>");
+                $pericle->setFinessEtablissement(null);
+                $finess->removePericle($pericle);
+                $em->persist($finess);
+                $em->persist($pericle);
+                $em->flush();
+            }
+        }
+
+    }
+    
+    
+    
+    
+    
+    function unlinkDemandeGestionnaire($finess)
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+        $em = $doctrine->getEntityManager();
+        $demandes=$finess->getDemandesGestionnaire();
+        foreach ($demandes as $demande)
+        {
+            $demande->setCommentaireAncreai($demande->getCommentaireAncreai()." - Finess desuet : ".$finess);
+            $demande->setFiness(null);
+            $finess->removeDemandesGestionnaire($demande);
+            $em->persist($finess);
+            $em->persist($demande);
+            $em->flush();            
+        }
+    }
+    
+    function unlinkGestionnaire($finess)
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+        $em = $doctrine->getEntityManager();
+        $gestionnaire=$finess->getGestionnaire();
+        if ($gestionnaire)
+        {
+            $gestionnaire->setFiness(null);
+            $finess->setGestionnaire(null);
+            $em->persist($finess);
+            $em->persist($gestionnaire);
+            $em->flush();
+        }
+    }
+    
+    
+    function unlinkPericlesGestionnaire($finess)
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+        $em = $doctrine->getEntityManager();
+        $pericles=$finess->getPericles();
+                    
+        if ($pericles)
+        {
+            $this->output->writeln("<error>Pericles: ".$finess."</error>");
+            foreach ($pericles as $pericle)
+            {
+                $this->output->writeln("<error>Pericle: ".$pericle."</error>");
+                $pericle->setFinessGestionnaire(null);
+                $finess->removePericle($pericle);
+                $em->persist($finess);
+                $em->persist($pericle);
+                $em->flush();
+            }
+        }
+
+    }
+    
+    
+    function printFinesses($finesses, $lib="Etablissement")
+    {
+       foreach ($finesses as $finess)
+       {
+            $this->output->writeln("".$lib." : ".$finess."");
+       }        
     }
     
     

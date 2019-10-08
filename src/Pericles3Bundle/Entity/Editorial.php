@@ -2,6 +2,7 @@
 
 namespace Pericles3Bundle\Entity;
 
+
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Constat
  *
  * @ORM\Table(name="editorial")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\EditorialRepository")
  */
 class Editorial
@@ -27,6 +29,7 @@ class Editorial
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="titre", type="string")
      */
     private $titre;
@@ -36,6 +39,7 @@ class Editorial
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="commentaire", type="text")
      */
     private $commentaire;

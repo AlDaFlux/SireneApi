@@ -2,7 +2,7 @@
 {% block body %}{{ parent() }}
     <h2>Gestionnaire</h2>
     
-    <h3> Creation</h2>
+    <h3> Creation </h2>
 
 
     {{ form_start(form) }}
@@ -11,4 +11,39 @@
 
     {{ form_end(form) }}
 
+    {%  if link_sans_finess %}
+            <br>
+                <p>
+                <br>
+                <p>
+                <br>
+                <p>
+                    
+            <a class="btn btn-warning active  btn-block btn-with-big-ico"  href="{{ path('demande_gestionnaire_new_simple') }}">
+                Le gestionnaire n'est pas dans la base FINESS ?
+            
+                <i class='glyphicon glyphicon-question-sign'></i>
+                
+            </a>
+
+                
+    {%  endif  %}
+    
 {% endblock %}
+
+
+
+{% block javascripts %}
+    
+    
+    
+    <script> 
+        $('#demande_gestionnaire_finess').autocompleter({
+    url_list: '{{ path('pericles3_backoffice_formsearch_finess_gestionnaire') }}',
+    url_get: '{{ path('pericles3_backoffice_formsearch_get_finess_gestionnaire') }}_'
+});
+        
+        
+    </script>
+{% endblock %}
+

@@ -4,6 +4,9 @@
         Etablissement
     </h2>
 
+{% endblock %}
+
+{% block out_container  %}
 
     {% if targetCreai is not empty  %}
         <h3>{{targetCreai }}</h3>
@@ -14,7 +17,7 @@
         <p>
             
     {% if app.user.isCreai %}
-        <a class='btn btn-link full-width ' href="{{ path('demande_etablissement_new') }}">Nouvelle demande de création d'établissement</a>
+        <a class='btn btn-link full-width ' href="{{ path('demande_etablissement_new_byfiness') }}">Nouvelle demande de création d'établissement</a>
     {% endif  %}
 
 {% endblock %}

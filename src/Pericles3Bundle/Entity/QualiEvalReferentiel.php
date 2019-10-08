@@ -19,6 +19,7 @@ use Gedmo\Blameable\Traits\BlameableEntity;
  * Referentiel
  *
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\QualiEvalReferentielRepository")
+ * @Gedmo\Loggable
  */
 class QualiEvalReferentiel
 {

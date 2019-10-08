@@ -14,7 +14,9 @@
             {% if is_granted('ROLE_SUPER_ADMIN')   %}
                 <tr>
                 <th>Categorie </th>
-                    {% if etablissement.category.reel %}
+                    {% if etablissement.impaye %}
+                        <td class='alert alert-danger' title='{{ etablissement.category.commentaire}}'> {{ etablissement.category }}   : {{ etablissement.category.commentaire}} </td>
+                    {% elseif etablissement.category.reel %}
                       <td class='alert alert-info' title='{{ etablissement.category.commentaire}}'> {{ etablissement.category }}  </td>
                     {% else %}
                       <td class='alert alert-warning' title='{{ etablissement.category.commentaire}}'> {{ etablissement.category }}  </td>
@@ -38,6 +40,9 @@
                 <tr>
                 <th>Referentiel</th>  {% include "BackOffice/referentielpublic/inc_td.html.twig" with {'referentielPublic' : etablissement.referentielPublic }  %}</td>
             </tr><tr>
+                
+                
+                {%  if activate_finess %}
                 <th>FINESS</th>
                 
                 {% if  etablissement.codeFiness %}
@@ -50,13 +55,13 @@
                     </td>
                 {% else %}
                     <td class='alert-danger'>
-                        
                     {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT') %}
                         <a href='{{ path("backoffice_etablissement_linkfiness", {"id":  etablissement.id}) }}'>Lier à un finess</a>
                     {% endif %}
                         
                     </td>
     
+                {% endif %}
                 {% endif %}
                 {#
                 {% if  etablissement.codeFiness %}
@@ -86,6 +91,9 @@
                 <th>Departement</th>
                 <td>{{ etablissement.departement}}</td>
             </tr>
+
+            {%  if activate_creai %}
+
             <tr>
                 <th>CREAI</th>
                 <td>{{ etablissement.creai}} 
@@ -101,6 +109,7 @@
                        {% endif  %}
                     </td>
             </tr>
+            {% endif %}
             
             {% if etablissement.delegationCreai and (etablissement.creai == app.user.creai or  is_granted('ROLE_ADMIN_SUPERVISOR')) %}
             <tr>
@@ -108,6 +117,7 @@
                 <td class='btn-warning'><span title='délégation CREAI'>  <a href='{{ path("pericles3_homepage_etablissement", {"id":  etablissement.id}) }}'>Voir les saisies / PAQ / biblio</a></td>
             </tr>
             {% endif  %}
+
                 
 </table>            
         

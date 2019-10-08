@@ -13,7 +13,38 @@ namespace Pericles3Bundle\Repository;
 class StatUserConnectRepository extends \Doctrine\ORM\EntityRepository
 {
      
+        public function findByFormat($format,$limit=0, $order="DESC")
+	{
+            $qb = $this->createQueryBuilder('stats');
+            $qb->select("DATE_FORMAT(stats.createdAt , '".$format."') as dt_range","COUNT(stats.id) as nb");
+            $qb->GroupBy('dt_range');               
+            if ($limit)
+            {
+                $qb->setMaxResults($limit);
+            }
+            $qb->orderBy("dt_range",$order);
+            return $qb->getQuery()->getResult();
+            
+        }
+        public function findByDay($limit=0)
+	{
+            return($this->findByFormat("%Y-%m-%d",$limit));
+	}
         
+        public function findByMonth($limit=0)
+	{
+            return($this->findByFormat("%Y-%m",$limit));
+	}
+        
+        public function findByHour()
+	{
+            return($this->findByFormat("%H",0, "ASC"));
+	}
+        
+        public function findByDayOfTheWeek()
+	{
+            return($this->findByFormat("%a",0, "ASC"));
+	}
         
         
 }

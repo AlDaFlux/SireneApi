@@ -1,4 +1,15 @@
 
+    
+
+    {% if  appVersion>'1.0.0' %}
+        {% if objectifOperationnel.ObjectifStrategique  %} 
+                <p><span class="gras">Objectif Stratégique : </span> <a href="{{ path('paq_osa_show', {'id': objectifOperationnel.ObjectifStrategique.id}) }}">{{ objectifOperationnel.ObjectifStrategique  }}</a></p>
+                    {% else  %} 
+                        <div class='alert alert-warning'> <b>Objectif Strategique :  </b> Aucun </div>
+        {% endif %} 
+    {% endif %} 
+
+
     <p><span class="gras">Description : </span>{{objectifOperationnel.description  | nl2br}}</p>
     <p><span class="gras">Date de début : </span>{{ objectifOperationnel.dateDebut is empty ? "" : objectifOperationnel.dateDebut|date("d-m-Y") }}</p>
     <p><span class="gras">Date de fin : </span>{{ objectifOperationnel.dateFin is empty ? "" : objectifOperationnel.dateFin|date("d-m-Y") }}</p>

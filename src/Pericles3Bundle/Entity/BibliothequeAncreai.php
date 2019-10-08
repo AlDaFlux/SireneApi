@@ -4,12 +4,16 @@ namespace Pericles3Bundle\Entity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Bibliotheque
  *
  * @ORM\Table(name="bibliotheque_ancreai")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\BibliothequeAncreaiRepository")
  */
 class BibliothequeAncreai

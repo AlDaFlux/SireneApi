@@ -254,7 +254,7 @@
                    
                    
                     {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT') %}
-                        <li> <a   href="{{ path('backoffice_etablissement_new_byfiness') }}"><i class='glyphicon glyphicon-plus'></i>Ajouter un établissement</a></li>
+                        <li> <a   href="{{ path('backoffice_etablissement_new') }}"><i class='glyphicon glyphicon-plus'></i>Ajouter un établissement</a></li>
                     {% endif %}      
                     
                     
@@ -466,10 +466,20 @@
                                   <li><a href="{{ path('facture_index_year', { 'year': year }) }}">{{year}}</a></li>
                             {% endfor %}
                             <li role="separator" class="divider"></li>
-                             <li><a  href="{{ path('facture_index_afaire') }}"> Facture à faire </a></li>
-                             <li><a  href="{{ path('facture_nonfinalisee') }}"> Facture non finalisee</a></li>
-                             <li><a  href="{{ path('facture_apayer') }}"> Facture à payer</a></li>
+                             <li><a  href="{{ path('facture_index_afaire') }}"> Factures à faire </a></li>
+                             <li><a  href="{{ path('facture_nonfinalisee') }}"> Factures non finalisées</a></li>
+                             <li><a  href="{{ path('facture_apayer') }}"> Factures à payer</a></li>
+                             
+                             {% if app.user.isCreai %}
+                                 {% if app.user.Creai.NbPublicsFacturation %}
+                                       <li role="separator" class="divider"></li>
+                                    {% for publicFacturation in  app.user.Creai.PublicsFacturation %}
+                                        <li><a  href="{{ path('facture_index_prestas_refepublic_child', { 'id': publicFacturation.id }) }}"> {{ publicFacturation }}</a></li>
+                                    {% endfor %}
+                                 {% endif  %}
+                             {% endif  %}
 
+                             
                              
                        <li role="separator" class="divider"></li>
                                  <li><a  href="{{ path('facture_index_prestas') }}">Prestations</a></li>

@@ -120,9 +120,9 @@ class IndexController extends Controller
         $this->addFlash('success', "Un mail a été envoyé de ".$this->getParameter('mail_from') );
   
         return $this->redirectToRoute('pericles3_backoffice');
-
-          
     }
+    
+    
     
    
 }   

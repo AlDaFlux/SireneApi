@@ -55,6 +55,12 @@ class DomaineObjectifStrategiqueType extends AbstractType
             $builder->add('commentaire',TextType::class,array('label'=>"Intitulé de l'objectif"));
 
             $builder->add('statut', ChoiceType::class, array('choices' => array('En cours'=>'1','Important'=>'2','Terminé'=>'3')))
+            ->add('dateDebut', DateType::class, array(
+                                                'widget' => 'single_text',
+                                                'input' => 'datetime',
+                                                'format' => 'dd-MM-yyyy',
+                                                'attr' => array('class' => 'date')
+                                                ))
             ->add('dateEcheance', DateType::class, array(
                                                 'widget' => 'single_text',
                                                 'input' => 'datetime',

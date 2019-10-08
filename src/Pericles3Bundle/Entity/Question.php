@@ -6,12 +6,16 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 
 /**
  * Question
  *
  * @ORM\Table(name="question")
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\QuestionRepository")
+ * @Gedmo\Loggable
  */
 class Question
 {

@@ -22,13 +22,11 @@
 export du {{ 'now'|date('d-m-Y  H:i') }}
 </div>
  
- 
- <ol>
+  
 {% for rbpp in referentielPublic.getBibliothequesAncreaiLinked  %}
     
     
     <h2>{{rbpp}} ({{rbpp.datePublication|date('m-Y') }}) <a href='{{rbpp.href}}' target='blank'>&para; </a></h2>
-    <ul>
         {% for CritereRef in rbpp.CriteresByRefPublic(referentielPublic)  %}
                
                 {% set critere=  CritereRef.getCritereEtablissement(etablissement) %}
@@ -66,7 +64,7 @@ export du {{ 'now'|date('d-m-Y  H:i') }}
                   
                 
        {% endfor %}
-    </ul>
+   
     
     
 {% endfor %}
@@ -94,9 +92,7 @@ export du {{ 'now'|date('d-m-Y  H:i') }}
         {# include "Synthese/export/inc/inc_critere_complet.html.twig" #}
 
   
-    
-    
- </ol>
+     
 
 
             

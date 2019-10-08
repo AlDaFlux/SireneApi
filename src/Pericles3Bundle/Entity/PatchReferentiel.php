@@ -15,6 +15,7 @@ use Gedmo\Blameable\Traits\BlameableEntity;
  * Bibliotheque
  *
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\PatchReferentielRepository")
+ * @Gedmo\Loggable
  */
 class PatchReferentiel
 {

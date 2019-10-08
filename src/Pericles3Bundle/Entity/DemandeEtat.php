@@ -3,6 +3,8 @@
 namespace Pericles3Bundle\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
+
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -112,6 +114,12 @@ class DemandeEtat
     {
         return($this->id==1);
     }
+    
+    public function IsDevis()
+    {
+        return($this->id==0);
+    }
+    
     /**
      * Constructor
      */

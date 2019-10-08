@@ -17,6 +17,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * ReferentielPublic
  *
  * @ORM\Table(name="referentiel_public")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\ReferentielPublicRepository")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
@@ -216,6 +217,10 @@ class ReferentielPublic
     private $finessCategories;
     
     
+     /**
+     * @ORM\ManyToOne(targetEntity="Pericles3Bundle\Entity\Creai", inversedBy="publicsFacturation")
+     */
+    private $creai;
     
  
     
@@ -670,6 +675,14 @@ class ReferentielPublic
     {
         return $this->demandesEtablissement;
     }
+    
+    public function getNbDemandesEtablissement()
+    {
+        return count($this->demandesEtablissement);
+    }
+    
+    
+    
 
     /**
      * Add demandesinfo
@@ -1056,11 +1069,44 @@ class ReferentielPublic
     
     
     
-    public function getVersionAlpha()
+    public function isVersionAlpha()
     {
 //        return $this->versionningParent == null)$this->versionning==0;
-        return ($this->versionningParent == null);
+        return ($this->getVersionningParent() == null);
     }
+    
+    
+    
+    public function getVersionAlpha()
+    {
+        
+        if ($this->isVersionAlpha())
+        {
+            return($this);
+        }
+        else
+        {
+            return($this->getVersionningParent()->getVersionAlpha());
+        }
+    }
+    
+    
+    public function getAllBranche()
+    {
+        $referentielsPublics = new \Doctrine\Common\Collections\ArrayCollection();
+        $public_i=$this->getVersionAlpha();
+        $referentielsPublics->add($public_i);
+        while ($public_i->getVersionningChildrenFirst())
+        {
+            $public_i= $public_i->getVersionningChildrenFirst();
+            $referentielsPublics->add($public_i);
+        }
+        return($referentielsPublics);
+        
+    }
+    
+     
+    
     
     
     public function getNbEtablissementsReelsCascade()
@@ -1068,7 +1114,7 @@ class ReferentielPublic
         
         
         
-        if ($this->getVersionAlpha())
+        if ($this->isVersionAlpha())
         {
             return $this->getNbEtablissementsReels();
         }
@@ -1150,6 +1196,7 @@ class ReferentielPublic
         return (! count($this->versionningChildren));
     }
     
+     
     
     
     
@@ -1363,5 +1410,29 @@ class ReferentielPublic
     public function getFinessCategories()
     {
         return $this->finessCategories;
+    }
+
+    /**
+     * Set creai
+     *
+     * @param \Pericles3Bundle\Entity\Creai $creai
+     *
+     * @return ReferentielPublic
+     */
+    public function setCreai(\Pericles3Bundle\Entity\Creai $creai = null)
+    {
+        $this->creai = $creai;
+
+        return $this;
+    }
+
+    /**
+     * Get creai
+     *
+     * @return \Pericles3Bundle\Entity\Creai
+     */
+    public function getCreai()
+    {
+        return $this->creai;
     }
 }

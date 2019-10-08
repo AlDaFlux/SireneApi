@@ -13,6 +13,17 @@
                         <div class='alert alert-warning'> Objectif non commencé ! (0%)</div>
                     {% endif %} 
 
+                    
+                {% if  appVersion>'1.0.0' %}
+                    {% if objectifOperationnel.ObjectifStrategique  %} 
+                        <div class="alert alert-success">
+                            <b>Objectif Strategique : </b>  <a href="{{ path('paq_osa_show', {'id': objectifOperationnel.ObjectifStrategique.id}) }}">{{ objectifOperationnel.ObjectifStrategique  }}</a>
+                        </div>
+                    {% else  %} 
+                        <div class='alert alert-warning'> <b>Objectif Strategique :  </b> Aucun </div>
+                    {% endif %} 
+                {% endif %} 
+
                     {% set flashSuccess = app.session.flashbag.get('fafini') %}
                     
                     {% if flashSuccess|length > 0 %} 

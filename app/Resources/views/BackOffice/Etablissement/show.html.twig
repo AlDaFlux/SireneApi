@@ -7,7 +7,9 @@
 
     
           
-                {% if etablissement.category.reel %}
+                {% if etablissement.Impaye %}
+                     <h1 class='fincontrat' title='{{ etablissement.category.commentaire}}'>Evaluation bloquée !: <br>Etablissement {{ etablissement.nom }}</h1>
+                {% elseif etablissement.category.reel %}
                       <h1  title='{{ etablissement.category.commentaire}}'>Etablissement {{ etablissement.nom }}</h1>
                 {% elseif etablissement.finContrat %}
                      <h1 class='fincontrat' title='{{ etablissement.category.commentaire}}'>Contrat TERMINE : <br>Etablissement {{ etablissement.nom }}</h1>
@@ -46,14 +48,24 @@
                 </div>
 
             {% else %}
-              <div class="alert alert-warning" role="warning">Il n'y a aucun utilisateurs ! </div>
-              <div class="alert alert-danger" role="danger">Chaque établissement doit avoir au moin un utilisateur/administrateur ! </div>
               
-              {% if etablissement.demande %}
-                  <a href="{{ path('backoffice_etablissement_add_user_fromdemande', {'id': etablissement.id}) }}"  class = "btn  btn-success full-width">Créer l'utilisateur pour <b>{{etablissement.demande.demandeurPrenom}}.{{etablissement.demande.demandeurNom}} ({{etablissement.demande.email}})</b> avec les droits administrateurs  </a>
+              {% if etablissement.gestionnaire %}
+                    <div class="alert alert-warning" role="warning">Il n'y a aucun utilisateurs établissement ! </div>
+                    {% if etablissement.gestionnaire.nbUsers %}
+                          <div class="alert alert-success" role="success">Le gestionnaire à {{ etablissement.gestionnaire.nbUsers }}</div>
+                    {% else %}
+                          <div class="alert alert-danger" role="danger">Le gestionnaire n'a pas d'utilisateurs non plus ! </div>
+                    {% endif %}
+                        
+              {% else %}
+                    <div class="alert alert-danger" role="danger">Chaque établissement doit avoir au moin un utilisateur/administrateur ! </div>
               {% endif %}
               
-              
+              {% if etablissement.demande %}
+                    {% if etablissement.demande.email  and etablissement.demande.demandeurNom and etablissement.demande.demandeurPrenom %}
+                        <a href="{{ path('backoffice_etablissement_add_user_fromdemande', {'id': etablissement.id}) }}"  class = "btn   btn-with-big-ico  btn-success full-width">Créer l'utilisateur pour <b>{{etablissement.demande.demandeurPrenom}}.{{etablissement.demande.demandeurNom}} ({{etablissement.demande.email}})</b> avec les droits administrateurs <i class='glyphicon glyphicon-plus'></i><i class='glyphicon glyphicon-user'></i> </a>
+                    {% endif %}
+                {% endif %}
         {% endif %}
               
         </div>
@@ -62,8 +74,8 @@
             
             
     {% if is_granted('ROLE_SUPER_ADMIN_UTILISATEUR') or ((is_granted('ROLE_ADMIN') and (app.user.GetParentType == "E" or app.user.GetParentType == "G" )))  %}
-              <a href="{{ path('backoffice_etablissement_add_user_choiceprofile', {'id': etablissement.id}) }}"  class = "btn  btn-link full-width">Ajouter un utilisateur</a>
-             
+         
+                 <a href="{{ path('backoffice_etablissement_add_user_choiceprofile', {'id': etablissement.id}) }}"  class = "btn  btn-link full-width">Ajouter un utilisateur</a>
     {% endif %}
     
     
@@ -94,9 +106,16 @@
     </div>
         {% endif %}
     
-    
+                {% if is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE')  and etablissement.demande is not empty %}
+                        {% if etablissement.demande.getEtat.Id != 3 %}
+                            <div class='alert alert-danger btn-with-big-ico  '>La demande n'est pas considéré comme terminée, modifier <a href='{{ path('demande_etablissement_editancreai', {'id': etablissement.demande.id}) }}'>l'état de la demande </a>
+                                <i class='glyphicon glyphicon-warning-sign'></i>
+                            </div>
+                        {% endif %}
+                {% endif %}
+
             
-{% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW')  %}
+{% if is_granted('ROLE_SUPER_ADMIN_COMPTA_VIEW') and activate_facturation %}
     <div class="panel panel-primary">
         <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-euro'></i> Facturation </h3> </div>
         

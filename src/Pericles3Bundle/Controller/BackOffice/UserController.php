@@ -337,7 +337,7 @@ class UserController extends Controller
         $usernamebase=$username;
         $suff=1;
         
-        while (count($this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:User')->findOneByUsername($username)) > 0)
+        while ($this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:User')->findOneByUsername($username))
         {
             $username=$usernamebase.$suff;
             $suff++;
@@ -378,7 +378,6 @@ class UserController extends Controller
      */
     public function addUserFromdemandeGestionnaireAction(DemandeGestionnaire $DemandeGestionnaire)
     { 
-        
         $user = new User();
         $user->setDesactive(0);
         $password=$this->get('saksimple')->RandomString();
@@ -388,7 +387,7 @@ class UserController extends Controller
         $usernamebase=$username;
         $suff=1;
         
-        while (count($this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:User')->findOneByUsername($username)) > 0)
+        while ($this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:User')->findOneByUsername($username))
         {
             $username=$usernamebase.$suff;
             $suff++;

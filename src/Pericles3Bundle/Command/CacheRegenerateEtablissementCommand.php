@@ -14,13 +14,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 
-class CacheRegenerateCommand extends ContainerAwareCommand
+class CacheRegenerateEtablissementCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
-        $this->setName('cache:regenerate');
-        $this->setDescription('regenere le cache');
-        $this->setHelp("regenere le cache");
+        $this->setName('cache:regenerate:etablissement');
+        $this->setDescription('regenere le cache pour les établissements');
+        $this->setHelp("regenere le cache pour les établissements");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

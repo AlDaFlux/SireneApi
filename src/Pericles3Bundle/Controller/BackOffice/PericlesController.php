@@ -86,7 +86,7 @@ class PericlesController extends Controller
                     $pericl->setFinessEtablissement($Finess);
                     $em->persist($pericl);
                     $em->flush();
-                    if ($Finess->getHaveEtablissement())
+                    if ($Finess->getHasEtablissement())
                     {
                         $pericl->setEtablissement($Finess->getEtablissement());
                         $em->persist($pericl);

@@ -2,6 +2,9 @@
 
 namespace Pericles3Bundle\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * DemandeGestionnaire
  *
  * @ORM\Table(name="demande_gestionnaire")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\DemandeGestionnaireRepository")
  */
 class DemandeGestionnaire
@@ -285,7 +289,25 @@ class DemandeGestionnaire
         return $this->demandesEtablissement;
     }
     
+    public function getDemandesEtablissementNonCrees()
+    {
+        $demandes = new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($this->getDemandesEtablissement() as $demande)
+        {
+            if (! $demande->getEtablissement())
+            {
+                $demandes->add($demande);
+            }
+        }
+        return $demandes;
+    }
     
+    public function getNbDemandesEtablissementNonCrees()
+    {
+        return count($this->getDemandesEtablissementNonCrees());
+    }
+    
+     
     
     public function getNbEtablissements()
     {
@@ -443,6 +465,11 @@ class DemandeGestionnaire
         return $this->etat;
     }
     
+    public function IsFini()
+    {
+        return $this->getEtat()->IsFini();
+    }
+    
     
     public function getEtatIdEtablissements()
     {
@@ -479,6 +506,14 @@ class DemandeGestionnaire
     {
         return $this->Gestionnaire;
     }
+    
+    
+    public function getConcerne()
+    {
+        return $this->Gestionnaire;
+    }
+
+    
     
     public function hasGestionnaire()
     {
@@ -583,4 +618,12 @@ class DemandeGestionnaire
     {
         return $this->finess;
     }
+    
+    
+    public function getNumDemandeFormate()
+    {
+        return ("DEM_GEST_".str_pad($this->GetId(),6, '0', STR_PAD_LEFT));
+    }
+
+    
 }

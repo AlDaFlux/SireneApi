@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Constat
  *
  * @ORM\Table(name="editorial_publication")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\EditorialPublicationRepository")
  */
 class EditorialPublication
@@ -27,6 +28,7 @@ class EditorialPublication
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="nom", type="string")
      */
     private $nom;

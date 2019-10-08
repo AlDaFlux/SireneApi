@@ -87,6 +87,7 @@ class AppExtension extends \Twig_Extension
         
         $EtabCategories = $this->em->getRepository('Pericles3Bundle:EtablissementCategory')->findAll();
         $EtabModesCotisation = $this->em->getRepository('Pericles3Bundle:ModeCotisation')->findAll();
+        $EtabModesCotisationChoix = $this->em->getRepository('Pericles3Bundle:ModeCotisation')->findChoix();
         $EtabStockages = $this->em->getRepository('Pericles3Bundle:StockageEtablissement')->findAll();
 
         $Factures= $this->em->getRepository('Pericles3Bundle:Facture')->findAll();
@@ -101,6 +102,18 @@ class AppExtension extends \Twig_Extension
         $appVersion=$this->container->getParameter('app.version');
 
         
+        
+        $gestionnairesAjoutEtab=  new \Doctrine\Common\Collections\ArrayCollection();
+        foreach ($DemandesEtablissementNonFinies as $demande)
+        {
+            if ($demande->getGestionnaire() && $demande->PasFini())
+            {
+                if (! $gestionnairesAjoutEtab->contains($demande->getGestionnaire()))
+                {
+                    $gestionnairesAjoutEtab->Add($demande->getGestionnaire());
+                }
+            }
+        } 
         
         
         $FacturesNumARenewObj= $this->em->getRepository('Pericles3Bundle:Facture')->findFactureARenouvellerNum();
@@ -147,9 +160,11 @@ class AppExtension extends \Twig_Extension
             'DemandesGestionnaireNonFinies' =>$DemandesGestionnaireNonFinies,
             'NbDemandeInfosSansCreaiNonFinies' => $NbDemandeInfosSansCreaiNonFinies,
             'NbDemandeInfosSansCreaiATraiter' => $NbDemandeInfosSansCreaiATraiter,
+            'gestionnairesAjoutEtab' => $gestionnairesAjoutEtab,
             'EtabCategories' => $EtabCategories ,
             'EtabStockages' => $EtabStockages ,
             'EtabModesCotisation' => $EtabModesCotisation ,
+            'EtabModesCotisationChoix' => $EtabModesCotisationChoix,
             'ActivityYears' => $ActivityYears,
             'FacturesARenouveller' => $FacturesARenouveller,
             'NbFacturesARenouveller' => count($FacturesARenouveller),
@@ -186,7 +201,8 @@ class AppExtension extends \Twig_Extension
     }      
      */
     
-    
+//                new TwigFilter('md2html', [$this, 'markdownToHtml'], ['is_safe' => ['html']]),
+
     public function getFilters()
     {
         return array(
@@ -209,7 +225,7 @@ class AppExtension extends \Twig_Extension
             new \Twig_SimpleFilter('reponseGlyphIcone', array($this, 'reponseGlyphIcone')),
             new \Twig_SimpleFilter('role_icon', array($this, 'role_icon')),
             new \Twig_SimpleFilter('role_principal_lib', array($this, 'role_principal_lib')),
-            new \Twig_SimpleFilter('get_icon', array($this, 'get_icon')),
+            new \Twig_SimpleFilter('get_icon', array($this, 'get_icon'), ['is_safe' => ['html']]),
             new \Twig_SimpleFilter('get_icon_evol', array($this, 'get_icon_evol')),
             new \Twig_SimpleFilter('get_icon_evol_img', array($this, 'get_icon_evol_img')),
             new \Twig_SimpleFilter('completeCss', array($this, 'completeCss')),
@@ -366,6 +382,7 @@ class AppExtension extends \Twig_Extension
         if ($demandeEtat->GetId()==3) $css=("done");
         elseif ($demandeEtat->GetId()==1) $css=("toedit");
         elseif ($demandeEtat->GetId()==2) $css=("doing");
+        elseif ($demandeEtat->GetId()==0) $css=("todo");
         return("<span class='".$css."'>".$demandeEtat."</span>");
     }
 
@@ -374,6 +391,7 @@ class AppExtension extends \Twig_Extension
         if ($demandeEtat->GetId()==3) $css="success";
         elseif ($demandeEtat->GetId()==1) $css="danger";
         elseif ($demandeEtat->GetId()==2) $css="warning";
+        elseif ($demandeEtat->GetId()==0) $css="primary";
         return("alert alert-".$css);
     }
 
@@ -496,6 +514,9 @@ class AppExtension extends \Twig_Extension
                 break;
             case "creai":
                     $icon_class="glyphicon glyphicon-map-marker";
+                break;
+            case "demande":
+                    $icon_class="glyphicon glyphicon-question-sign";
                 break;
          
 

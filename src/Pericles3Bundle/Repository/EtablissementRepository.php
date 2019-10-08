@@ -218,7 +218,9 @@ class EtablissementRepository extends \Doctrine\ORM\EntityRepository
         $qb = $this->createQueryBuilder('etablissement');
         $qb->LeftJoin('etablissement.facturePrestas', 'facturePrestas');
         $qb->LeftJoin('facturePrestas.facture', 'facture');
-        $qb->Where('facture.numFacture  IS NOT NULL AND facture.payele  IS  NULL');
+        $qb->Join('etablissement.modeCotisation', 'modeCotisation');
+        $qb->where('modeCotisation.id<>13');
+        $qb->andWhere('facture.numFacture  IS NOT NULL AND facture.payele  IS  NULL');
         return $qb->getQuery()->getResult();
     }
     

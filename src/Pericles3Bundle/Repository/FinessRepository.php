@@ -1,6 +1,9 @@
 <?php
 
 namespace Pericles3Bundle\Repository;
+use Pericles3Bundle\Entity\Creai;
+
+
 
 /**
  * ReferentielPublicRepository
@@ -82,6 +85,24 @@ class FinessRepository extends \Doctrine\ORM\EntityRepository
 		return $qb->getQuery()->getResult();
 	}
         
+        public function findSupprimerDansImportAvecDemande() 
+        {
+                $qb = $this->createQueryBuilder('anciens');
+                $qb->InnerJoin('anciens.demandesEtablissement', 'demande');
+                $qb->leftJoin('Pericles3Bundle:FinessImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
+                $qb->Where('nouveaux.codeFiness IS NULL');
+		return $qb->getQuery()->getResult();
+	}
+        
+        public function findSupprimerDansImportAvecPericles() 
+        {
+                $qb = $this->createQueryBuilder('anciens');
+                $qb->InnerJoin('anciens.pericles', 'pericles');
+                $qb->leftJoin('Pericles3Bundle:FinessImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
+                $qb->Where('nouveaux.codeFiness IS NULL');
+		return $qb->getQuery()->getResult();
+	}
+        
         
         
         public function findImportDifferentEtablissement() 
@@ -97,6 +118,28 @@ class FinessRepository extends \Doctrine\ORM\EntityRepository
         
         
         
+          
+        public function findLike($occurence) 
+        {
+            $qb = $this->createQueryBuilder('etab');
+            $qb->where("etab.raisonSociale LIKE :occurence or etab.codeFiness LIKE :occurence")->setParameter('occurence',"%".$occurence."%");
+            $qb->setMaxResults(2);
+            return $qb->getQuery()->getResult();
+        }
+        
+        public function findLikeCreai($occurence, $creai) 
+        {
+            $qb = $this->createQueryBuilder('etab');
+            $qb->select('etab.codeFiness ,departement.id ,etab.raisonSociale, CASE WHEN  creai.id='.$creai->GetId().' THEN 1 ELSE 0 END  as creai_match');
+            $qb->LeftJoin('etab.departement', 'departement');
+            $qb->LeftJoin('departement.creai', 'creai');
+            $qb->where("etab.raisonSociale LIKE :occurence or etab.codeFiness LIKE :occurence")->setParameter('occurence',"%".$occurence."%");
+            $qb->orderBy('creai_match', 'DESC');
+            $qb->addOrderBy('etab.codeFiness', 'ASC');
+            $qb->setMaxResults(20);
+            return $qb->getQuery()->getResult();
+        }
+         
 
         
         

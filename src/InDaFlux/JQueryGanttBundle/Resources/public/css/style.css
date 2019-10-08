@@ -1,4 +1,29 @@
 
+.grisee
+{
+    background-color: #bdbdbd;
+    color: #eeeeee;
+    font-style: italic;
+}
+
+.grisee a
+{
+    color: #ddddff;
+}
+
+
+.table_small_facture td
+{
+    padding: 4px;
+    border: 1px solid #777;
+}
+
+.current_facture td
+{
+    border: 1px solid #f00;
+}
+
+
 .gantt_container
 {
     margin: 60px;
@@ -228,6 +253,13 @@
 .fn-gantt .ganttRed {
     background-color: #F9C4E1;
 }
+
+.fn-gantt .ganttOSRed {
+    background-color: #ff0000;
+    font-size: 3em !important;
+}
+
+
 .fn-gantt .ganttRed .fn-label {
     color: #78436D !important;
 }

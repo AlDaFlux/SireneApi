@@ -1,0 +1,94 @@
+{% extends "BackOffice/Demande/layout.html.twig" %}
+ 
+{% block body %}{{ parent() }}
+    
+    <h1> Gestionnaire</h1>
+ 
+    
+    {%  if gestionnaire is defined %}
+    <h2><a href="{{ path('backoffice_gestionnaire_show', { 'id': gestionnaire.id }) }}"> {{ gestionnaire }}</a></h2>
+     <div class="panel panel-success">
+        <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-tower'></i> Etablissements existant </h3> </div>
+
+            {% include "BackOffice/Etablissement/list_short_crees.html.twig" with {'etablissements': gestionnaire.etablissements} %}
+    </div>
+        
+     <div class="panel panel-warning">
+        <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-tower'></i> Demande de création </h3> </div>
+        
+        {%  if gestionnaire.getDemandesEtablissementGestionnaireExistantNonFini | length > 0  %}
+            {% include "BackOffice/Demande/Gestionnaire/inc_liste_etablissement.html.twig" with {'demandeEtablissements' :gestionnaire.getDemandesEtablissementGestionnaireExistantNonFini }%} 
+        {%  else  %}
+            <div class='alert alert-succes'>Aucune demande en cours pour <b>{{ gestionnaire }}</b></div>
+        {%  endif  %}
+
+            {%  if  gestionnaire.gestionnaireExistantEtatIdEtablissements== 0  %}
+                <a class='btn btn-block btn-warning btn-lg' href="{{ path('demande_gestionnaire_existant_id_valide', { 'id': gestionnaire.id }) }}"> Valider la demande de création des {{ gestionnaire.getNbDemandesEtablissementGestionnaireExistantDevis }} établissementen devis</a>        
+            {%  endif  %}
+    </div>
+            
+        <h2>Créer une demande pour un autre établissement de {{ gestionnaire }} : </h2>
+        
+        
+        {%  set proposition = false %}
+        {%  for  etabFiness in gestionnaire.getFinessEtablissements() %}
+            {% if (not etabFiness.HasEtablissement) and (not etabFiness.getDemandesEtablissement ) %} 
+                {%  set proposition = true %}
+                    {{ include("BackOffice/Demande/Gestionnaire/inc_form_fromfiness.html.twig") }}
+            {% endif  %}
+
+        {%  endfor %}
+   
+        
+        
+        {%  if proposition %}
+                  <div class='panel panel-primary'>
+            <div class='panel-heading'><a data-toggle="collapse" href="#collapse_etab_vierge"><i class='glyphicon glyphicon-plus'></i>Ajouter un établissement qui ne figure pas dans la liste</a></div>        
+                <div  id="collapse_etab_vierge" class='panel-body panel-collapse collapse'>
+                        <div class='well'>
+                            {{ form_start(form) }}
+                            {{ form_widget(form) }}
+                            {{ include("Nuts/cancelsave.html.twig") }}
+                            {{ form_end(form) }}
+                        </div>
+                </div>
+            </div>
+        {%  else %}
+            <div class='well'>
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                {{ include("Nuts/cancelsave.html.twig") }}
+                {{ form_end(form) }}
+            </div>
+        {%  endif %}
+
+        
+        
+        
+    
+        
+        
+    {%  else %}
+
+
+            <form name="demande_gestionnaire_existant" method="post" class="form-horizontal">
+              <div class="form-group">
+                            <label class="col-sm-4 control-label" for="gestionnaire_nom">Choisir un gestionnaire : </label>
+                            <div class="col-sm-8">
+                                <input  list="list_gestionnaire"  value="" type="text" id="gestionnaire_nom" name="gestionnaire_nom" maxlength="255" class="form-control" />
+                            </div>
+            </div>
+
+
+            <datalist id="list_gestionnaire">
+                {%  for gestionnaire in gestionnaires %}
+                    <option value="{{ gestionnaire }}"> 
+                {%  endfor %}
+            </datalist>
+                        <button type="submit" id="Valider" class=" btn btn-block btn-primary">Valider</button>
+            </form>
+
+ 
+    {%  endif %}
+
+{% endblock %}

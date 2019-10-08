@@ -85,9 +85,17 @@ class FinessGestionnaireController extends Controller
     public function searchFinessGestionnaireAction(Request $request)
     {
         $q = $request->query->get('term'); // use "term" instead of "q" for jquery-ui
-        $results = $this->getDoctrine()->getRepository('Pericles3Bundle:FinessGestionnaire')->findLike($q);
+        if ($this->GetUser()->GetCreai())
+        {
+            $results = $this->getDoctrine()->getRepository('Pericles3Bundle:FinessGestionnaire')->findLikeCreai($q,$this->GetUser()->GetCreai());
+        }
+        else
+        {
+            $results = $this->getDoctrine()->getRepository('Pericles3Bundle:FinessGestionnaire')->findLike($q);
+        }        
         return $this->render('BackOffice/finess_gestionnaire/search_result.html.twig', ['results' => $results]);
     }
+
     
     
     /**

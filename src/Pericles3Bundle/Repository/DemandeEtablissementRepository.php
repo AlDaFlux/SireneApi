@@ -19,6 +19,7 @@ class DemandeEtablissementRepository extends \Doctrine\ORM\EntityRepository
             $qb = $this->createQueryBuilder('demandes');
             $qb->select('count(demandes.id)');
             $qb->where("demandes.etat<>3");
+            $qb->andWhere("demandes.etat<>0");
             return($qb->getQuery()->getSingleScalarResult());
         }
         
@@ -27,6 +28,14 @@ class DemandeEtablissementRepository extends \Doctrine\ORM\EntityRepository
         {
             $qb = $this->createQueryBuilder('demandes');
             $qb->where("demandes.etat<>3");
+            $qb->andWhere("demandes.etat<>0");
+            return $qb->getQuery()->getResult();
+        }
+  
+        public function findNonDevis() 
+        {
+            $qb = $this->createQueryBuilder('demandes');
+            $qb->Where("demandes.etat<>0");
             return $qb->getQuery()->getResult();
         }
   

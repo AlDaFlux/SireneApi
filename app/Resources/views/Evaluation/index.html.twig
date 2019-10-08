@@ -7,7 +7,7 @@
     
 
      
-{% block title %}{{ parent() }} - Domaines évalués{% endblock %}
+{% block title %}{{ parent() }} - Evaluation{% endblock %}
 
 
 {% block legend %}
@@ -23,18 +23,8 @@
 
      
       {% if advanced_gesionnaire%} 
-    <div class="row">
-        <a href='{{ path('evaluation_etablissements')}}'>  
-             <div class="col-md-12 ">
-                <div class="panel panel-primary panel_osa">            
-                        <div class="panel-heading"> <h3 class="panel-title">Par établissement </h3> </div>
-                          <div class="panel-body">  
-                                  <canvas id="chartCanvasEtablissements"  ></canvas>
-                    </div>
-                </div>
-            </div>
-            </div>
-                          </a>
+          
+                              
     <div class="row">
        
              <div class="col-md-12 ">
@@ -48,12 +38,27 @@
                  </a>
             </div>
         </div> 
+                    
+                    
+    <div class="row">
+        <a href='{{ path('evaluation_etablissements')}}'>  
+             <div class="col-md-12 ">
+                <div class="panel panel-primary panel_osa">            
+                        <div class="panel-heading"> <h3 class="panel-title">Par établissement </h3> </div>
+                          <div class="panel-body">  
+                                  <canvas id="chartCanvasEtablissements"  ></canvas>
+                    </div>
+                </div>
+            </div>
+              </a>
+             
+    </div>
+     
 
-{% else%} 
-        {% include "Evaluation/etablissements/inc_etablissements.html.twig" %}
 
 {% endif %}
                       
+        {% include "Evaluation/etablissements/inc_etablissements.html.twig" %}
         
  
 
@@ -69,9 +74,8 @@
       {% if advanced_gesionnaire%} 
             {{ etablissements | graphMultiDataSet('chartCanvasDomaines') |raw }}
             {{ etablissements | graph('chartCanvasEtablissements',true,'options_responsive') |raw }}
-      {% else  %} 
-        {% include "Evaluation/etablissements/inc_etablissements_js.html.twig" %}
       {% endif  %} 
-            
+        {% include "Evaluation/etablissements/inc_etablissements_js.html.twig" %}
+        
     </script>          
 {% endblock %}

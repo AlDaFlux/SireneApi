@@ -56,16 +56,20 @@
                 <td>{{ demandeEtablissement.etat|  afficheDemandeEtat | raw }}</td>
 
                 <td>
-                    {% if  not is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
-                        {% if demandeGestionnaire.etat.id ==1  %}
-                                <a  class='btn btn-warning full-width' href="{{ path('demande_etablissement_edit', { 'id': demandeEtablissement.id }) }}"> Modifier la demande</a>
-                        {% endif %}
-                    {% else %}
-                            <a  class='btn btn-warning full-width' href="{{ path('demande_etablissement_editancreai', { 'id': demandeEtablissement.id }) }}"> Modifier la demande</a>
-                         <i data-invite="Voulez-vous supprimer définitivement la demande de création d'établissement ? il est conseillé de la passé en traité pour conserver l'historique des demandes."
+                    {% if  is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
+                        <a  class='btn btn-warning full-width' href="{{ path('demande_etablissement_editancreai', { 'id': demandeEtablissement.id }) }}"> Modifier la demande</a>
+                        <i data-invite="Voulez-vous supprimer définitivement la demande de création d'établissement ? il est conseillé de la passé en traité pour conserver l'historique des demandes."
                                 data-url_delete="{{ path('demande_etablissement_delete_get', {'id':demandeEtablissement.id}) }}" 
                                class='btn btn-danger full-width DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active full-width'
                                >Supprimer  </i> 
+                    {% else %}
+                            {% if demandeEtablissement.etat.id == 0  %}
+                                   <a  class='btn btn-warning full-width' href="{{ path('demande_etablissement_edit', { 'id': demandeEtablissement.id }) }}"> Modifier la demande</a>
+                                   <i data-invite="Voulez-vous supprimer la demande de création d'établissement ? "
+                                   data-url_delete="{{ path('demande_etablissement_delete_get', {'id':demandeEtablissement.id}) }}" 
+                                  class='btn btn-danger full-width DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active full-width'
+                                  >Supprimer  </i> 
+                        {% endif %}
                     {% endif %}
                 </td>
             </tr>

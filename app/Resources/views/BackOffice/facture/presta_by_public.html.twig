@@ -1,0 +1,138 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+{% block out_container  %}
+
+{{ parent() }}    
+
+
+<h1><a href="{{ path('facture_index') }}">Factures</a></h1>
+<h2>Prestas {{ public.public }} {{ year }}</h2>
+
+<div class="btn-group btn-group-justified" role="group" aria-label="...">
+        <div class="btn-group" role="group">
+            <a class="btn btn-default" href="{{ path('facture_index_prestas_refepublic_child', { 'id': public.id }) }}" class="list-group-item">Toutes</a>
+        </div> 
+ {% for year_i in ActivityYears %}
+        <div class="btn-group" role="group">
+            <a class="btn btn-{% if year == year_i %}primary{% else %}default{% endif  %}" href="{{ path('facture_index_prestas_refepublic_child_year', { 'id': public.id, 'year': year_i }) }}" class="list-group-item">{{year_i}}</a>
+        </div> 
+{% endfor %}
+</div> 
+      
+      
+   
+<table class='table table-bordered table-triable'> 
+    <thead>
+        <tr>
+            <td>Facture</td>
+            <td>id</td>
+            <td>Renouvel</td>
+            <td>Concerne</td>
+            <td>Public</td>
+            <td> Facture DateEmission </td>
+            <td>Montant </td>
+        </tr>
+    </thead>
+    <tbody>
+    {% set  nb_prestas = 0  %}
+    {% set  nb_renouvellement = 0  %}
+    {% set  montant_total = 0  %}
+    
+           
+    {% set nb_avoir=0 %}
+    {% set message_avoir='' %}
+    {% set montant_avoir=0 %}
+    {% set prestasAvoir = [] %}
+    
+    {% for presta in prestas %}
+
+        
+        
+        
+    {% set  nb_prestas = nb_prestas + 1  %}
+    {%  if presta.Renouvellement %}
+        {% set  nb_renouvellement = nb_renouvellement + 1  %}
+    {% endif %}
+
+
+     
+         
+        {% if presta.facture.Avoir %}
+            {% set message_avoir = message_avoir ~ 'Facture : ' ~  presta.facture %}
+            {% set nb_avoir= nb_avoir + 1 %}
+            {% set montant_avoir= montant_avoir + presta.montant %}
+            {% set prestasAvoir = prestasAvoir|merge([presta]) %}
+        {% else %}
+            
+      
+        
+                
+                {% if presta.facture.Avoir %}
+                    <td class='alert-danger facture-annullee'><a href="{{ path('facture_show', { 'numFacture': presta.facture.numFacture }) }}">{{ presta.facture.numFacture }}</a></td>
+                {% elseif presta.facture.getFinalise %}
+                    <td class='alert-info'><a href="{{ path('facture_show', { 'numFacture': presta.facture.numFacture }) }}">{{ presta.facture.numFacture }}</a></td>
+                {% else %}
+                    <td class='alert-warning'><a href="{{ path('facture_show', { 'numFacture': presta.facture.numFacture }) }}">{{ presta.facture.numFacture }}</a></td>
+                {% endif %}
+
+                <td><a href="{{ path('facture_index_presta_show', { 'id': presta.id }) }}">{{presta.id}}</a></td>
+                
+                <td title="{{presta.RenouvellementLib}}">{{presta.Renouvellement}}</td>
+
+                
+                    {% if presta.concerne.GetFinContrat %}
+                        <td title="L'établissement à mis fin a son contrat" class='alert-danger'>{{'etablissement' | get_icon | raw}}    <a href="{{ path('backoffice_etablissement_view', { 'id': presta.concerne.id }) }}">{{presta.concerne}}</a></td>
+                    {% else %}
+                        <td>{{'etablissement' | get_icon | raw}}    <a href="{{ path('backoffice_etablissement_view', { 'id': presta.concerne.id }) }}">{{presta.concerne}}</a></td>
+                    {% endif %}
+                    
+                    <td>{{presta.concerne.referentielPublic}}</td>
+
+                {{presta.Facture.DateEmission | TdSortableDate  }} 
+                
+                
+
+
+                    {% set  montant_total = montant_total + presta.Montant  %}
+                    <td>{{presta.Montant}} €</td>
+
+
+             {% endif %}
+           </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+        
+          <tr>
+            <th>Total</th>
+            <th>{{ nb_prestas }}</th>
+            <th>{{ nb_renouvellement }}</th>
+            {%  if etablissement is not defined  %}
+            <td colspan='1'></td>
+            {%  endif  %}
+            <td colspan='2'></td>  
+            <th>{{ montant_total }} €</th>
+            {% if  is_granted('ROLE_MEGA_ADMIN')  %}
+                <td></td>
+            {% endif %}
+        </tr>
+    </tfoot>
+    
+</table>
+    
+    
+
+        {%  if nb_avoir %}
+            <div class='btn-with-big-ico container alert alert-danger'>
+                 Il y a avoirs {{ nb_avoir }} pour un montant de {{ montant_avoir }} € 
+                 <ul>
+                 {%  for prestaAvoir in prestasAvoir %}
+                     <li> {{prestaAvoir.facture}} : {{ prestaAvoir }} - {{ prestaAvoir.montant }} € 
+                 {%  endfor  %}
+                </ul>
+                <i class='glyphicon glyphicon-warning-sign'></i>
+            </div>
+                  
+        {% endif %}
+
+{% endblock %}

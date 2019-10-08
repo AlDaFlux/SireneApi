@@ -2,6 +2,9 @@
 
 namespace Pericles3Bundle\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -9,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Domaine
  *
  * @ORM\Table(name="domaine")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\DomaineRepository")
  */
 class Domaine

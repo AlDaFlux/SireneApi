@@ -4,12 +4,16 @@ namespace Pericles3Bundle\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * DemandeEtablissement
  *
  * @ORM\Table(name="demande_etablissement")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\DemandeEtablissementRepository")
  */
 class DemandeEtablissement
@@ -118,6 +122,15 @@ class DemandeEtablissement
     private $demandeGestionnaire;
     
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Pericles3Bundle\Entity\Gestionnaire",inversedBy="demandesEtablissementGestionnaireExistant")
+     */
+    private $gestionnaire;
+    
+    
+    
+
+    
     
     /**
      * @ORM\OneToOne(targetEntity="Pericles3Bundle\Entity\Finess", inversedBy="demandesEtablissement")
@@ -150,6 +163,14 @@ class DemandeEtablissement
     private $commentaireAncreai;
 
     
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="commentaire_creai", type="text", nullable=true)
+     */
+    private $commentaireCreai;
+
+    
 
     /**
      * @var string
@@ -171,11 +192,36 @@ class DemandeEtablissement
 
     
     
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="adresse", type="string", length=255, nullable=true)
+     */
+    private $adresse;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="codePostal", type="string", length=255, nullable=true)
+     */
+    private $codePostal;
+
+      /**
+     * @var string
+     *
+     * @ORM\Column(name="ville", type="string", length=255, nullable=true)
+     */
+    private $ville;
+    
+
+    
+    
     
     function __toString() 
     {
-        if ($this->demandeur_nom.$this->demandeur_prenom) return($this->demandeur_nom . " " .$this->demandeur_prenom);
-        else return($this->etablissementNom);
+        if ($this->demandeur_nom.$this->demandeur_prenom) return("".$this->demandeur_nom . " " .$this->demandeur_prenom);
+        else return("".$this->etablissementNom);
     }
     
 
@@ -370,6 +416,14 @@ class DemandeEtablissement
     {
         return $this->demandeGestionnaire;
     }
+    
+    
+    public function getDemandeHasOneGestionnaire()
+    {
+        return ($this->demandeGestionnaire || $this->gestionnaire) ;
+    }
+    
+    
 
     /**
      * Set finess
@@ -466,6 +520,18 @@ class DemandeEtablissement
     {
         return $this->etat;
     }
+    
+    public function IsFini()
+    {
+        return $this->getEtat()->IsFini();
+    }
+    
+    public function PasFini()
+    {
+        return (! $this->IsFini());
+    }
+    
+    
 
     /**
      * Set etablissementNom
@@ -537,6 +603,16 @@ class DemandeEtablissement
     {
         return $this->Etablissement;
     }
+    
+    
+    
+    public function getConcerne()
+    {
+        return $this->Etablissement;
+    }
+    
+    
+    
 
     /**
      * Set modeCotisation
@@ -561,4 +637,135 @@ class DemandeEtablissement
     {
         return $this->modeCotisation;
     }
+
+    /**
+     * Set gestionnaire
+     *
+     * @param \Pericles3Bundle\Entity\Gestionnaire $gestionnaire
+     *
+     * @return DemandeEtablissement
+     */
+    public function setGestionnaire(\Pericles3Bundle\Entity\Gestionnaire $gestionnaire = null)
+    {
+        $this->gestionnaire = $gestionnaire;
+
+        return $this;
+    }
+
+    /**
+     * Get gestionnaire
+     *
+     * @return \Pericles3Bundle\Entity\Gestionnaire
+     */
+    public function getGestionnaire()
+    {
+        return $this->gestionnaire;
+    }
+
+    /**
+     * Set adresse
+     *
+     * @param string $adresse
+     *
+     * @return DemandeEtablissement
+     */
+    public function setAdresse($adresse)
+    {
+        $this->adresse = $adresse;
+
+        return $this;
+    }
+
+    /**
+     * Get adresse
+     *
+     * @return string
+     */
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * Set codePostal
+     *
+     * @param string $codePostal
+     *
+     * @return DemandeEtablissement
+     */
+    public function setCodePostal($codePostal)
+    {
+        $this->codePostal = $codePostal;
+
+        return $this;
+    }
+
+    /**
+     * Get codePostal
+     *
+     * @return string
+     */
+    public function getCodePostal()
+    {
+        return $this->codePostal;
+    }
+
+    /**
+     * Set ville
+     *
+     * @param string $ville
+     *
+     * @return DemandeEtablissement
+     */
+    public function setVille($ville)
+    {
+        $this->ville = $ville;
+
+        return $this;
+    }
+
+    /**
+     * Get ville
+     *
+     * @return string
+     */
+    public function getVille()
+    {
+        return $this->ville;
+    }
+    
+    
+    
+    public function getNumDemandeFormate()
+    {
+        return ("DEM_ETAB_".str_pad($this->GetId(),6, '0', STR_PAD_LEFT));
+    }
+    
+    
+    /*
+     * Set commentaireCreai
+     *
+     * @param string $commentaireCreai
+     *
+     * @return DemandeGestionnaire
+     */
+    public function setCommentaireCreai($commentaireCreai)
+    {
+        $this->commentaireCreai = $commentaireCreai;
+
+        return $this;
+    }
+
+    /**
+     * Get commentaireCreai
+     *
+     * @return string
+     */
+    public function getCommentaireCreai()
+    {
+        return $this->commentaireCreai;
+    }
+
+    
+    
 }

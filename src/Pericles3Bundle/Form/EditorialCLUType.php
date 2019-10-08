@@ -25,12 +25,7 @@ class EditorialCLUType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('fichier', FileType::class,  array('required' => false, 'label' => 'CGU (PDF file)','data_class' => null));
-        
-                    
-        
         $builder->add('commentaire');
-
-                    
         $builder->add('datePublication', DateType::class, array(
                                                         'label' => 'Date de publication',
                                                         'widget' => 'single_text',

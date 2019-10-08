@@ -27,20 +27,27 @@
                             {% else  %}
                                 <td>{{presta}}</td>
                             {% endif  %}
+                        {% else  %}
+                                <td>{{presta}}</td>
                         {% endif  %}
 
 
                             <td>{{presta.montant}} €</td>
                             
-                            {% if presta.getDateFiff2 > 100 or presta.getDateFinLointaine %}
+                            {% if presta.getDateFiff2 > 100 or presta.getDateFinLointaine or presta.DateDebut is empty  %}
                                 {% set class_presta='danger' %}
                             {% elseif presta.getDateFiff2 > 5 %}
                                 {% set class_presta='warning' %}
                             {% else %}
                                 {% set class_presta='success' %}
                             {% endif %}
-                            <td class='alert-{{class_presta}}'>{{presta.DateDebut | date('d/m/Y')}} </td>
-                            <td class='alert-{{class_presta}}'>{{presta.DateFin | date('d/m/Y')}} </td>
+                            {%  if presta.DateDebut %} 
+                                <td class='alert-{{class_presta}}'>{{presta.DateDebut | date('d/m/Y')}} </td>
+                                <td class='alert-{{class_presta}}'>{{presta.DateFin | date('d/m/Y')}} </td>
+                            {% else %}
+                                <td class='alert-danger'>ATTENTION ! </td>
+                                <td class='alert-danger'>PAS DE DATE !!</td>
+                            {% endif %}
                             {#
                             <td>{{presta.concerne.firstFacturePresta.dateEmission| date('d/m/Y')}} </td>
                             #}

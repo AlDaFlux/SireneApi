@@ -1,4 +1,4 @@
-    <table class='table  table-triable'>
+    <table class='table table_small_facture'>
         <thead>
             <tr>
                 <th>Numfacture</th>
@@ -9,40 +9,48 @@
             </tr>
         </thead>
         <tbody>
-        {% for facture in factures %}
-            <tr>
-                {% if facture.getAvoir %}
+            
+        {%  if facture is defined  %}
+            {% set  facture_id =facture.numFacture %}
+        {% else  %}                
+            {% set  facture_id =0 %}
+        {% endif %}                
+
+    {% for facture_i in factures %}                    
+                {% if facture_i.getAvoir %}
                     <tr class='facture-annullee'>
-                        <td class='alert-danger facture-annullee'><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{ facture.numFacture }}</a></td>
-                {% elseif facture.getFinalise %}
-                    <tr>
-                        <td class='alert-info'><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{ facture.numFacture }}</a></td>
+                        <td class='alert-danger facture-annullee {% if  facture_i.numFacture==facture_id %} current_facture {% endif %}'><a href="{{ path('facture_show', { 'numFacture': facture_i.numFacture }) }}">{{ facture_i.numFacture }}</a></td>
+                {% elseif facture_i.getFinalise %}
+                    <tr {% if  facture_i.numFacture==facture_id %} class='current_facture' {% endif %}>
+                        <td class='alert-info'><a href="{{ path('facture_show', { 'numFacture': facture_i.numFacture }) }}">{{ facture_i.numFacture }}</a></td>
                 {% else %}
-                    <tr>
-                        <td class='alert-warning'><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{ facture.numFacture }}</a></td>
+                    <tr {% if  facture_i.numFacture==facture_id %} class='current_facture' {% endif %}>
+                        <td class='alert-warning'><a href="{{ path('facture_show', { 'numFacture': facture_i.numFacture }) }}">{{ facture_i.numFacture }}</a></td>
                 {% endif %}
                     
     
-                {% if facture.HasPDF  %}
+                {% if facture_i.HasPDF  %}
                 <td class='alert-success'>
             {% else  %}
                 <td class='alert-danger'>
             {% endif %}
-                    {% if facture.HasPDF  %}
+                    {% if facture_i.HasPDF  %}
                         <i alt='PDF' class='glyphicon glyphicon-save-file'></i>PDF
                     {% endif %}
                 </td>
                 
                    
-                <td>{% if facture.dateEmission %}{{ facture.dateEmission|date('Y-m-d') }}{% endif %}</td>
+                <td>{% if facture_i.dateEmission %}{{ facture_i.dateEmission|date('Y-m-d') }}{% endif %}</td>
            
-                <td class='alert-success'>{{ facture.montantTotal }} €</td>
+                <td class='alert-success'>{{ facture_i.montantTotal }} €</td>
                 
-                {% if facture.payele %}
-                    <td class='alert-success'>{{ facture.payele|date('Y-m-d') }}</td>
+                {% if facture_i.payele %}
+                    <td class='alert-success'>{{ facture_i.payele|date('Y-m-d') }}</td>
                 {% else %}                
                     <td class='alert-danger'></td>
                 {% endif %}                
+                
+                   
             </tr>
         {% endfor %}
         </tbody>

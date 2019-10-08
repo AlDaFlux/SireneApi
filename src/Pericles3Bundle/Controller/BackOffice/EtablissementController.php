@@ -4,6 +4,7 @@ namespace Pericles3Bundle\Controller\BackOffice;
 
 use Pericles3Bundle\Controller\BackOffice\AdminController;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Pericles3Bundle\Entity\DemandeEtablissement;
+use Pericles3Bundle\Entity\DemandeGestionnaire;
 use Pericles3Bundle\Entity\EtablissementCategory;
 use Pericles3Bundle\Entity\Etablissement;
 use Pericles3Bundle\Entity\Gestionnaire;
@@ -558,13 +560,28 @@ class EtablissementController extends AdminController
     }
     
     
-      
+        
+    /**
+     * Creates a new Gestionnaire entity.
+     *
+     * @Route("/new", name="backoffice_etablissement_new")
+     * @Method({"GET", "POST"})
+     */
+    public function new()
+    {
+        if ($this->container->getParameter('activate.finess'))
+        {
+            return $this->redirectToRoute('backoffice_etablissement_new_byfiness');
+        }
+        else
+        {
+            return $this->redirectToRoute('backoffice_etablissement_new_simple');
+        }
+    }
     
     
     
-    
-    
-       /**
+    /**
      * Creates a new Gestionnaire entity.
      *
      * @Route("/new/byfiness", name="backoffice_etablissement_new_byfiness")
@@ -736,7 +753,7 @@ class EtablissementController extends AdminController
          $Finess=$this->GetFinessByCode($num_finess);
          if ($Finess)
          {
-            if ($Finess->getHaveEtablissement())
+            if ($Finess->hasEtablissement())
             {
                 $this->addFlash('error', "Le Finess est déja attribué à l'établissement ".$num_finess." . ");
             }
@@ -785,7 +802,9 @@ class EtablissementController extends AdminController
     public function addEtablissementSansFiness(Request $request,Gestionnaire $gestionnaire=NULL)
     {
         $etablissement = new Etablissement();
-        $form = $this->createForm('Pericles3Bundle\Form\EtablissementType', $etablissement,['code_finess' => false, 'gestionnaire' => false]);
+        $wcreai=$this->container->getParameter('activate.creai');
+        
+        $form = $this->createForm('Pericles3Bundle\Form\EtablissementType', $etablissement,['code_finess' => false, 'gestionnaire' => false, 'creai'=>$wcreai]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) 
         {
@@ -1973,12 +1992,64 @@ class EtablissementController extends AdminController
     /**
      * Finds and displays a DemandeEtablissement entity.
      *
-     * @Route("/gestionnaire/create_etablissement/demande_{id}", name="demande_gestionnaire_create_etablissement_bydemande")
+     * @Route("/gestionnaire/{id_gestionnaire}/create_etablissement/demande_{demande_etablissement}", name="demande_gestionnaire_create_etablissement_bydemande")
+     * @ParamConverter("gestionnaire", options={"mapping": {"id_gestionnaire": "id"}})
+     * @ParamConverter("DemandeEtablissement", options={"mapping": {"demande_etablissement": "id"}})
      * @Method({"GET"})
      */
-    public function CreateEtabGestionnaireBydemandeAction(DemandeEtablissement $DemandeEtablissement)
+    public function CreateEtabGestionnaireBydemandeAction(Gestionnaire $gestionnaire,  DemandeEtablissement $DemandeEtablissement)
     {
-        $DemandeGestionnaire=$DemandeEtablissement->getDemandeGestionnaire();
+        $this->CreateEtabGestionnaireBydemande($DemandeEtablissement);
+        return $this->redirectToRoute('backoffice_gestionnaire_show', array('id' => $gestionnaire->getId()));
+    }
+    
+    /**
+     * Finds and displays a DemandeEtablissement entity.
+     *
+     * @Route("/gestionnaire/{id_gestionnaire}/create_etablissements/demande_{demande_gestionnaire}", name="demande_gestionnaire_create_etablissement_bydemande_gestionnaire")
+     * @ParamConverter("gestionnaire", options={"mapping": {"id_gestionnaire": "id"}})
+     * @ParamConverter("DemandeGestionnaire", options={"mapping": {"demande_gestionnaire": "id"}})
+     * @Method({"GET"})
+     */
+    public function CreateEtabsGestionnaireBydemandeGestAction(Gestionnaire $gestionnaire,DemandeGestionnaire $DemandeGestionnaire)
+    {
+        foreach ($DemandeGestionnaire->getDemandesEtablissementNonCrees() as $DemandeEtablissement)
+        {
+            $this->CreateEtabGestionnaireBydemande($DemandeEtablissement);
+        }
+        
+        return $this->redirectToRoute('backoffice_gestionnaire_show', array('id' => $gestionnaire->getId()));
+    }
+    /**
+     * Finds and displays a DemandeEtablissement entity.
+     *
+     * @Route("/gestionnaire/{id}/create_etablissements_existing", name="gestionnaire_create_etablissements_existing")
+     * @Method({"GET"})
+     */
+    public function CreateEtabsGestionnaireExisitnigGestAction(Gestionnaire $gestionnaire)
+    {
+        foreach ($gestionnaire->getDemandesEtablissementGestionnaireExistantNonFini() as $DemandeEtablissement)
+        {
+            $this->CreateEtabGestionnaireBydemande($DemandeEtablissement);
+        }
+        
+        return $this->redirectToRoute('backoffice_gestionnaire_show', array('id' => $gestionnaire->getId()));
+    }
+    
+    
+    function CreateEtabGestionnaireBydemande(DemandeEtablissement $DemandeEtablissement)
+    {
+        if ($DemandeEtablissement->getDemandeGestionnaire())
+        {
+            $demandeGestionnaire=$DemandeEtablissement->getDemandeGestionnaire();
+            $gestionnaire=$DemandeEtablissement->getDemandeGestionnaire()->getGestionnaire();
+        }
+        else
+        {
+            $demandeGestionnaire=false;
+           $gestionnaire=$DemandeEtablissement->getGestionnaire();
+        }
+        
         $etablissement = new Etablissement();
         $Finess=$DemandeEtablissement->GetFiness();
         $em = $this->getDoctrine()->getManager();
@@ -1987,14 +2058,12 @@ class EtablissementController extends AdminController
         $etablissement->setCategory($em->getRepository('Pericles3Bundle:EtablissementCategory')->findOneById(1));
         $etablissement->setModeCotisation($DemandeEtablissement->getModeCotisation());
         
-        $etablissement->setGestionnaire($DemandeGestionnaire->getGestionnaire());
+        $etablissement->setGestionnaire($gestionnaire);
         $etablissement->SetDemandeEtablissement($DemandeEtablissement);
         $etablissement->setNom($DemandeEtablissement->getEtablissementNom());
         $etablissement->setReferentielPublic($DemandeEtablissement->getReferentielPublic());
-        $etablissement->setCreai($DemandeEtablissement->getDemandeGestionnaire()->getCreai());
-        
-        
-
+        $etablissement->setCreai($DemandeEtablissement->getCreai());
+         
         
         if ($Finess) 
         {
@@ -2006,22 +2075,22 @@ class EtablissementController extends AdminController
         $etablissement->setCreatedDate(new \DateTime());
         $em->persist($etablissement);
         $em->flush();
-        $this->AddFlash("success","L'établissement a bien été créé.");
+        $this->AddFlash("success","L'établissement ".$etablissement." a bien été créé.");
 
 
         $DemandeEtablissement->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(3));
         $em->persist($DemandeEtablissement);
         $em->flush();
 
-        $DemandeGestionnaire->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(2));
-        $em->persist($DemandeGestionnaire);
-        $em->flush();
         
-        
+        if ($demandeGestionnaire)
+        {
+            $demandeGestionnaire->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(2));
+            $em->persist($demandeGestionnaire);
+            $em->flush();
+        }
         $this->genereEtablissementData($etablissement);
-        return $this->redirectToRoute('backoffice_gestionnaire_show', array('id' => $DemandeEtablissement->getDemandeGestionnaire()->getGestionnaire()->getId()));
     }
-    
     
     
     

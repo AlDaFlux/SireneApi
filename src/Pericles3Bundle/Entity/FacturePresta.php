@@ -9,6 +9,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
 use \DateTime;
 
 
@@ -16,6 +18,7 @@ use \DateTime;
  * Facture
  *
  * @ORM\Table
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\FacturePrestaRepository")
  */
 class FacturePresta
@@ -378,8 +381,9 @@ class FacturePresta
             }
             else
             {
+                
                 return(null);
-//               throw new FatalErrorException("-----------",5046,3,"FacturePresta.php",375);
+              // throw new FatalErrorException("-----------",5046,3,"FacturePresta.php",375);
             }
         }
         
@@ -415,10 +419,18 @@ class FacturePresta
     
     public function getDateDebut()
     {
-        $date_debut = clone  $this->getDateFin();
-        $date_debut ->modify("-1 year");
-        $date_debut ->modify("+1 day");
-        return($date_debut );
+        if ($this->getDateFin())
+        {
+            $date_debut = clone  $this->getDateFin();
+            $date_debut ->modify("-1 year");
+            $date_debut ->modify("+1 day");
+            return($date_debut);
+        }
+        else
+        {
+            dump($this);
+            return(null);
+        }
     }
     
       

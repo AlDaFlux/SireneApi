@@ -63,6 +63,26 @@ class ObjectifOperationnelController extends Controller
             return($objectifOperationnels);
         }   
     }
+    private function GetObjectifsStrategiques($type="",$etablissement=null)
+    {
+        if (! $this->getUser())
+        {
+             throw $this->createAccessDeniedException("Vous n'avez pas les droits suffisants");
+        }
+        else
+        {
+            if (! $etablissement) $etablissement = $this->getUser()->getEtablissement();
+            if ($etablissement)
+            {
+                $ObjectifsStrategiques = $this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:DomaineObjectifStrategique')->findByEtablissement($etablissement);
+            }
+            else
+            {
+                $ObjectifsStrategiques =$this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:DomaineObjectifStrategique')->findByGestionnaire($this->getUser());
+            }
+            return($ObjectifsStrategiques);
+        }   
+    }
             
   
     /**
@@ -74,7 +94,8 @@ class ObjectifOperationnelController extends Controller
     public function indexGanttAction()
     {
         $objectifOperationnels=$this->GetObjectifsOperationnels();
-        return $this->render('ObjectifsAmelioration/gantt.html.twig', array('objectifOperationnels' => $objectifOperationnels));
+        $objectifStrategiques=$this->GetObjectifsStrategiques();
+        return $this->render('ObjectifsAmelioration/gantt.html.twig', array('objectifStrategiques' => $objectifStrategiques,'objectifOperationnels' => $objectifOperationnels));
     }
     
     /**
@@ -548,12 +569,27 @@ class ObjectifOperationnelController extends Controller
         $etablissement = $objectifOperationnel->getEtablissement();
         $repositoryCritere = $this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:Critere');
         $criteres_liste = $repositoryCritere->findByEtablissement($etablissement);
-        
+        $objectifsStrategique = $this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:DomaineObjectifStrategique')->findByEtablissementAlpha($etablissement);
         if ($request->get('update')) { 
              $dateDebut = $request->get('dateDebut');
              $dateFin = $request->get('dateFin');
                 if ($this->isValid($request)=='')
                 {
+                    if (is_numeric($request->get('objectif_stragegique')))
+                    {
+                        $objectifStrategique = $this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:DomaineObjectifStrategique')->findOneById($request->get('objectif_stragegique'));
+                         $this->addFlash('success', $objectifStrategique);
+                         $objectifOperationnel->setObjectifStrategique($objectifStrategique);
+
+                    }
+                    else
+                    {
+                         $objectifOperationnel->setObjectifStrategique(null);
+                         $this->addFlash('success', "PAS ");
+                    }
+                        
+                    
+                    
                     $objectifOperationnel->setTitre($request->get('titre'));
                     $objectifOperationnel->setDescription($request->get('description'));
                     $objectifOperationnel->setMoyen($request->get('moyens'));
@@ -594,14 +630,10 @@ class ObjectifOperationnelController extends Controller
         
             $this->addFlash('warning', $request->get('update'));
 
-        
-        
-        
-        
-
         return $this->render('ObjectifsAmelioration/Operationnels/edit.html.twig', array(
             'objectifOperationnel' => $objectifOperationnel,
-            'criteres_liste' => $criteres_liste
+            'criteres_liste' => $criteres_liste,
+            'objectifsStrategique' => $objectifsStrategique
         ));
     }
     

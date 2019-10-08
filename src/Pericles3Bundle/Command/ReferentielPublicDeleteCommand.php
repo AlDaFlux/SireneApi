@@ -164,29 +164,73 @@ HELP
             }
             
             
-            
-            
-            
+             
+    $output->writeln("<info>ICI !!!  </info>");
+
             
     foreach ($refPublic->getReferentielDomaines() as $Domaine )
     {
-               foreach ($Domaine->getDimensions() as $Dimension  )
-               {
-                   foreach ($Dimension->getCriteres() as $Critere )
-                   {
-                       foreach ($Critere->GetQuestions() as $Question)
-                       {
-                            $em->remove($Question);
-                       }
-                       $em->flush();
-                       $em->remove($Critere);
-                   }
-                   $em->flush();
-                   $em->remove($Dimension);
-               }
-               $em->flush();
-               $em->remove($Domaine);
+        foreach ($Domaine->getSourceChildren() as $source  )
+        {
+            $output->writeln("<info>--".$source."</info>");
+            $source->setSourceParent(null);
+            $em->persist($source);
+            $em->flush();
         }
+              $output->writeln("<info>-DIMENSION -".$Domaine->GetNbChildren()."</info>");
+               foreach ($Domaine->getChildren() as $Dimension  )
+               {
+                    foreach ($Dimension->getSourceChildren() as $source  )
+                     {
+                         $output->writeln("<info>--".$source."</info>");
+                         $source->setSourceParent(null);
+                         $em->persist($source);
+                         $em->flush();
+                     }
+
+                  $output->writeln("<info>-DIMENSION -".$Dimension."</info>");
+                   foreach ($Dimension->getChildren() as $Critere )
+                   {
+                       foreach ($Critere->getSourceChildren() as $source  )
+                        {
+                            $output->writeln("<info>--".$source."</info>");
+                            $source->setSourceParent(null);
+                            $em->persist($source);
+                            $em->flush();
+                        }
+                       
+                       
+                       foreach ($Critere->getChildren() as $Question)
+                       {
+                        foreach ($Question->getSourceChildren() as $source  )
+                        {
+                            $output->writeln("<info>--".$source."</info>");
+                            $source->setSourceParent(null);
+                            $em->persist($source);
+                            $em->flush();
+                        }
+
+                            $id=$Question->GetId();
+                            $output->writeln("<info>--Question -".$Question."</info>");
+                            $em->remove($Question);
+                            $em->flush();
+                            $output->writeln("<info>--Question -".$id." OK</info>");
+                       }
+
+                       $output->writeln("<info>Supression du critere : ".$Critere->GetId()."</info>");
+                       $em->remove($Critere);
+                       $em->flush();
+                   }
+                    $output->writeln("<info>Supression de la dimension ".$Dimension->GetId()."</info>");
+                   $em->remove($Dimension);
+                   $em->flush();
+               }
+               $output->writeln("<info>Supression du domaine : ".$Domaine->GetId()."</info>");
+               $em->remove($Domaine);
+               $em->flush();
+        }
+    
+        $output->writeln("<info>LA </info>");
         
         $em->flush();
         

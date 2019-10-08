@@ -2,7 +2,9 @@
         <thead>
             <tr>
                 <th>Date de <br>Création</th>
+                {%  if activate_finess %}
                 <th>FINESS</th>
+                {% endif %}
                 <th>Nom</th>
                 {% if gestionnaire is not defined %}
                     <th>Gestionnaire</th>
@@ -13,13 +15,15 @@
          
         <tbody>
         {% for etablissement in etablissements  %}
-            {% if  etablissement.users | length == 0 %}
-            <tr class='alert-danger'>
-            {% else %}
+            {% if  etablissement.dateLastConnect  %}
             <tr>
+            {% else %}
+            <tr class='alert-danger'>
             {% endif %}
                 <td class='small'>{{ etablissement.CreatedDate  | hiddenDate | raw }}</td>
+                {%  if activate_finess %}
                 <td>{{ etablissement.codefiness }}</td>
+                {% endif %}
                    
                 {% if etablissement.category.reel %}
                     <td  class='alert alert-info' title='{{ etablissement.category.commentaire}}'> <a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}">{{ etablissement.nom }}</a></td>

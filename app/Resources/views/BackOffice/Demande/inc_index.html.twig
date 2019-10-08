@@ -21,6 +21,19 @@
 
             </div>   
         </div>   
+                    
+        <div class="panel panel-primary">
+            <div class="panel-heading"> <h3 class="panel-title"><i class='icon-king'></i>Demandes d'ajout d'établissement à un gestionnaire </h3></div>
+                {% if gestionnairesAjoutEtab | length  >0 %}
+                    {% include "BackOffice/Demande/Gestionnaire/inc_liste_short_existing.html.twig" with {'gestionnaires' : gestionnairesAjoutEtab} %}
+                {% else %}
+                    <div class="panel-body alert-success">
+                            Toutes les demandes d'ajout d'établissement à un gestionnaire ont été traitées...
+                        </div>   
+                {% endif %}
+        </div>                       
+                    
+                    
     </div>   
                      
     <div class='col-md-4'>

@@ -21,6 +21,7 @@ class CreaiType extends AbstractType
             ->add('codePostal')
             ->add('ville')
         ;
+        //  ->add('publicsFacturation')
     }
     
     /**

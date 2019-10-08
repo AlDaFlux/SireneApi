@@ -5,8 +5,7 @@ namespace Pericles3Bundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-
-
+ 
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 
 
@@ -14,7 +13,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
  * Domaine
  *
  * @ORM\Table(name="sauvegarde")
- 
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\SauvegardeRepository")
  */
 class Sauvegarde

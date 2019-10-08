@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Constat
  *
  * @ORM\Table(name="editorial_clu")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\EditorialCLURepository")
  */
 class EditorialCLU
@@ -98,6 +99,7 @@ class EditorialCLU
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="commentaire", type="text",nullable=true)
      */
     private $commentaire;

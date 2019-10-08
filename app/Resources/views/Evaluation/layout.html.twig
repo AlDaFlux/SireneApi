@@ -13,7 +13,7 @@
 
 {% extends "::layout.html.twig" %}
 
-{% block title %}{{ parent() }}  {% endblock %}
+{% block title %}{{ parent() }} - Evaluation {% endblock %}
 
   {% block message_flash %}
 {% endblock %}
@@ -184,7 +184,7 @@
              {% if  etablissement is defined  %}  
                     <form class="navbar-form navbar-left"  action="{{path("pericles3_eval_search_etablissement" , {'id': etablissement.id})}}" method="POST"   >
                     <div class="form-group">
-                      <input type="text" name='occurence' class="form-control" placeholder="{{etablissement}} - Rechercher dans l'évaluation">
+                      <input size="8" type="text" name='occurence' class="form-control" placeholder="{{etablissement}} - Rechercher dans l'évaluation">
                     </div>
                     <button type="submit" class="btn btn-default"><i class='glyphicon glyphicon-search'></i></button>
                   </form>

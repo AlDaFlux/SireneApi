@@ -23,11 +23,23 @@ class FinessController extends Controller
      * Lists all Finess entities.
      *
      * @Route("/", name="backoffice_finess_index")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+
+        $code_finess = $request->request->get('etablissement_finess');
+        
+        
+        
+        if ($code_finess)
+        {
+            return $this->redirectToRoute('backoffice_finess_show', array('id' => $code_finess));
+        }
+        
+         
+            
         if ($this->getUser()->IsCreai())
         {
             $departements=$em->getRepository('Pericles3Bundle:Departement')->findByCreai($this->getUser()->GetCreai());
@@ -59,11 +71,7 @@ class FinessController extends Controller
     }
      
     
-    
-    
-    
-    
-    
+     
     
     /**
      * Lists all Finess entities.
@@ -240,5 +248,48 @@ class FinessController extends Controller
             'edit_form' => $editForm->createView() 
         ));
     }
+    
+    
+    
+    
+    
+    /**
+     * Lists all etablissements entities.
+     *
+     * @Route("/search_form", name="pericles3_backoffice_formsearch_finess_etablissement")
+     * @Method("GET")
+     */
+    public function searchFinessEtablissementAction(Request $request)
+    {
+        $q = $request->query->get('term'); // use "term" instead of "q" for jquery-ui
+        
+        if ($this->GetUser()->GetCreai())
+        {
+            $results = $this->getDoctrine()->getRepository('Pericles3Bundle:Finess')->findLikeCreai($q,$this->GetUser()->GetCreai());
+        }
+        else
+        {
+            $results = $this->getDoctrine()->getRepository('Pericles3Bundle:Finess')->findLike($q);
+            
+        }
+        return $this->render('BackOffice/finess/search_result.html.twig', ['results' => $results]);
+    }
+    
+    
+    /**
+     * Lists all etablissements entities.
+     *
+     * @Route("/search_get_{codeFiness}", name="pericles3_backoffice_formsearch_get_finess_etablissement")
+     * @Method("GET")
+     */
+    public function getFinessEtablissementAction($codeFiness = null)
+    {
+        $author = $this->getDoctrine()->getRepository('Pericles3Bundle:Finess')->findByCodefiness($codeFiness);
+        return new Response($author->getRaisonSociale());
+    }
+    
+    
+    
+    
  
 }

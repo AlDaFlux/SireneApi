@@ -415,6 +415,14 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
+body.whithe {
+    /* Margin bottom by footer height */
+    background-color: #ffffff;
+}
+
+
+
+
 .gras{ font-weight: bold; }
 
 
@@ -844,6 +852,7 @@ h2.osa,h3.osa
 {
      background-color:#127473;
      color: #ffffff;
+     padding: 6px;
 }
 
 h2.ooa,h3.ooa
@@ -1741,5 +1750,31 @@ h2.fincontrat
 .mega_ico 
 {
     font-size: 5em;
+}
+
+
+
+
+
+.btn-with-big-ico i
+{
+    margin-top: 6px;
+    font-size: 5em;
+    display: block;
+    text-align: center;
+}
+
+
+
+
+.btn-with-big-ico
+{
+    text-align: center;
+}
+
+
+label.required:before {
+    content: "* ";
+    color: red;
 }
 

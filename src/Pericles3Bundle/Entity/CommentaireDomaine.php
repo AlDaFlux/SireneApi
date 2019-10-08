@@ -4,10 +4,15 @@ namespace Pericles3Bundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
+
 /**
  * CommentaireDomaine
  *
  * @ORM\Table(name="commentaire_domaine")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\CommentaireDomaineRepository")
  */
 class CommentaireDomaine
@@ -24,6 +29,7 @@ class CommentaireDomaine
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="commentaire", type="text")
      */
     private $commentaire;

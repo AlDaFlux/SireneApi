@@ -10,6 +10,13 @@ namespace Pericles3Bundle\Repository;
  */
 class GestionnaireRepository extends \Doctrine\ORM\EntityRepository
 {
+        public function findAll() 
+        {
+            $qb = $this->createQueryBuilder('gestionnaire');
+            $qb->OrderBy("gestionnaire.nom");
+            return $qb->getQuery()->getResult();
+        }
+        
         public function findReels() 
         {
             $qb = $this->createQueryBuilder('gestionnaire');
@@ -17,6 +24,7 @@ class GestionnaireRepository extends \Doctrine\ORM\EntityRepository
             $qb->OrderBy("gestionnaire.nom");
             return $qb->getQuery()->getResult();
         }
+        
         
         public function findByCreai(\Pericles3Bundle\Entity\Creai $creai) 
         {

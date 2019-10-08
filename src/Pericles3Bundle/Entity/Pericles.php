@@ -16,6 +16,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *
  * @ORM\Table 
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\PericlesRepository")
+ * @Gedmo\Loggable
  */
 class Pericles
 {

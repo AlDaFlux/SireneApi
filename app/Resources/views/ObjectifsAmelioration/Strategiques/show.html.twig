@@ -11,6 +11,7 @@
 
                 
             <p><span class="gras">Statut : </span> <span class='{{ObjectifStrategique.CSSClasse}}'>{{ ObjectifStrategique.StatutLib }}</span></p>
+            <p><span class="gras">Date de début: </span>{{ ObjectifStrategique.dateDebut is empty ? "" : ObjectifStrategique.dateDebut|date("d-m-Y") }}</p>
             <p><span class="gras">Date d'échéance : </span>{{ ObjectifStrategique.dateEcheance is empty ? "" : ObjectifStrategique.dateEcheance|date("d-m-Y") }}</p>
 
        
@@ -22,7 +23,8 @@
                 
     </div>
 
-             
+
+
   
       <div class="row">
  
@@ -37,10 +39,17 @@
                             <a class="col-md-4 btn btn-primary active oa full-width" href="{{ path('paq_osa_list') }}"><i class='glyphicon glyphicon-th-list'></i>Retour a la liste </a>
                         </div>
                         <div class='col-md-4'>
+                                        {%  if ObjectifStrategique.NbObjectifsOperationnel %}
+                             <i data-invite="Voulez ne pouvez pas supprimer cet objéctif stratégique car il est lié a des objectifs opérationnels"
+                                                                                    class='CantDeleteBoxBefore glyphicon glyphicon-trash iconhead  redText btn  btn-danger active full-width '>Supprimer</i>                                                
+                                        {%  else %}
                             <i data-invite="Voulez-vous supprimer définitivement l'Objectif Stratégique ?"
                                                 data-url_delete="{{ path('paq_osa_delete_get', {'id': ObjectifStrategique.id}) }}" 
                                                class='DeleteBoxBefore glyphicon glyphicon-trash iconhead btn btn-danger active full-width'
                                                >Supprimer l'objectif</i> 
+                                        {%  endif %}
+
+                                               
             {% else %}
                 <div class='col-md-12'>                                               
                             <a class="btn btn-primary active oa full-width" href="{{ path('paq_osa_list') }}"><i class='glyphicon glyphicon-th-list'></i>Retour a la liste </a>
@@ -49,10 +58,46 @@
                            
         </div>
     </div>
-                               
+                            
+            
+{% if  appVersion>'1.0.0'  %}
+            <h2>Objectifs Opérationnels</h2>
+            {%  if ObjectifStrategique.NbObjectifsOperationnel %}
+            {% set path_liste = 'afaire' %}
+                <div id='liste_objectifs'  data-reload_with='{{path_liste}}'>   
+                 {% include "ObjectifsAmelioration/Operationnels/inc_liste.html.twig" with {'objectifOperationnels' : ObjectifStrategique.ObjectifsOperationnel , 'liste_objectif_toreload' : 'liste_objectifs_orphans'} %} 
+                </div>
+            {% else %}                       
+                <div class='alert alert-warning'>Aucun Objectif Opérationnel</div>
+            {% endif %}                        
+{% endif %}                        
+
                                
 
                                
                 
                 
 {% endblock %}
+
+
+{% block out_container %}
+        
+
+    {%  if ObjectifStrategique.NbObjectifsOperationnel %}
+    
+     <div class="gantt_container">
+     <div class="gantt"></div>
+        </div>  
+     
+      
+    {% endif %}                        
+
+    
+        
+     
+{% endblock %}
+ 
+{% block javascripts %}
+        {% include 'ObjectifsAmelioration/inc_gantt.js.twig' with {'objectifOperationnels' : ObjectifStrategique.ObjectifsOperationnel} %}
+{% endblock %}
+ 

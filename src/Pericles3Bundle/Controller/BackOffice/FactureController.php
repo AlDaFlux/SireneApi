@@ -4,7 +4,8 @@ namespace Pericles3Bundle\Controller\BackOffice;
 
 use Pericles3Bundle\Entity\Facture;
 use Pericles3Bundle\Entity\FacturePresta;
-
+use Pericles3Bundle\Entity\ReferentielPublic;
+use Pericles3Bundle\Entity\Gestionnaire;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\Debug\Exception\FatalErrorException;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -133,6 +135,83 @@ class FactureController extends Controller
                 'titre' => "Prestations",
         ));
     }
+    
+     
+    /**
+     * Lists all facture entities.
+     *
+     * @Route("/prestas/refpublic_{id}", name="facture_index_prestas_refepublic")
+     * @Method("GET")
+     */
+    public function PrestaRefPublicAction(ReferentielPublic $public)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $prestas = $em->getRepository('Pericles3Bundle:FacturePresta')->findByReferentielPublic($public);
+        return $this->render('BackOffice/facture/presta.html.twig', array(
+                'prestas' => $prestas,
+                'titre' => "Prestations",
+        ));
+    }
+    
+    
+     
+    /**
+     * Lists all facture entities.
+     *
+     * @Route("/prestas/refpublic_{id}/child", name="facture_index_prestas_refepublic_child")
+     * @Method("GET")
+     */
+    public function PrestaRefChildPublicAction(ReferentielPublic $public)
+    {
+        $em = $this->getDoctrine()->getManager();
+        if ($public->getTheLastGood())
+        {
+            $prestas = $em->getRepository('Pericles3Bundle:FacturePresta')->findByReferentielPublicAllBranche($public);
+            return $this->render('BackOffice/facture/presta_by_public.html.twig', array(
+                    'prestas' => $prestas,
+                    'public' => $public,
+                    'year' => null,
+                    'titre' => "Prestations" 
+            ));
+        }
+        else
+        {
+             throw $this->createAccessDeniedException("Le référentiel est obsolete");
+        }
+    }
+    
+    
+    /**
+     * Lists all facture entities.
+     *
+     * @Route("/prestas/refpublic_{id}/child/year_{year}", name="facture_index_prestas_refepublic_child_year")
+     * @Method("GET")
+     */
+    public function PrestaRefChildPublicActionYear(ReferentielPublic $public, $year)
+    {
+        if (!is_numeric($year))
+        {
+             throw $this->createAccessDeniedException("L'année n'est pas valide");
+        }
+        $em = $this->getDoctrine()->getManager();
+        if ($public->getTheLastGood())
+        {
+            $prestas = $em->getRepository('Pericles3Bundle:FacturePresta')->findByReferentielPublicAllBranche($public, $year);
+            return $this->render('BackOffice/facture/presta_by_public.html.twig', array(
+                    'prestas' => $prestas,
+                    'public' => $public,
+                    'year' => $year,
+                    'titre' => "Prestations" 
+            ));
+        }
+        else
+        {
+             throw $this->createAccessDeniedException("Le référentiel est obsolete");
+        }
+    }
+    
+    
+    
     
     
     
@@ -353,6 +432,10 @@ class FactureController extends Controller
 
     }
     
+     
+    
+    
+    
        
     /**
      * Creates a new facture entity.
@@ -433,7 +516,7 @@ class FactureController extends Controller
      * @Route("/new_from_gestionnaire/{id}", name="facture_new_from_gestionnaire")
      * @Method({"GET"})
      */
-    public function newFromGEstionnaireAction(\Pericles3Bundle\Entity\Gestionnaire $gestionnaire)
+    public function newFromGEstionnaireAction(Gestionnaire $gestionnaire)
     {
         $newFacture=$this->FactureGestionnaire($gestionnaire,$gestionnaire->getEtablissements());
         return $this->redirectToRoute('facture_show', array('numFacture' => $newFacture->getNumfacture()));
@@ -446,7 +529,7 @@ class FactureController extends Controller
      * @Route("/new_from_gestionnaire/{id}/etab_sans_fact", name="facture_new_from_gestionnaire_etab_sans_fact")
      * @Method({"GET"})
      */
-    public function newFromGEstionnaireEtabSansFactAction(\Pericles3Bundle\Entity\Gestionnaire $gestionnaire)
+    public function newFromGEstionnaireEtabSansFactAction(Gestionnaire $gestionnaire)
     {
         $newFacture=$this->FactureGestionnaire($gestionnaire,$gestionnaire->getEtablissementsSansPrestas());
         return $this->redirectToRoute('facture_show', array('numFacture' => $newFacture->getNumfacture()));
@@ -458,7 +541,7 @@ class FactureController extends Controller
     
     public function FactureGestionnaire($gestionnaire, $etablissements)
     {
-         $em = $this->getDoctrine()->getManager();       
+        $em = $this->getDoctrine()->getManager();       
         $newFacture = new Facture();
         $newFacture->setConcerneGestionnaire(true);
         $newFacture->setGestionnaire($gestionnaire);
@@ -468,7 +551,13 @@ class FactureController extends Controller
         $newFacture->setFinalise(false);
         $newFacture->setNumFacture($this->GetNextFactureNum());
         $em->persist($newFacture);
+        $em->flush();
         
+            
+        $datefin=new \DateTime();
+        $datefin->modify("+ 1 year");
+        $datefin->modify("-1 day");
+
         
         foreach ($etablissements as $etablissement)
         {
@@ -479,13 +568,10 @@ class FactureController extends Controller
             $newPresta->setRenouvellement(false);
             $em->persist($newPresta);
             $em->flush();
-            $datefin=$newPresta->getDateFinCalcule();
             $newPresta->setDateFin($datefin);
             $em->persist($newPresta);
             $em->flush();
-             
-            
-            
+ 
         if ($etablissement->GetStockageEtablissement()->GetMontant())
         {
             $newPresta = new FacturePresta();
@@ -540,6 +626,12 @@ class FactureController extends Controller
         $newFacture->setDateEmission(new \DateTime());
         $newFacture->setFinalise(false);
         $newFacture->setNumFacture($this->GetNextFactureNum());
+
+        $newFacture->setContactFacturationNom($facture->getContactFacturationNom());
+        $newFacture->setContactFacturationEmail($facture->getContactFacturationEmail());
+        $newFacture->setContactFacturationTelephone($facture->getContactFacturationTelephone());
+        
+        
 
         $em->persist($newFacture);
         $em->flush();
@@ -654,6 +746,50 @@ class FactureController extends Controller
         ));
     }
 
+    
+    /**
+     * Finds and displays a facture entity.
+     *
+     * @Route("/{numFacture}/send_to_gestionnaire_{id_gestionnaire}", name="facture_changetogestionnaire")
+     * @ParamConverter("facture", options={"mapping": {"numFacture": "numFacture"}})
+     * @ParamConverter("gestionnaire", options={"mapping": {"id_gestionnaire": "id"}})
+     * @Method("GET")
+     */
+    public function sendToGestionnaire(Facture $facture, Gestionnaire $gestionnaire)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $this->AddFlash("success","La facture est affectée au ".$gestionnaire);
+        $facture->setConcerneGestionnaire(true);
+        $facture->setGestionnaire($gestionnaire);
+        $facture->setEtablissement(null);
+        $em->persist($facture);
+        $em->flush();
+        return $this->redirectToRoute('facture_show', array('numFacture' => $facture->getNumFacture()));
+    }
+    
+    /**
+     * Finds and displays a facture entity.
+     *
+     * @Route("/{numFacture}/send_to_etablissement_{id_etablissement}", name="facture_changeetablissement")
+     * @ParamConverter("facture", options={"mapping": {"numFacture": "numFacture"}})
+     * @ParamConverter("etablissement", options={"mapping": {"id_etablissement": "id"}})
+     * @Method("GET")
+     */
+    public function sendToEtablissement(Facture $facture, \Pericles3Bundle\Entity\Etablissement $etablissement)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $facture->setConcerneGestionnaire(false);
+        $facture->setGestionnaire(null);
+        $facture->setEtablissement($etablissement);
+        $em->persist($facture);
+        $em->flush();
+        $this->AddFlash("success","La facture est affectée à ".$etablissement);
+        return $this->redirectToRoute('facture_show', array('numFacture' => $facture->getNumFacture()));
+    }
+    
+    
+    
+    
     
     
     
@@ -783,9 +919,50 @@ class FactureController extends Controller
         
        $em = $this->getDoctrine()->getManager();
        
-         if ($request->getMethod() == 'POST') 
+       $concerne=$facture->getConcerne();
+       
+        $editFormDemandeView=null;
+        if ($concerne->GetDemande())
         {
-//            $this->AddFlash("success","POST");
+                $demande=$concerne->GetDemande();
+                if ($facture->getConcerneTypeLib()=='GESTIONNAIRE')
+                {
+                $editFormDemande = $this->createForm('Pericles3Bundle\Form\DemandeGestionnaireType', $demande,['ancreai'=>true]);
+                }
+                else
+                {
+                    $editFormDemande = $this->createForm('Pericles3Bundle\Form\DemandeEtablissementType', $demande,['ancreai'=>true]);
+                }
+
+                $editFormDemande->handleRequest($request);
+                if ($editFormDemande->isSubmitted() && $editFormDemande->isValid()) 
+                {
+                    $em->persist($demande);
+                    $em->flush();
+                    if ($demande->IsFini() && $facture->getConcerneTypeLib()=='GESTIONNAIRE')
+                    {
+                        $fini=$em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(3);
+                        $etabs='<ul>';
+                        
+                        foreach ($demande->getDemandesEtablissement() as $DemandeEtablissement)
+                        {
+                            $etabs.="<li>".$DemandeEtablissement;
+                            $DemandeEtablissement->setEtat($fini);
+                            $em->persist($DemandeEtablissement);
+                            $em->flush();
+                        }
+                        $this->AddFlash("success","Les demande des établissements  : ".$etabs. "</ul> -> sont conisdérés comme terminées");
+                    }
+                    $this->AddFlash("success","La demande est terminée");
+                }
+                $editFormDemandeView=$editFormDemande->createView();
+        }
+        
+        
+        
+        
+        if ($request->getMethod() == 'POST') 
+        {
             if ($request->get('type') == 'add_module_gestionnaire_free') 
             {
                 $presta = new \Pericles3Bundle\Entity\FacturePresta();
@@ -814,11 +991,7 @@ class FactureController extends Controller
             }
             if ($request->get('type') == 'add_module_etablisement') 
             {
-                    
-                
-                    
-                    
-                $this->AddFlash("debug","ICIII");
+ 
                 $etablissement = $em->getRepository('Pericles3Bundle:Etablissement')->findOneById($request->get('etab_id'));
                 $presta = new \Pericles3Bundle\Entity\FacturePresta();
                 $presta->SetMontant($request->get('montant'));
@@ -882,9 +1055,22 @@ class FactureController extends Controller
         $lastFacture = $em->getRepository('Pericles3Bundle:Facture')->findLastFactureNum();
 
         
+        /*
+
+            return $this->redirectToRoute('demande_gestionnaire_show', array('id' => $demandeGestionnaire->getId()));
+        }
+        return $this->render('BackOffice/Demande/Gestionnaire/edit.html.twig', array(
+            'demandeEtablissement' => $demandeGestionnaire,
+            'edit_form_demande_gestionnaire' => $editFormDemande->createView()
+        ));
+         * 
+         */
+        
+        
         return $this->render('BackOffice/facture/show.html.twig', array(
             'facture' => $facture,
-            'lastFacture' => $lastFacture
+            'lastFacture' => $lastFacture,
+            'editFormDemandeView' => $editFormDemandeView
         ));
     }
 
@@ -906,6 +1092,26 @@ class FactureController extends Controller
             return $this->redirectToRoute('facture_show', array('numFacture' => $facture->getNumfacture()));
         }
 
+        return $this->render('BackOffice/facture/edit.html.twig', array(
+            'facture' => $facture,
+            'edit_form' => $editForm->createView(), 
+        ));
+    }
+
+    /**
+     * Displays a form to edit an existing facture entity.
+     *
+     * @Route("/{numFacture}/edit_contact", name="facture_edit_contact")
+     * @Method({"GET", "POST"})
+     */
+    public function editContact(Request $request, Facture $facture)
+    {
+        $editForm = $this->createForm('Pericles3Bundle\Form\FactureType', $facture, ["contact_facturation"=>true]);
+        $editForm->handleRequest($request);
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('facture_show', array('numFacture' => $facture->getNumfacture()));
+        }
         return $this->render('BackOffice/facture/edit.html.twig', array(
             'facture' => $facture,
             'edit_form' => $editForm->createView(), 

@@ -4,10 +4,14 @@ namespace Pericles3Bundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 /**
  * Bibliotheque
  *
  * @ORM\Table(name="bibliotheque")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\BibliothequeRepository")
  */
 class Bibliotheque
@@ -31,6 +35,7 @@ class Bibliotheque
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="message", type="text")
      */
     private $message;
@@ -38,6 +43,7 @@ class Bibliotheque
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="type_message", type="string", length=255)
      */
     private $type_message;
@@ -45,6 +51,7 @@ class Bibliotheque
     /**
      * @var string
      *
+     * @Gedmo\Versioned
      * @ORM\Column(name="href", type="string", length=255, nullable=true)
      */
     private $href;

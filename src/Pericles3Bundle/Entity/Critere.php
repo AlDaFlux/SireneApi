@@ -5,10 +5,14 @@ namespace Pericles3Bundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 /**
  * Critere
  *
  * @ORM\Table(name="critere")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\CritereRepository")
  */
 class Critere

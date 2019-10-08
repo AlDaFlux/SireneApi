@@ -1,29 +1,41 @@
 {% extends "BackOffice/layout.html.twig" %}
 
+{% block message_flash %}
+{% endblock %}
+
+{% block title %}{{ parent() }} - {{facture}} {% endblock %}
 
 {% block out_container  %}
 
 {{ parent() }}    
 
     <h1><a href="{{ path('facture_index') }}">Factures</a></h1>
-    
-    
+
     {% if facture.getAvoir  %}
         <h2 class='fincontrat'><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{facture}}</a></h2>
     {% else %}
-        <h2><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{facture}}++</a></h2>
+        <h2><a href="{{ path('facture_show', { 'numFacture': facture.numFacture }) }}">{{facture}}</a></h2>
     {% endif %}
 
 <div class='row'>
     <div class='col-md-3'>
         {% if facture.getAvoir  %}
-            <div class='alert alert-danger'>La facture est annulé !!! AVOIR</div>
+            <div class='alert  btn-with-big-ico alert-danger'>
+                <center>La facture est annulé !!!
+                <i class='glyphicon glyphicon glyphicon-exclamation-sign'></i>
+                un avoir a été effectué ! 
+            </center>
+            </div>
+            
             <div class='alert alert-danger'>{% include 'BackOffice/facture/inc_show.html.twig' %}</div>
         {% elseif facture.Finalise %}
             <div class='alert alert-success'>La facture est finalisée</div>
             {% include 'BackOffice/facture/inc_show.html.twig' %}
         {% else  %}
-            <div class='alert alert-warning'>La facture n'est pas finalisée</div>
+            <div class='alert btn-with-big-ico alert-warning'><center>La facture n'est pas finalisée</center><i class='glyphicon glyphicon glyphicon-exclamation-sign'></i></div>
+            
+            <a class='btn btn-block btn-primary' target='blank' href='{{ path('facture_show_pdf', { 'numFacture': facture.numFacture }) }}'><i class='glyphicon glyphicon-eye-open'>Prévisualiser la facture </i></a>
+            <br>
             {% include 'BackOffice/facture/inc_show.html.twig' %}
         {% endif %}
 
@@ -38,7 +50,18 @@
                 {% endif %}
                 
             {% else %}
-                <a class='btn btn-danger' href='{{ path('facture_unfinalise', { 'numFacture': facture.numFacture }) }}'>Considérer la facture comme non finalisée !!!! </a>
+                <div>
+                        <a class='btn btn-block btn-danger' href='{{ path('facture_unfinalise', { 'numFacture': facture.numFacture }) }}'>Considérer la facture <br>comme non finalisée !!!! </a>
+                        <br>
+
+                        {% if not facture.getAvoir  %}
+                                <span class="btn-block DeleteBoxBefore btn btn-danger  btn-block" data-btn_lib="AVOIR - (avoir, désactivation des établissements)" data-invite="Attention, si la facture n'a pas été envoyé et que c'est la dernière, vous devez la supprimer. dans le cas contraire, il faut aller manuellement mettre le gestionnaire et/ou les établissements en fin de contrat." data-url_delete="{{ path('facture_avoir', { 'numFacture': facture.numFacture }) }}"  ><i class='glyphicon glyphicon-warning-sign'></i> Facture annulée (AVOIR) <i class='glyphicon glyphicon-warning-sign'></i>   </span>
+                          <br>
+                            {% endif %}
+                </div>
+
+
+
             {% endif %}
         {% endif %}
         
@@ -72,7 +95,8 @@
     </div>
     <div class='col-md-5'>
                 
-        
+            {% include "MessageFlash/messageFlash.html.twig" %}
+
             {# if is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') and facture.Finalise and facture.isLastFacture #}
             {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') and facture.Finalise and facture.FacturePrestasHasLast%}
                 {% if facture.getPlusdunAn  or facture.getPlusdunAn15jours   %}
@@ -101,7 +125,8 @@
                         {% endif %}
                     {% else  %}
                                 {% set next_indice = facture.getConcerne.NewFactureRenouvellementIndice %}
-                                    {% if facture.notFinalized  %}
+                                
+                                    {% if facture.notFinalized and is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') %}
                                         {% include 'BackOffice/facture/add/add_etablissement_presta.html.twig'   %}
                                     {% endif %}
                     {% endif %}
@@ -124,9 +149,12 @@
                         
                          
         {% if facture.NotFinalized  %}
-            <a class='btn btn-primary' href='{{ path('facture_show_pdf', { 'numFacture': facture.numFacture }) }}'>Prévisualiser la facture </a>
             
-            <a class='btn btn-danger' href='{{ path('facture_finalise', { 'numFacture': facture.numFacture }) }}'>Finaliser la facture !!  </a>
+            {% if is_granted('ROLE_SUPER_ADMIN_COMPTA_EDIT') %}
+            <a class='btn btn-block btn-with-big-ico btn-danger' href='{{ path('facture_finalise', { 'numFacture': facture.numFacture }) }}'>Finaliser la facture !! 
+                <i class='glyphicon glyphicon-ok'></i></a>
+            {% endif %}
+                
         {% elseif not facture.payele and not facture.getAvoir %}
             {% include 'BackOffice/facture/add/add_facture_paiement.html.twig' %}
             
@@ -138,9 +166,49 @@
             {% endif %}
             
             <p>
-            <span data-btn_lib="AVOIR" data-invite="Attention, si la facture n'a pas été envoyé et que c'est la dernière, vous devez la supprimer. dans le cas contraire, il faut aller manuellement mettre le gestionnaire et/ou les établissements en fin de contrat." data-url_delete="{{ path('facture_avoir', { 'numFacture': facture.numFacture }) }}"  class=" DeleteBoxBefore btn btn-danger large full-width"><i class='glyphicon glyphicon-warning-sign'></i> Déclarer que la facture est annulée (avoir, désactivation des établissements)  <i class='glyphicon glyphicon-warning-sign'></i>   </span>
             {#path('backoffice_etablissement_patch_todo', {'id': etablissement.id,'patch_id': patch.id }) #}
         {% endif %}
+        
+ 
+            
+        <p><br>
+                {% if facture.getConcerne.demande  %}
+                    {%  if facture.getConcerne.demande.isFini  %}
+                        <div class='panel panel-success'>
+                    {%  else %}
+                            {% set first_user = facture.getConcerne.IfOneUserNotConeccted %}
+                            {%  if first_user %}
+                                {% include 'BackOffice/user/inc_show_password.html.twig' %}
+                            {% endif %}
+                        <div class='panel panel-warning'>
+                    {%  endif %}
+                    
+                    {% if facture.getConcerneTypeLib =='GESTIONNAIRE'  %}
+                        <div class='panel-heading'><a href="{{ path('demande_gestionnaire_show', { 'id': facture.getConcerne.demande.id }) }}">Demande</a></div>        
+                        {% include 'BackOffice/Demande/inc_show_short_demande.html.twig' with {'demande':facture.getConcerne.demande} %}
+
+                    {%  else  %}
+                        <div class='panel-heading'><a href="{{ path('demande_etablissement_show', { 'id': facture.getConcerne.demande.id }) }}">Demande</a></div>        
+                        {% include 'BackOffice/Demande/inc_show_short_demande.html.twig' with {'demande':facture.getConcerne.demande} %}
+                    {%  endif %}
+                            
+                    {% if not facture.getConcerne.demande.fini and editFormDemandeView and facture.finalised %}
+                    
+                                <div class='panel-body'> 
+                                <div class='well'> 
+                        {{ form_start(editFormDemandeView) }}
+                            {{ form_widget(editFormDemandeView) }}
+                            {{ include("Nuts/cancelsave.html.twig") }}
+                        {{ form_end(editFormDemandeView) }}
+                         </div> </div>
+                    
+                    {% endif %} 
+                             
+                 </div>
+            {% endif %} 
+       
+
+                        
         
         
     </div>

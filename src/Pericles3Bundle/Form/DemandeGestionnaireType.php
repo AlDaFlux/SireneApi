@@ -11,6 +11,12 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+
+
+use PUGX\AutocompleterBundle\Form\Type\AutocompleteType;
+
+
 
 class DemandeGestionnaireType extends AbstractType
 {
@@ -20,7 +26,16 @@ class DemandeGestionnaireType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($options['ancreai'])
+        if ($options['finess'])
+        {
+            $builder->add('finess', AutocompleteType::class, [
+                'required'    => false ,
+                'attr' => array('placeholder' => "Numéro finess (012345678) ou nom du gestiopnnaire (ASSOCIATION DE REGROUPEMENT D'ETABLISSEMENTS REGIONALE..) "),
+                'label' => 'Gestionnaire',
+                'class' => 'Pericles3Bundle:FinessGestionnaire'
+                ]);
+        }
+        elseif ($options['ancreai'])
         {
         $builder
             ->add('etat', EntityType::class, array(
@@ -36,11 +51,11 @@ class DemandeGestionnaireType extends AbstractType
                 ->add('GestionnaireNom', TextType::class, ['required' => true])
                 ->add('DemandeurNom', TextType::class, ['required' => true])
                 ->add('DemandeurPrenom', TextType::class, ['required' => true])
-                ->add('email')
+                ->add('email', EmailType::class, ['required' => true])
                 ->add('adresse')
                 ->add('codePostal')
                 ->add('ville')
-                ->add('CommentaireCreai', TextareaType::class);
+                ->add('CommentaireCreai', TextareaType::class, ['required' => false]);
         }
     }
     
@@ -53,6 +68,7 @@ class DemandeGestionnaireType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'Pericles3Bundle\Entity\DemandeGestionnaire',
             'ancreai' => false,
+            'finess' => false,
         ));
     }
 }

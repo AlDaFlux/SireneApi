@@ -38,8 +38,6 @@ class ObjectifOperationnelRepository extends \Doctrine\ORM\EntityRepository
                 $qb = $this->createQueryBuilder('ooa');
                 $qb->Join('ooa.etablissement', 'etablissement');
                 $qb->Join('etablissement.gestionnaire', 'gestionnaire');
- 
-                
                 if ($completed=="finis") { $whereand='  AND  ooa.complete = 100'; }
                 elseif ($completed=="encours") { $whereand = ' AND  ooa.complete <100'; }
                 else $whereand="";
@@ -230,5 +228,16 @@ class ObjectifOperationnelRepository extends \Doctrine\ORM\EntityRepository
         }
         
 
+        /* utimlisé& pour l'analyse pre - migration */ 
+        public function findByGestionnaireGestionnaire(Gestionnaire $gestionnaire) 
+        {
+                $qb = $this->createQueryBuilder('ooa');
+                $qb->Join('ooa.etablissement', 'etablissement');
+                $qb->Join('etablissement.gestionnaire', 'gestionnaire');
+                $qb->where("etablissement.gestionnaire = :gestionnaire_id")->setParameter('gestionnaire_id', $gestionnaire->getId());
+		return $qb->getQuery()->getResult();
+	}
+        
+        
         
 }

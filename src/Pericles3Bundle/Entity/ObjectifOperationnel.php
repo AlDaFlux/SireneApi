@@ -3,6 +3,8 @@
 namespace Pericles3Bundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+
 
 use DateTime;
 
@@ -11,6 +13,7 @@ use DateTime;
  *
  * @ORM\Table(name="objectif_perationnel")
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\ObjectifOperationnelRepository")
+ * @Gedmo\Loggable
  */
 class ObjectifOperationnel
 {
@@ -130,6 +133,13 @@ class ObjectifOperationnel
      */
     private $priorite;
     
+    
+    
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Pericles3Bundle\Entity\DomaineObjectifStrategique",inversedBy="objectifsOperationnel")
+     */
+    private $objectifStrategique;
     
     
     
@@ -443,6 +453,11 @@ class ObjectifOperationnel
         return count($this->criteres);
     }
     
+    
+//    new \Doctrine\Common\Collections\ArrayCollection();
+    
+    
+    
     public function getLonelyCritere()
     {
         if ($this->getNbCriteres())
@@ -646,5 +661,53 @@ class ObjectifOperationnel
     public function getPriorité()
     {
         return $this->priorite;
+    }
+
+    /**
+     * Set priorite
+     *
+     * @param integer $priorite
+     *
+     * @return ObjectifOperationnel
+     */
+    public function setPriorite($priorite)
+    {
+        $this->priorite = $priorite;
+
+        return $this;
+    }
+
+    /**
+     * Get priorite
+     *
+     * @return integer
+     */
+    public function getPriorite()
+    {
+        return $this->priorite;
+    }
+
+    /**
+     * Set objectifStrategique
+     *
+     * @param \Pericles3Bundle\Entity\DomaineObjectifStrategique $objectifStrategique
+     *
+     * @return ObjectifOperationnel
+     */
+    public function setObjectifStrategique(\Pericles3Bundle\Entity\DomaineObjectifStrategique $objectifStrategique = null)
+    {
+        $this->objectifStrategique = $objectifStrategique;
+
+        return $this;
+    }
+
+    /**
+     * Get objectifStrategique
+     *
+     * @return \Pericles3Bundle\Entity\DomaineObjectifStrategique
+     */
+    public function getObjectifStrategique()
+    {
+        return $this->objectifStrategique;
     }
 }

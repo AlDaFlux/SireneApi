@@ -65,9 +65,11 @@
                 <td>{{ patch.createdAt  | date('Y-m-d') }}</td>
                 {% set stats = patch.stats %}
                 {% if stats.source_a_verifie +  stats.cible_a_verifie %}
-                    <td class='alert-danger'><a href="{{ path('patch_show', { 'id': patch.id }) }}">{{patch}}</a></td>
-                {% else %}
+                {% endif %}
+                {% if patch.isVerif %}
                     <td class='alert-success'><a href="{{ path('patch_show', { 'id': patch.id }) }}">{{patch}}</a></td>
+                {% else %}
+                    <td class='alert-danger'><a href="{{ path('patch_show', { 'id': patch.id }) }}">{{patch}}</a></td>
                 {% endif %}
                     
                 <td>{{stats.OK}}</td>

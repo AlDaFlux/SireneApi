@@ -2,6 +2,9 @@
 
 namespace Pericles3Bundle\Repository;
 
+use Pericles3Bundle\Entity\ReferentielPublic;
+
+
 use DateTime;
 
 
@@ -29,12 +32,11 @@ class FacturePrestaRepository extends \Doctrine\ORM\EntityRepository
 	{
             $dateLoin =new Datetime('now');
             $dateLoin->modify("+ 1 year");
-            $dateLoin->modify("- 1  month");
+            $dateLoin->modify("+ 3  month");
 
             $dateYAPasLongtemps=new Datetime('now');
             $dateYAPasLongtemps->modify("- 1  month");
-
-            
+ 
             
             $qb = $this->createQueryBuilder('facturePrestas');
             if ($limit) { $qb->setMaxResults($limit); }
@@ -55,6 +57,43 @@ class FacturePrestaRepository extends \Doctrine\ORM\EntityRepository
             $qb->Join('facturePrestas.etablissement', 'etablissement');
             $qb->Join('facturePrestas.facture', 'facture');
             $qb->where('etablissement.id='.$etablissement->getId());
+            $qb->orderBy("facture.dateEmission","ASC");
+            return $qb->getQuery()->getResult();
+	}
+        
+        
+	public function findByReferentielPublic(ReferentielPublic $public)
+	{
+            $qb = $this->createQueryBuilder('facturePrestas');
+            $qb->Join('facturePrestas.etablissement', 'etablissement');
+            $qb->Join('etablissement.referentielPublic', 'public');
+            $qb->Join('facturePrestas.facture', 'facture');
+            $qb->where('public.id='.$public->getId());
+            $qb->orderBy("facture.dateEmission","ASC");
+            return $qb->getQuery()->getResult();
+	}
+        
+	public function findByReferentielPublicAllBranche(ReferentielPublic $public, $year=null)
+	{
+            $qb = $this->createQueryBuilder('facturePrestas');
+            $qb->Join('facturePrestas.etablissement', 'etablissement');
+            $qb->Join('etablissement.referentielPublic', 'public');
+            $qb->Join('facturePrestas.facture', 'facture');
+            $refsPublics=$public->getAllBranche();
+            
+            if ($year)
+            {
+                $year_where="and facture.numFacture LIKE '".$year."%'";
+            }
+            else
+            {
+                $year_where="";
+            }
+            foreach ($refsPublics as $refPublic)
+            {
+                $qb->orWhere('(public.id='.$refPublic->getId()." ".$year_where.")");
+            }
+            
             $qb->orderBy("facture.dateEmission","ASC");
             return $qb->getQuery()->getResult();
 	}

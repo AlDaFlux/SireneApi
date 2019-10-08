@@ -28,6 +28,16 @@ class DomaineObjectifStrategiqueRepository extends \Doctrine\ORM\EntityRepositor
                 $qb->orderBy('dosa.statut DESC, dosa.dateEcheance');
 	}
         
+	public function findByEtablissementAlpha(Etablissement $etablissement) 
+        {
+		$qb = $this->createQueryBuilder('dosa');
+		$qb->where('dosa.etablissement = :etablissement_id')->setParameter('etablissement_id', $etablissement->getId());
+                $qb->orderBy('dosa.commentaire');
+		return $qb->getQuery()->getResult();
+	}
+        
+        
+        
         public function findByGestionnaire(\Pericles3Bundle\Entity\User $User) 
         {
 		$qb = $this->createQueryBuilder('dosa');

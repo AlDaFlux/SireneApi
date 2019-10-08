@@ -6,6 +6,7 @@
 {% block body %}
     <h1><a href="{{ path('arsene_stats') }}">Stats</a></h1>
    
+   
     
     <h2>CREAIs</h2>
         
@@ -18,7 +19,9 @@
                 <td>CREAI</td>
                 <td>Nb Etab.</td>
                 <td>Nb Gest.</td>
-                <td>Montant</td>
+            {# 
+                <td>Montant</td> 
+            #}
             </tr>
         </thead>
     {% set total = 0 %}
@@ -40,8 +43,10 @@
             <td class="text-right">{{creai.NbEtablissementsReels}}</td>
             <td class="text-right" >{{creai.NbGestionnairesReels}}</td>
             
-            
+                        {# 
              {{creai.FacturesMontant | TdCurrency | raw}} 
+            #}
+
         </tr>
         {% set total = total + creai.NbEtablissementsReels %}
         {% set total_gestionnaire = total_gestionnaire + creai.NbGestionnairesReels %}
@@ -52,7 +57,10 @@
             <td>ANCREAI</td>
             <td class="text-right">{{NbSansCreai}}</td>
             <td class="text-right">{{NbGestionnaireSansCreai}}</td>
-           {{(SommeFacturee-montant_total) | TdCurrency  | raw }}
+                        {# 
+            {{(SommeFacturee-montant_total) | TdCurrency  | raw }}
+            #}
+
         </tr>
         {% set total = total + NbSansCreai%}
         {% set total_gestionnaire = total_gestionnaire + NbGestionnaireSansCreai%}
@@ -65,7 +73,9 @@
                 <td>Total</td>
                 <td class="text-right">{{total}}</td>
                 <td class="text-right">{{total_gestionnaire}}</td>
+                {# 
                      {{SommeFacturee | TdCurrency | raw}}  
+                #}
             </tr>
         </tfoot>
     </table>
@@ -114,8 +124,9 @@
             
             
  
-                 
-  
+       <p>                
+     <a class='btn btn-block btn-primary' href="{{ path('arsene_stats_connections') }}">Stats User</a>
+ 
     
 {% endblock %}
  

@@ -222,6 +222,26 @@ class StatsController extends Controller
     
     
     
+    
+    /**
+     * Lists all Gestionnaire entities.
+     *
+     * @Route("/connection_user", name="arsene_stats_connections")
+     * @Method("GET")
+     */
+    public function indexUserConnectAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $stats_day = $em->getRepository('Pericles3Bundle:StatUserConnect')->findByDay(60);
+        $stats_day_week = $em->getRepository('Pericles3Bundle:StatUserConnect')->findByDayOfTheWeek();
+        $stats_month= $em->getRepository('Pericles3Bundle:StatUserConnect')->findByMonth(6);
+        $stats_hour= $em->getRepository('Pericles3Bundle:StatUserConnect')->findByHour();
+        
+        return $this->render('BackOffice/Stats/connections_user.html.twig', array('stats_day'=>$stats_day,'stats_month'=>$stats_month,'stats_hour'=>$stats_hour,'stats_day_week'=>$stats_day_week));
+    }
+    
+    
+    
     public function getGraphPie($datas,$labels,$lib="nb")
     {
         

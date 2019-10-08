@@ -1,0 +1,60 @@
+{% extends "BackOffice/layout.html.twig" %}
+
+ 
+
+{% block body %}
+    <h1><a href="{{ path('trash_index') }}">Trash</a></h1>
+     
+    <h3>Objectifs Opérationels - Analyse</h3>
+  
+
+    <table class='table table-triable'>    
+            <thead>
+                <tr>
+                    <th>OO id</th>
+                    <th>etablissement</th>
+                    <th>objectifOperationnel</th>
+                    <th>Etablissement</th>
+                    <th>Numero</th>
+                    <th>Critere</th>
+                     {#
+                    <th>Public</th>
+                    <th>Etablissement</th>
+                    <th>Numero</th>
+                    <th>Critere</th>
+                    <th>Public</th>
+                     #}
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+        {% for objectifOperationnel in objectifOperationnels %}
+                        <tr>
+                            <td>{{objectifOperationnel.id}}</td>
+                            <td>{{objectifOperationnel.nbCriteres}}</td>
+                            <td>{{objectifOperationnel}}</td>
+                            <td>
+                                <a  title="Accèdez à l'objectif opérationnel " href="{{ path('paq_ooa_show', {'id': objectifOperationnel.id}) }}"><i class='glyphicon glyphicon-export'></i></a>
+                            </td>
+                            {#
+                            <td class='alert-warning'>{{critere.dimension.domaine.numero}}</td>
+                            #}
+                            
+                        </tr>
+       {% endfor %}
+            </tbody>
+    </table>    
+    
+  
+       
+       
+        {% for objectifOperationnel in objectifOperationnels %}
+               {% include 'ObjectifsAmelioration/Operationnels/inc_modal_show.html.twig' %}
+       {% endfor %}
+        
+         
+        
+    
+{% endblock %}
+ 

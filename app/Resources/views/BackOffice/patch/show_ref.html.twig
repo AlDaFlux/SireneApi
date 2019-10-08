@@ -68,7 +68,11 @@
                     <td>
                         {{ patchReferentiel.cible.referentielPublic}}</a>
                     </td>
-                    <td>{{ patchReferentiel.cible.id}}</td>
+                    <td>
+                         <a href="{{ path('referentielpublic_show_node', {'id': patchReferentiel.cible.ReferentielPublic.id,'id_node': patchReferentiel.cible.id }) }}">
+                             {{ patchReferentiel.cible.id}}
+                         </a>
+                    </td>
                 {% else %}
                     <td></td>
                     <td></td>

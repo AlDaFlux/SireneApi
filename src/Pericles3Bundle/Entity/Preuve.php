@@ -4,11 +4,15 @@ namespace Pericles3Bundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 /**
  * Preuve
  *
  * @ORM\Table(name="preuve")
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\PreuveRepository")
+ * @Gedmo\Loggable
  */
 class Preuve
 {

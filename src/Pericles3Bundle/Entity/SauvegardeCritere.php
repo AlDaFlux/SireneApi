@@ -2,6 +2,7 @@
 
 namespace Pericles3Bundle\Entity;
 
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**

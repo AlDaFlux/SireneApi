@@ -172,15 +172,21 @@ class EvaluationController extends Controller
     public function indexReferentielAction()
     {
         $etablissements=$this->GetUser()->GetEtablissements();
+        
+        return $this->render('Evaluation/Referentiel/index.html.twig', 
+                array(
+                'etablissements'=> $etablissements, 
+                'etabsByRef'=> $this->etabsByRef($etablissements) 
+                    ));
+    }
+    
+    function etabsByRef($etablissements)
+    {
         foreach ($etablissements as $etablissement)
         {
             $etabsByRef[$etablissement->GetReferentielPublic()->GetID()][]=$etablissement;
         }
-        return $this->render('Evaluation/Referentiel/index.html.twig', 
-                array(
-                'etablissements'=> $etablissements, 
-                'etabsByRef'=> $etabsByRef 
-                    ));
+        return($etabsByRef);
     }
      
     

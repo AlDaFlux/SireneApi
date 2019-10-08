@@ -94,7 +94,8 @@ class IndexController extends Controller
                         {
                             $Etablissements=$this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:Etablissement')->findEtablissementParGestionnaire($this->getUser()->GetGestionnaire());
                         }
-                        return $this->render('Index/indexGestionnaire.html.twig',['etablissements' =>$Etablissements,"editorials"=>$editorials]);
+                        
+                        return $this->render('Index/indexGestionnaire.html.twig',['etablissements' =>$Etablissements,"editorials"=>$editorials, 'etabsByRef'=> $this->etabsByRef($Etablissements)]);
                     }
                     elseif($this->getUser())
                     {
@@ -106,6 +107,15 @@ class IndexController extends Controller
          
     
        
+    function etabsByRef($etablissements)
+    {
+        foreach ($etablissements as $etablissement)
+        {
+            $etabsByRef[$etablissement->GetReferentielPublic()->GetID()][]=$etablissement;
+        }
+        return($etabsByRef);
+    }
+     
 
     /**
      * Finds and displays a User entity.

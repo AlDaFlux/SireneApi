@@ -6,10 +6,6 @@
     <table class='table table-bordered'>
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ dump(editorialCLU) }}</td>
-            </tr>
-            <tr>
                 <th>datePublication</th>
                 <th>{% if editorialCLU.datePublication %}{{ editorialCLU.datePublication|date('Y-m-d H:i:s') }}{% endif %}</th>
             </tr>

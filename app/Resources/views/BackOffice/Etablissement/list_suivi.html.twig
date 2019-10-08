@@ -4,7 +4,9 @@
     <table class='table table-bordered table-triable white'>
         <thead>
             <tr>
+                {%  if activate_finess %}
                 <th>FINESS</th>
+                {% endif %}
                 <th>Nom</th>
                 {% if gestionnaire is not defined %}
                     <th>Gestionnaire</th>
@@ -34,7 +36,9 @@
             {% else %}
             <tr>
             {% endif %}
+                {%  if activate_finess %}
                 <td>{{ etablissement.codefiness }}</td>
+                {% endif %}
                                   
                 {% if etablissement.category.reel %}
                     <td  class='alert alert-info' title='{{ etablissement.category.commentaire}}'> <a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}">{{ etablissement.nom }}</a></td>
@@ -85,9 +89,6 @@
                     <td>{{etablissement.sizeMaxUpload | formatBytes}} </td>
 
                     {% include "Synthese/Sauvegardes/inc_td_sauvegarde.html.twig" with {'link_save' : true} %} 
-            
- 
-                    
                     
                     
                     {% if  etablissement.users | length == 0 %}

@@ -2,10 +2,13 @@
 
 namespace Pericles3Bundle\Controller\BackOffice;
 
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 use Pericles3Bundle\Entity\DemandeEtablissement;
 use Pericles3Bundle\Entity\DemandeEtat;
@@ -14,10 +17,14 @@ use Pericles3Bundle\Entity\Creai;
 use Pericles3Bundle\Entity\Gestionnaire;
 use Pericles3Bundle\Entity\Etablissement;
 use Pericles3Bundle\Entity\DemandeInfos;
+use Pericles3Bundle\Entity\Finess;
+use Pericles3Bundle\Entity\FinessGestionnaire;
 
 use Pericles3Bundle\Form\DemandeEtablissementType;
 use Pericles3Bundle\Form\DemandeInfosType;
 use Pericles3Bundle\Form\DemandeGestionnaireType;
+
+use Dompdf\Dompdf;
 
 
 
@@ -97,7 +104,7 @@ class DemandeController extends Controller
         }
         else
         {
-            $demandeEtablissements  = $em->getRepository('Pericles3Bundle:DemandeEtablissement')->findAll();
+            $demandeEtablissements  = $em->getRepository('Pericles3Bundle:DemandeEtablissement')->findNonDevis();
         }
         
         
@@ -118,7 +125,7 @@ class DemandeController extends Controller
         if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') or $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_SUPERVISOR'))
         {
            $em = $this->getDoctrine()->getManager();
-           $demandeEtablissements  = $em->getRepository('Pericles3Bundle:DemandeEtablissement')->findAll();
+           $demandeEtablissements  = $em->getRepository('Pericles3Bundle:DemandeEtablissement')->findNonDevis();
             return $this->render('BackOffice/Demande/Etablissement/liste.html.twig', array(
                 'demandeEtablissements' => $demandeEtablissements,
             ));
@@ -133,18 +140,141 @@ class DemandeController extends Controller
     
     
     
+    /**
+     * Creates a new DemandeEtablissement entity.
+     *
+     * @Route("/etablissement/new/byfiness", name="demande_etablissement_new_byfiness")
+     * @Method({"GET", "POST"})
+     */
+    public function newEtablissementazeByFinessAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $demandeEtablissement = new DemandeEtablissement();
+        $form = $this->createForm('Pericles3Bundle\Form\DemandeEtablissementType', $demandeEtablissement, ["finess"=>true]);
+        $form->handleRequest($request);
+
+         if ($form->isSubmitted() && $form->isValid()) 
+        {
+            $num_finess=$form->getData()->GetFiness();
+            $repositoryFiness = $this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:Finess');
+            $finess = $repositoryFiness->findOneByCodeFiness($num_finess);
+            if ($finess)
+            {
+                if ($finess->hasEtablissement())
+                {
+                    $this->addFlash('error', "L'établissement ".$finess->GetEtablissement()."est déja créer dans ".$this->getParameter('application_name'));
+                }
+                elseif ($finess->getDemandesEtablissement())
+                {
+                    $this->addFlash('error', "L'établissement ".$num_finess." à déja une demande en cours");
+                }
+                else
+                {
+                    $this->addFlash('success', "FINESS : ".$num_finess);
+                    return $this->redirectToRoute('demande_etablissement_from_byfiness', array('codeFiness' => $num_finess));
+                }
+            }
+            else
+            {
+                $this->addFlash('error', "Le numéro FINESS n'a pas été trouvé : ".$num_finess);
+            }
+
+         }
+        
+        
+        return $this->render('BackOffice/Demande/Etablissement/new.html.twig', array(
+            'demandeEtablissement' => $demandeEtablissement,
+            'form' => $form->createView(),
+             'link_sans_finess' => true,
+        ));
+    }
+
+    
+    function mailFree($email)
+    {
+        $em = $this->getDoctrine()->getManager();
+         if ($em->getRepository('Pericles3Bundle:User')->nbParMail($email))
+        {
+            $this->addFlash('error', "L'utilisateur <i>".$email."</i> à déja un compte ARSENE : ".$em->getRepository('Pericles3Bundle:User')->nbParMail($email));
+            return(false);
+        }
+        elseif ($em->getRepository('Pericles3Bundle:DemandeEtablissement')->nbParMail($email))
+        {
+            $this->addFlash('error', "Une demande de création d'établissement avec le mail <i>".$email."</i> à déja éfféctué : ");
+            return(false);
+        }
+        elseif ($em->getRepository('Pericles3Bundle:DemandeGestionnaire')->nbParMail($email))
+        {
+            $this->addFlash('error', "Une demande de création de gestionnaire avec le mail <i>".$email."</i> à déja éfféctué : ");
+            return(false);
+        }
+        return(true);
+    }
+    
     
     /**
      * Creates a new DemandeEtablissement entity.
      *
-     * @Route("/etablissement/new", name="demande_etablissement_new")
+     * @Route("/etablissement/new/fromfiness/{codeFiness}", name="demande_etablissement_from_byfiness")
+     * @Method({"GET", "POST"})
+     */
+    public function newEtablissementazeFromFinessAction(Finess $finess,Request $request)
+    {
+        
+        $em = $this->getDoctrine()->getManager();
+        $demandeEtablissement = new DemandeEtablissement();
+        
+        $demandeEtablissement->setCodePostal($finess->GetCodePostal());
+        $demandeEtablissement->setEtablissementNom($finess->GetRaisonSociale());
+        $demandeEtablissement->setAdresse($finess->GetAdresse());
+        $demandeEtablissement->setVille($finess->GetVille());
+        $demandeEtablissement->setFiness($finess);
+        $demandeEtablissement->setReferentielPublic($finess->getReferentielPublicDefaut());
+        
+        
+        $form = $this->createForm('Pericles3Bundle\Form\DemandeEtablissementType', $demandeEtablissement, ["finess"=>false,"required"=>true]);
+        $form->handleRequest($request);
+
+        
+        $email=$form->getData()->GetEmail();
+        if ($email)
+        {
+            if ($this->mailFree($email))
+            {
+                if ($form->isSubmitted() && $form->isValid()) 
+                {
+                    $demandeEtablissement->setCreai($this->getUser()->GetCreai());
+                    $demandeEtablissement->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(0));
+                    $demandeEtablissement->setDateDemande(new \DateTime(date("Y-m-d H:i:s")));
+                    $em->persist($demandeEtablissement);
+                    $em->flush();
+                    return $this->redirectToRoute('demande_etablissement_show', array('id' => $demandeEtablissement->getId()));
+                 }
+            }
+        }
+
+
+        return $this->render('BackOffice/Demande/Etablissement/new.html.twig', array(
+            'demandeEtablissement' => $demandeEtablissement,
+            'form' => $form->createView(),
+             'link_sans_finess' => false,
+        ));
+        
+    }
+    
+    
+    
+    /**
+     * Creates a new DemandeEtablissement entity.
+     *
+     * @Route("/etablissement/new", name="demande_etablissement_new_simple")
      * @Method({"GET", "POST"})
      */
     public function newEtablissementazeaAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $demandeEtablissement = new DemandeEtablissement();
-        $form = $this->createForm('Pericles3Bundle\Form\DemandeEtablissementType', $demandeEtablissement);
+        $form = $this->createForm('Pericles3Bundle\Form\DemandeEtablissementType', $demandeEtablissement, ["required"=>true]);
         $form->handleRequest($request);
         $email=$form->getData()->GetEmail();
         
@@ -178,18 +308,17 @@ class DemandeController extends Controller
             }
             
             $demandeEtablissement->setCreai($this->getUser()->GetCreai());
-            $demandeEtablissement->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(1));
+            $demandeEtablissement->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(0));
             $demandeEtablissement->setDateDemande(new \DateTime(date("Y-m-d H:i:s")));
             $em->persist($demandeEtablissement);
             $em->flush();
 
-            $this->EnvoiMailDemandeEtablissement($demandeEtablissement,$this->getParameter('mail_to'));
-            
             return $this->redirectToRoute('demande_etablissement_show', array('id' => $demandeEtablissement->getId()));
         }
         return $this->render('BackOffice/Demande/Etablissement/new.html.twig', array(
             'demandeEtablissement' => $demandeEtablissement,
             'form' => $form->createView(),
+             'link_sans_finess' => false,
         ));
     }
 
@@ -234,7 +363,19 @@ class DemandeController extends Controller
             $em->persist($demandeEtablissement);
             $em->flush();
             $this->AddFlash("success","La demande a bien été modifiée.");
-            return $this->redirectToRoute('backoffice_demande_index');
+            if ($demandeEtablissement->getDemandeGestionnaire())
+            {
+                return $this->redirectToRoute('demande_gestionnaire_show', array('id' => $demandeEtablissement->getDemandeGestionnaire()->getId()));
+            }
+            elseif ($demandeEtablissement->getGestionnaire())
+            {
+                return $this->redirectToRoute('demande_gestionnaire_existant_id', array('id' => $demandeEtablissement->getGestionnaire()->getId()));
+            }
+            else
+            {
+                return $this->redirectToRoute('demande_etablissement_show', array('id' => $demandeEtablissement->getId()));
+            }
+
         }
 
         return $this->render('BackOffice/Demande/Etablissement/edit.html.twig', array(
@@ -263,6 +404,10 @@ class DemandeController extends Controller
             {
                 return $this->redirectToRoute('demande_gestionnaire_show', array('id' => $demandeEtablissement->getDemandeGestionnaire()->getId()));
             }
+            elseif ($demandeEtablissement->getGestionnaire())
+            {
+                return $this->redirectToRoute('demande_gestionnaire_existant_id', array('id' => $demandeEtablissement->getGestionnaire()->getId()));
+            }
             else
             {
                 return $this->redirectToRoute('backoffice_demande_index');
@@ -290,7 +435,8 @@ class DemandeController extends Controller
             $em->persist($demandeGestionnaire);
             $em->flush();
             $this->AddFlash("success","La demande a bien été modifiée.");
-            return $this->redirectToRoute('backoffice_demande_index');
+            return $this->redirectToRoute('demande_gestionnaire_show', array('id' => $demandeGestionnaire->getId()));
+//            return $this->redirectToRoute('backoffice_demande_index');
         }
 
         return $this->render('BackOffice/Demande/Gestionnaire/edit.html.twig', array(
@@ -316,7 +462,7 @@ class DemandeController extends Controller
             $em->persist($demandeGestionnaire);
             $em->flush();
 
-            if ($demandeGestionnaire->getEtat()->getId()==3)
+            if ($demandeGestionnaire->IsFini())
             {
                 $fini=$em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(3);
 
@@ -335,7 +481,7 @@ class DemandeController extends Controller
             return $this->redirectToRoute('demande_gestionnaire_show', array('id' => $demandeGestionnaire->getId()));
         }
         return $this->render('BackOffice/Demande/Gestionnaire/edit.html.twig', array(
-            'demandeEtablissement' => $demandeGestionnaire,
+            'demandeGestionnaire' => $demandeGestionnaire,
             'edit_form' => $editForm->createView()
         ));
     }
@@ -371,13 +517,15 @@ class DemandeController extends Controller
      * @Route("/etablissement/{id}/valider", name="demande_etablissement_valide")
      * @Method({"GET", "POST"})
      */
-    public function valideAction(Request $request, DemandeEtablissement $demandeEtablissement)
+    public function valideAction(DemandeEtablissement $demandeEtablissement)
     {
             $em = $this->getDoctrine()->getManager();
+            $demandeEtablissement->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(1));
             $em->persist($demandeEtablissement);
             $em->flush();
             $this->AddFlash("success","Votre demande à bien été enregistrée, elle sera prise en compte dans les plus brefs délais");
-            return $this->redirectToRoute('pericles3_backoffice');
+            $this->EnvoiMailDemandeEtablissement($demandeEtablissement,$this->getParameter('mail_to'));
+            return $this->redirectToRoute('demande_etablissement_show', array('id' => $demandeEtablissement->getId()));
     }
     
     
@@ -476,7 +624,7 @@ class DemandeController extends Controller
         }
         else
         {
-            $demandesGestionnaire  = $em->getRepository('Pericles3Bundle:DemandeGestionnaire')->findAll();
+            $demandesGestionnaire  = $em->getRepository('Pericles3Bundle:DemandeGestionnaire')->findNonDevis();
         }
         return $this->render('BackOffice/Demande/Gestionnaire/liste.html.twig', array(
             'demandesGestionnaire' => $demandesGestionnaire,
@@ -509,7 +657,105 @@ class DemandeController extends Controller
     /**
      * Creates a new DemandeEtablissement entity.
      *
-     * @Route("/gestionnaire/new", name="demande_gestionnaire_new")
+     * @Route("/gestionnaire/new/byfiness", name="demande_gestionnaire_new_byfiness")
+     * @Method({"GET", "POST"})
+     */
+    public function newGestionnaireByFinessAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $demandeGestionnaire = new DemandeGestionnaire();
+        
+        $form = $this->createForm('Pericles3Bundle\Form\DemandeGestionnaireType', $demandeGestionnaire, ["finess"=>true]);
+        
+        $form->handleRequest($request);
+         
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
+            $num_finess=$form->getData()->GetFiness();
+            $repositoryFiness = $this->getDoctrine()->getManager()->getRepository('Pericles3Bundle:FinessGestionnaire');
+            $finess = $repositoryFiness->findOneByCodeFiness($num_finess);
+            if ($finess)
+            {
+                if ($finess->GetGestionnaire())
+                {
+                    $this->addFlash('error', "Le gestionnaire avec le finess ".$num_finess." existe déja dans ".$this->getParameter('application_name'));
+                    $this->addFlash('warning', "Voulez vous lui ajouter des établissements ?");
+                    return $this->redirectToRoute('demande_gestionnaire_existant_id', array('id' => $finess->GetGestionnaire()->GetId()));
+                }
+                else
+                {
+                    return $this->redirectToRoute('demande_gestionnaire_from_byfiness', array('codeFiness' => $finess->getCodeFiness()));
+                    //$this->addFlash('success', "Le gestionnaire n'exite pas déja");
+                }
+            }
+            else
+            {
+                $this->addFlash('error', "Le numéro FINESS n'a pas été trouvé : ".$num_finess);
+            }
+
+         }
+        return $this->render('BackOffice/Demande/Gestionnaire/new.html.twig', array(
+            'demandeGestionnaire' => $demandeGestionnaire,
+            'form' => $form->createView(),
+            'link_sans_finess' => true,
+        ));
+    }
+    
+    
+    
+    /**
+     * Creates a new DemandeEtablissement entity.
+     *
+     * @Route("/gestionnaire/new/fromfiness/{codeFiness}", name="demande_gestionnaire_from_byfiness")
+     * @Method({"GET", "POST"})
+     */
+    public function newGestionnaireFromFinessAction(FinessGestionnaire $finess,Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $demandeGestionnaire = new DemandeGestionnaire();
+        $demandeGestionnaire->setCodePostal($finess->GetCodePostal());
+        $demandeGestionnaire->setGestionnaireNom($finess->GetRaisonSociale());
+        $demandeGestionnaire->setAdresse($finess->GetAdresse());
+        $demandeGestionnaire->setVille($finess->GetVille());
+        $demandeGestionnaire->setFiness($finess);
+        
+        
+        $form = $this->createForm('Pericles3Bundle\Form\DemandeGestionnaireType', $demandeGestionnaire, ["finess"=>false]);
+        
+        $form->handleRequest($request);
+         
+        
+        $email=$form->getData()->GetEmail();
+        if ($email)
+        {
+            if ($this->mailFree($email))
+            {
+                if ($form->isSubmitted() && $form->isValid()) 
+                {
+                    $demandeGestionnaire->setCreai($this->getUser()->GetCreai());
+                    $demandeGestionnaire->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(0));
+                    $demandeGestionnaire->setDateDemande(new \DateTime(date("Y-m-d H:i:s")));
+                    $em->persist($demandeGestionnaire);
+                    $em->flush();
+                    return $this->redirectToRoute('demande_gestionnaire_show', array('id' => $demandeGestionnaire->getId()));
+                 }
+            }
+        }
+        return $this->render('BackOffice/Demande/Gestionnaire/new.html.twig', array(
+            'demandeGestionnaire' => $demandeGestionnaire,
+            'form' => $form->createView(),
+              'link_sans_finess' => false,
+        ));
+    }
+    
+    
+    
+    
+    
+    /**
+     * Creates a new DemandeEtablissement entity.
+     *
+     * @Route("/gestionnaire/new", name="demande_gestionnaire_new_simple")
      * @Method({"GET", "POST"})
      */
     public function newGestionnaireAction(Request $request)
@@ -520,46 +766,81 @@ class DemandeController extends Controller
         $form->handleRequest($request);
         
         $email=$form->getData()->GetEmail();
-        if ($em->getRepository('Pericles3Bundle:User')->nbParMail($email))
+        if ($this->mailFree($email))
         {
-            $this->addFlash('error', "L'utilisateur <i>".$email."</i> à déja un compte ARSENE : ".$em->getRepository('Pericles3Bundle:User')->nbParMail($email));
-        }
-        elseif ($form->isSubmitted() && $form->isValid()) {
-             
-            
-            $demandeGestionnaire->setCreai($this->getUser()->GetCreai());
-            $demandeGestionnaire->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(1));
-
-                    
-            $demandeGestionnaire->setDateDemande(new \DateTime(date("Y-m-d H:i:s")));
-            $em->persist($demandeGestionnaire);
-            $em->flush();
-            
-            
-            return $this->redirectToRoute('demande_gestionnaire_show', array('id' => $demandeGestionnaire->getId()));
+            if ($form->isSubmitted() && $form->isValid()) 
+            {
+                $demandeGestionnaire->setCreai($this->getUser()->GetCreai());
+                $demandeGestionnaire->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(0));
+                $demandeGestionnaire->setDateDemande(new \DateTime(date("Y-m-d H:i:s")));
+                $em->persist($demandeGestionnaire);
+                $em->flush();
+                return $this->redirectToRoute('demande_gestionnaire_show', array('id' => $demandeGestionnaire->getId()));
+            }
         }
         
         return $this->render('BackOffice/Demande/Gestionnaire/new.html.twig', array(
             'demandeGestionnaire' => $demandeGestionnaire,
             'form' => $form->createView(),
+              'link_sans_finess' => false,
         ));
     }
 
 
-    
-        /**
+    /**
      * Finds and displays a DemandeEtablissement entity.
      *
-     * @Route("/gestionnaire/{id}", name="demande_gestionnaire_show")
+     * @Route("/gestionnaire/existant", name="demande_gestionnaire_existant")
      * @Method({"GET", "POST"})
      */
-    public function showGestionnaireAction(Request $request,DemandeGestionnaire $demandeGestionnaire)
+    public function showGestionnaireExistantAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        $gestionnaires = $em->getRepository('Pericles3Bundle:Gestionnaire')->findAll();
+
+        if ($request->get('gestionnaire_nom'))
+        {
+            $gestionnaire = $em->getRepository('Pericles3Bundle:Gestionnaire')->findOneByNom($request->get('gestionnaire_nom'));
+            if ($gestionnaire)
+            {
+                return $this->redirectToRoute('demande_gestionnaire_existant_id', array('id' => $gestionnaire->getId()));
+            }
+            else
+            {
+                $this->AddFlash("error","Le gestionnaire ".$request->get('gestionnaire_nom')."n a pas été trouvé");
+            }
+        }
+                
+        return $this->render('BackOffice/Demande/Gestionnaire/show_existing.html.twig', array(
+            "gestionnaires"=>$gestionnaires
+        ));
+    }
+    
+    
+    /**
+     * Finds and displays a DemandeEtablissement entity.
+     *
+     * @Route("/gestionnaire/existant/{id}", name="demande_gestionnaire_existant_id")
+     * @Method({"GET", "POST"})
+     */
+    public function showGestionnaireExistantIdAction(Gestionnaire $gestionnaire, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        
         $demandeEtablissement = new DemandeEtablissement();
         $form = $this->createForm('Pericles3Bundle\Form\DemandeEtablissementType', $demandeEtablissement,['gestionnaire'=>true]);
         $form->handleRequest($request);
-
+        
+        if ($request->get('etablissementNom'))
+        {
+            $demandeEtablissement=$this->GetDemandeEtablissementFromFiness($demandeEtablissement,$request);
+            //$demandeEtablissement->setGestionnaire($gestionnaire);
+            $demandeEtablissement->setGestionnaire($gestionnaire);          
+            $em->persist($demandeEtablissement);
+            $em->flush();
+        }
+        
+        
         if ($form->isSubmitted() && $form->isValid()) 
         {
             $num_finess=$demandeEtablissement->getFinessCode();
@@ -576,7 +857,139 @@ class DemandeController extends Controller
                 if ($num_finess) $this->AddFlash("error","Aucune correspondance pour le code finess <b>'".$num_finess."'</b> n'a été trouvé");
                 else $this->AddFlash("error","Pas de FINESS !! ");
             }
-            $demandeEtablissement->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(1));
+            
+            $demandeEtablissement->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(0));
+            $demandeEtablissement->setDateDemande(new \DateTime(date("Y-m-d H:i:s")));
+            $demandeEtablissement->setCreai($this->getUser()->GetCreai());
+            $demandeEtablissement->setGestionnaire($gestionnaire);          
+            
+            $em->persist($demandeEtablissement);
+            $em->flush();
+
+            $this->AddFlash("success","Etablissement rajouté ");
+            
+            unset($demandeEtablissement);
+            unset($form);
+            $demandeEtablissement = new DemandeEtablissement();
+            $form = $this->createForm('Pericles3Bundle\Form\DemandeEtablissementType', $demandeEtablissement,['gestionnaire'=>true]);
+        } 
+        
+        
+        return $this->render('BackOffice/Demande/Gestionnaire/show_existing.html.twig', array(
+            "gestionnaire"=>$gestionnaire,
+            'form' => $form->createView()
+                
+        ));
+    }
+    
+     /**
+     * Finds and displays a DemandeEtablissement entity.
+     *
+     * @Route("/gestionnaire/existant/{id}/valide_mail", name="demande_gestionnaire_existant_id_valide")
+     * @Method({"GET", "POST"})
+     */
+    public function showGestionnaireExistantValideIdAction(Gestionnaire $gestionnaire)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $encours=$em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(1);
+        
+        $devis=0;
+        foreach ($gestionnaire->getDemandesEtablissementGestionnaireExistant() as $demandeEtab)
+        {
+            if ($demandeEtab->GetEtat()->GetId()==0)
+            {
+                $devis++;
+                $demandeEtab->setEtat($encours);
+                $em->persist($demandeEtab);
+            }
+        }
+        $em->flush();
+        
+//        $this->AddFlash("success","Un mail a été envoyer au CREAI pour traitement.");
+        return $this->redirectToRoute('demande_gestionnaire_existant_id', array('id' => $gestionnaire->getId()));
+    }
+    
+    
+    
+    
+    
+    
+    /*
+    /**
+    public function showGestionnaireMailAction(Request $request,DemandeGestionnaire $demandeGestionnaire)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $encours=$em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(1);
+        $demandeGestionnaire->setEtat($encours);
+        $em->flush();
+        foreach ($demandeGestionnaire->getDemandesEtablissement() as $demandeEtab)
+        {
+            $demandeEtab->setEtat($encours);
+            $em->persist($demandeEtab);
+        }
+        $em->flush();
+        
+        $message = \Swift_Message::newInstance()
+          ->setSubject("[ARSENE] - Demande de création de gestionnaire ")
+          ->setFrom($this->getParameter('mail_from'))
+          ->setTo($this->getParameter('mail_to'))
+          ->setBody($this->renderView(
+                          'Email/demandeCreationGestionnaire.html.twig',
+                          array('demandeGestionnaire' => $demandeGestionnaire)
+          ),
+                          'text/html'
+          );
+          $this->get('mailer')->send($message);
+            $this->AddFlash("success","Un mail a été envoyer au CREAI pour traitement.");
+        return $this->redirectToRoute('backoffice_demande_index');
+
+    }
+
+    */
+    
+    /**
+     * Finds and displays a DemandeEtablissement entity.
+     *
+     * @Route("/gestionnaire/{id}", name="demande_gestionnaire_show")
+     * @Method({"GET", "POST"})
+     */
+    public function showGestionnaireAction(Request $request,DemandeGestionnaire $demandeGestionnaire)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $demandeEtablissement = new DemandeEtablissement();
+        $form = $this->createForm('Pericles3Bundle\Form\DemandeEtablissementType', $demandeEtablissement,['gestionnaire'=>true]);
+        $form->handleRequest($request);
+
+                
+//        $this->addFlash('error', "----<i>".$request->get('etablissementNom')."</i> +++");
+
+        if ($request->get('etablissementNom'))
+        {
+            $demandeEtablissement=$this->GetDemandeEtablissementFromFiness($demandeEtablissement,$request);
+            $demandeEtablissement->setDemandeGestionnaire($demandeGestionnaire);
+            $em->persist($demandeEtablissement);
+            $em->flush();
+            $this->AddFlash("success","Etablissement rajouté");
+        }
+                
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
+            $num_finess=$demandeEtablissement->getFinessCode();
+            $Finess=$this->GetFinessByCode($num_finess);
+            if ($Finess) 
+            {
+                $demandeEtablissement->setFiness($Finess);
+                $Finess->setDemandesEtablissement($demandeEtablissement);
+                $em->persist($Finess);
+                $this->AddFlash("success","Le code finess a été trouvé");
+            }
+            else
+            {
+                if ($num_finess) $this->AddFlash("error","Aucune correspondance pour le code finess <b>'".$num_finess."'</b> n'a été trouvé");
+                else $this->AddFlash("error","Pas de FINESS !! ");
+            }
+            
+            $demandeEtablissement->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(0));
             $demandeEtablissement->setDateDemande(new \DateTime(date("Y-m-d H:i:s")));
             $demandeEtablissement->setCreai($this->getUser()->GetCreai());
             $demandeEtablissement->setDemandeGestionnaire($demandeGestionnaire);
@@ -584,7 +997,7 @@ class DemandeController extends Controller
             $em->persist($demandeEtablissement);
             $em->flush();
 
-            $this->AddFlash("success","Etablissement rajouté");
+            $this->AddFlash("success","Etablissement rajouté ");
             
             unset($demandeEtablissement);
             unset($form);
@@ -600,16 +1013,118 @@ class DemandeController extends Controller
 
     
     
-        /**
-     * Finds and displays a DemandeEtablissement entity.
+    
+    function GetDemandeEtablissementFromFiness($demandeEtablissement,$request)
+    {
+            $em = $this->getDoctrine()->getManager();
+            $num_finess=$request->get('finessCode');
+            $Finess=$this->GetFinessByCode($num_finess);
+            if ($Finess) 
+            {
+                $demandeEtablissement->setFiness($Finess);
+                $Finess->setDemandesEtablissement($demandeEtablissement);
+                $this->AddFlash("success","Le code finess a été trouvé");
+            }
+            else
+            {
+                if ($num_finess) $this->AddFlash("error","Aucune correspondance pour le code finess <b>'".$num_finess."'</b> n'a été trouvé");
+                else $this->AddFlash("error","Pas de FINESS !! ");
+            }
+            $demandeEtablissement->setEtablissementNom($request->get('etablissementNom'));
+            $demandeEtablissement->setModeCotisation($em->getRepository('Pericles3Bundle:ModeCotisation')->findOneById($request->get('modeCotisation')));
+            $demandeEtablissement->setReferentielPublic($em->getRepository('Pericles3Bundle:ReferentielPublic')->findOneById($request->get('referentielPublic')));
+            $demandeEtablissement->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(0));
+            $demandeEtablissement->setDateDemande(new \DateTime(date("Y-m-d H:i:s")));
+            $demandeEtablissement->setCreai($this->getUser()->GetCreai());
+            return($demandeEtablissement);
+
+    }
+    
+    
+    
+    
+    
+    
+    /**
+     * Imprime un devis (pdf)
+     *
+     * @Route("/gestionnaire/{id}/devis", name="demande_gestionnaire_devis")
+     * @Method({"GET", "POST"})
+     */
+    public function debugDevisAction(DemandeGestionnaire $demandeGestionnaire)
+    {
+        $view =  $this->renderView('BackOffice/facture/facture/devis_'.strtolower($this->getParameter('application_name')).'.html.twig',  
+                array(
+                    'demandeGestionnaire'=>$demandeGestionnaire,
+                    'titre'=>"Devis ".$demandeGestionnaire,
+                    'concerneFiness'=> $demandeGestionnaire->getFiness(),
+                ));     
+            $dompdf = new DOMPDF();
+            $dompdf->load_html($view);
+            $dompdf->render();
+            $response = new Response($dompdf->output());
+            $disposition = $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,"Devis ".$demandeGestionnaire." - (".date("d-m-Y").").pdf"
+        );
+        $response->headers->set('Content-Disposition', $disposition);
+        return $response;
+    }
+    
+    
+    
+    /**
+     * Imprime un devis (pdf)
+     *
+     * @Route("/etablissement/{id}/devis", name="demande_etablissement_devis")
+     * @Method({"GET", "POST"})
+     */
+    public function debugDevisEtablissementAction(DemandeEtablissement $demandeEtablissement)
+    {
+        $view =  $this->renderView('BackOffice/facture/facture/devis_'.strtolower($this->getParameter('application_name')).'.html.twig',  
+                array(
+                    'demandeEtablissement'=>$demandeEtablissement,
+                    'titre'=>"Devis ".$demandeEtablissement,
+                    'concerneFiness'=> $demandeEtablissement->getFiness(),
+                ));     
+            $dompdf = new DOMPDF();
+            $dompdf->load_html($view);
+            $dompdf->render();
+            $response = new Response($dompdf->output());
+            $disposition = $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,"Devis ".$demandeEtablissement." - (".date("d-m-Y").").pdf"
+        );
+        $response->headers->set('Content-Disposition', $disposition);
+        return $response;
+    }
+    
+    
+    
+    
+    
+    
+    /**
+     * Imprime un devis (pdf)
      *
      * @Route("/gestionnaire/{id}/validemail", name="demande_gestionnaire_envoimail")
      * @Method({"GET", "POST"})
      */
     public function showGestionnaireMailAction(Request $request,DemandeGestionnaire $demandeGestionnaire)
     {
+        $em = $this->getDoctrine()->getManager();
+        $encours=$em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(1);
+        $demandeGestionnaire->setEtat($encours);
+        $em->flush();
+        foreach ($demandeGestionnaire->getDemandesEtablissement() as $demandeEtab)
+        {
+            $demandeEtab->setEtat($encours);
+            $em->persist($demandeEtab);
+        }
+        $em->flush();
+        
+        
+        
         $message = \Swift_Message::newInstance()
-          ->setSubject("[ARSENE] - Demande de création de gestionnaire ")
+          ->setSubject("[".$this->getParameter('application_name')."] - Demande de création de gestionnaire ")
           ->setFrom($this->getParameter('mail_from'))
           ->setTo($this->getParameter('mail_to'))
           ->setBody($this->renderView(
@@ -636,8 +1151,6 @@ class DemandeController extends Controller
     {
             $em = $this->getDoctrine()->getManager();
             $gestionnaire = new Gestionnaire();
-
-            
             $gestionnaire->setNom($demandeGestionnaire->getGestionnaireNom());
             $gestionnaire->setAdresse($demandeGestionnaire->getAdresse());
             $gestionnaire->setCodePostal($demandeGestionnaire->getCodePostal());
@@ -645,6 +1158,8 @@ class DemandeController extends Controller
             $gestionnaire->setDemandeGestionnaire($demandeGestionnaire);         
             $gestionnaire->setCreatedBy($this->GetUser());
             $gestionnaire->setCreai($demandeGestionnaire->getCreai());
+            $gestionnaire->setFiness($demandeGestionnaire->getFiness());
+            
             
             $gestionnaire->setNewFonctionnaliteGestionnaire(true);
             
@@ -666,6 +1181,49 @@ class DemandeController extends Controller
             }
                     
             return $this->redirectToRoute('backoffice_gestionnaire_show', array('id' => $gestionnaire->getId()));
+    }
+     
+    
+    /**
+     * Finds and displays a DemandeEtablissement entity.
+     *
+     * @Route("/etablissement/{id}/generate", name="demande_etablissement_create_bydemande")
+     * @Method({"GET", "POST"})
+     */
+    public function CreateEtabByDemandeAction(DemandeEtablissement $demandeEtablissement)
+    {
+
+        $this->AddFlash("success","Génération");
+        
+            $em = $this->getDoctrine()->getManager();
+                    
+            $etablissement = new Etablissement();
+            $etablissement->setNom($demandeEtablissement->getEtablissementNom());
+            $etablissement->setAdresse($demandeEtablissement->getAdresse());
+            $etablissement->setCodePostal($demandeEtablissement->getCodePostal());
+            $etablissement->setVille($demandeEtablissement->getVille());
+            $etablissement->setDemandeEtablissement($demandeEtablissement);         
+            $etablissement->setReferentielPublic($demandeEtablissement->getReferentielPublic());
+            $etablissement->setModeCotisation($demandeEtablissement->getModeCotisation());
+            $etablissement->setFiness($demandeEtablissement->getFiness());
+            $etablissement->setCreatedBy($this->GetUser());
+            $etablissement->setCreai($demandeEtablissement->getCreai());
+            $etablissement->setCategory($em->getRepository('Pericles3Bundle:EtablissementCategory')->findOneById(1));
+            $etablissement->setCreatedDate(new \DateTime());
+            $etablissement->setStockageEtablissement($em->getRepository('Pericles3Bundle:StockageEtablissement')->findOneById(0));
+            $etablissement->setDemandeEtablissement($demandeEtablissement);
+            $em->persist($etablissement);
+            $em->flush();
+            
+            $this->AddFlash("success","Le etablissement à bien été créer");
+            $encours=$em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(2);
+            $demandeEtablissement->setEtat($encours);
+            $em->persist($demandeEtablissement);
+            $em->flush();
+
+            return $this->redirectToRoute('backoffice_etablissement_view', array('id' => $etablissement->getId()));
+
+        
     }
      
     
@@ -840,7 +1398,7 @@ class DemandeController extends Controller
     public function EnvoiMailDemandeEtablissement($demandeEtablissement,$email)
     {
         $message = \Swift_Message::newInstance()
-          ->setSubject("[ARSENE] - Demande de création d'établissement ")
+          ->setSubject("[".$this->getParameter('application_name')."] - Demande de création d'établissement ")
           ->setFrom($this->getParameter('mail_from'))
           ->setTo($email)
           ->setBody($this->renderView(

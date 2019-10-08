@@ -8,34 +8,8 @@
     
       {{ parent() }}
 
-      <h1>Par référentiel</h1>
-      
-      {% for referentielPublic in referentielsPublic %}
-          <h2><a href='{{ path('pericles3_referentiel_ref', {'id' :referentielPublic.id })}}'>{{ referentielPublic }} </a></h2> 
-          
-        <div class="row">
-            <a href='{{ path('pericles3_referentiel_ref', {'id' :referentielPublic.id })}}'>
-             <div class="col-md-6 ">
-                <div class="panel panel-primary panel_osa">            
-                    <div class="panel-heading"> <h3 class="panel-title">Etablissement</h3> </div>
-                      <div class="panel-body"> 
-                          
-                        <canvas id="chartCanvasEtablissements_{{referentielPublic.id}}"  ></canvas>
-                        
-                </div>
-            </div>
-            </div> 
-             <div class="col-md-6 ">
-                <div class="panel panel-primary panel_osa">            
-                    <div class="panel-heading"> <h3 class="panel-title">Domaines</h3> </div>
-                      <div class="panel-body"> 
-                        <canvas id="chartCanvasDomaines_{{referentielPublic.id}}"  ></canvas>
-                </div>
-            </div>
-        </div>
-                </a>
-        </div>
-    {% endfor %}
+      <h1>Par référentiel </h1>
+            {% include "Evaluation/Referentiel/par_referentiel.html.twig" %}
 {% endblock %}
 
 
@@ -46,8 +20,10 @@
         {% include "Synthese/inc_options_charts.js.twig" %}
                 
       {% for referentielPublic in referentielsPublic %}
-         {{ etabsByRef[referentielPublic.id] | graphMultiDataSet('chartCanvasDomaines_' ~ referentielPublic.id ) |raw }}
          {{ etabsByRef[referentielPublic.id] | graph('chartCanvasEtablissements_' ~ referentielPublic.id,true,'options_responsive') |raw }}
+             {#
+         {{ etabsByRef[referentielPublic.id] | graphMultiDataSet('chartCanvasDomaines_' ~ referentielPublic.id ) |raw }}
+         #}
      {% endfor %}
 
 

@@ -8,7 +8,9 @@
                 {% if  is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}                    
                     <th>Creai</th>
                 {% endif %}
+                <th>Etabs</th>
                 <th>Etat</th>
+                <th>Action</th>
 
                 
                 
@@ -22,11 +24,22 @@
                 <tr>
             {% endif  %}
                 <td>{{ demandeGestionnaire.dateDemande|hiddenDate("d-m-Y") | raw }}</td>
-                <td><a href="{{ path('demande_gestionnaire_show', { 'id': demandeGestionnaire.id }) }}"> {{ demandeGestionnaire.GestionnaireNom }} </td>
-                {% if  not is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
+                <td>
+
+                        {{ demandeGestionnaire.GestionnaireNom }} 
+                </td>
+                
+                {% if  is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
                     <td>{{ demandeGestionnaire.creai  }}</td>
                 {% endif %}
+                <td>{{ demandeGestionnaire.nbEtablissements }}</td>
                 <td>{{ demandeGestionnaire.etat|  afficheDemandeEtat | raw }}</td>
+                <td>
+                    <a title='voir la demande' href="{{ path('demande_gestionnaire_show', { 'id': demandeGestionnaire.id }) }}">{{ 'demande' | get_icon | raw  }} </a>
+                    {%  if demandeGestionnaire.gestionnaire %}
+                    <a title='voir le gestionnaire' href="{{ path('backoffice_gestionnaire_show', { 'id': demandeGestionnaire.gestionnaire .id }) }}">{{ 'gestionnaire' | get_icon | raw  }} </a>
+                        {% endif %}
+                </td>
             </tr>
         {% endfor %}
         </tbody>

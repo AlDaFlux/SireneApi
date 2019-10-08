@@ -17,22 +17,52 @@
         </div>
                 
     {% endif %} 
+  
+</div>
 
+    <div class="row">
+   
+    <div class="col-md-4 ">
+    <a class="btn btn-warning active  btn-block btn-with-big-ico"  href="{{ path('demande_gestionnaire_new_byfiness') }}">
+        Demande de création de gestionnaire 
+        {{'gestionnaire' | get_icon | raw}}
+        <i class='glyphicon glyphicon-plus'></i> 
+    </a>
+        </div>
         <div class="col-md-4 ">
-            <div class="panel panel-primary"> 
-                <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-king'></i> Demandes de création de gestionnaire {{app.user.creai}}</h3></div>
-                <div class="panel-footer">
-                    <a class="btn btn-warning active full-width"  href="{{ path('demande_gestionnaire_new') }}"><i class='glyphicon glyphicon-plus'></i> Demande de création de gestionnaire </a>
-                <a class="btn btn-primary active full-width"  href="{{ path('backoffice_demande_gestionnaire_index') }}"><i class='glyphicon glyphicon-list'></i> Voir les demandes de creation gestionnaire {{app.user.creai}}</a>
-                </div>
-            </div>
-            <div class="panel panel-primary"> 
-                <div class="panel-heading"> <h3 class="panel-title"><i class='glyphicon glyphicon-queen'></i>  Demandes de création d'établissement {{app.user.creai}}</h3></div>
-                    
-                <div class="panel-footer">
-                    <a class="btn btn-warning active full-width"  href="{{ path('demande_etablissement_new') }}"><i class='glyphicon glyphicon-plus'></i> Demande de création d'établissement</a>
-                    <a class="btn btn-primary active full-width"  href="{{ path('backoffice_demande_etablissement_index') }}"><i class='glyphicon glyphicon-list'></i> Voir les demandes de creation d'établissement {{app.user.creai}}</a>
-                </div>
-            </div>
+    <a class="btn btn-warning active btn-block btn-with-big-ico"  href="{{ path('demande_gestionnaire_existant') }}">
+        Demande de création d'établissements pour un gestionnaire existant 
+        {{'gestionnaire' | get_icon | raw}}
+        {{'etablissement' | get_icon | raw}}
+    </a>
+        </div>
+        <div class="col-md-4 ">
+    <a class="btn btn-warning active btn-block btn-with-big-ico"  href="{{ path('demande_etablissement_new_byfiness') }}">
+        Demande de création d'établissement
+        {{'etablissement' | get_icon | raw}}
+        <i class='glyphicon glyphicon-plus'></i> 
+    </a>
+    </div>
+    </div>
+        <p>
+    <div class="row">
+   
+        <div class="col-md-6 ">
+            <a class="btn btn-primary active full-width"  href="{{ path('backoffice_demande_gestionnaire_index') }}"><i class='glyphicon glyphicon-list'></i> Voir les demandes de creation gestionnaire {{app.user.creai}}</a>
+            {% include "BackOffice/Demande/Gestionnaire/inc_liste_short.html.twig" with {'targetCreai':app.user.creai, 'demandesGestionnaire':app.user.demandesGestionnaireAVoir} %}
+            
+                        
+            {% include "BackOffice/Demande/Gestionnaire/inc_liste_short_existing.html.twig" with {'targetCreai':app.user.creai, 'gestionnaires':app.user.gestionnaireExistingAVoir} %}
+
+                        
+        </div>
+        
+        <div class="col-md-6 ">
+            <a class="btn btn-primary active full-width"  href="{{ path('backoffice_demande_etablissement_index') }}"><i class='glyphicon glyphicon-list'></i> Voir les demandes de creation d'établissement {{app.user.creai}}</a>
+
+            {% include "BackOffice/Demande/Etablissement/inc_liste_short.html.twig" with {'targetCreai':app.user.creai, 'demandeEtablissements':app.user.demandesEtablissementAVoir} %}
+
         </div>
     </div>
+
+                  

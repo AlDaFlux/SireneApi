@@ -1,6 +1,8 @@
 <?php
 
 namespace Pericles3Bundle\Repository;
+use Pericles3Bundle\Entity\Creai;
+
 
 /**
  * GestionnaireRepository
@@ -20,6 +22,21 @@ class FinessGestionnaireRepository extends \Doctrine\ORM\EntityRepository
             return $qb->getQuery()->getResult();
         }
         
+         
+                
+        public function findLikeCreai($occurence,Creai $creai) 
+        {
+            $qb = $this->createQueryBuilder('gestionnaire');
+            $qb->select('gestionnaire.codeFiness ,departement.id ,gestionnaire.raisonSociale, CASE WHEN  creai.id='.$creai->GetId().' THEN 1 ELSE 0 END  as creai_match');
+            $qb->LeftJoin('gestionnaire.departement', 'departement');
+            $qb->LeftJoin('departement.creai', 'creai');
+            $qb->where("gestionnaire.raisonSociale LIKE :occurence or gestionnaire.codeFiness LIKE :occurence")->setParameter('occurence',"%".$occurence."%");
+            $qb->orderBy('creai_match', 'DESC');
+            $qb->addOrderBy('gestionnaire.codeFiness', 'ASC');
+            $qb->setMaxResults(20);
+            return $qb->getQuery()->getResult();
+        }
+         
         
         
         public function findSupprimerDansImport() 
@@ -40,6 +57,23 @@ class FinessGestionnaireRepository extends \Doctrine\ORM\EntityRepository
 		return $qb->getQuery()->getResult();
 	}
         
+      public function findSupprimerDansImportAvecDemande() 
+        {
+                $qb = $this->createQueryBuilder('anciens');
+                $qb->InnerJoin('anciens.demandesGestionnaire', 'demande');
+                $qb->leftJoin('Pericles3Bundle:FinessImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
+                $qb->Where('nouveaux.codeFiness IS NULL');
+		return $qb->getQuery()->getResult();
+	}
+        
+        public function findSupprimerDansImportAvecPericles() 
+        {
+                $qb = $this->createQueryBuilder('anciens');
+                $qb->InnerJoin('anciens.pericles', 'pericles');
+                $qb->leftJoin('Pericles3Bundle:FinessImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
+                $qb->Where('nouveaux.codeFiness IS NULL');
+		return $qb->getQuery()->getResult();
+	}
         
         
         

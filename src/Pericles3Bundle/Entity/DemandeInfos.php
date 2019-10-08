@@ -4,12 +4,16 @@ namespace Pericles3Bundle\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * DemandeInfos
  *
  * @ORM\Table(name="demande_infos")
+ * @Gedmo\Loggable
  * @ORM\Entity(repositoryClass="Pericles3Bundle\Repository\DemandeInfosRepository")
  */
 class DemandeInfos

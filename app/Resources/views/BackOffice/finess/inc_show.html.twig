@@ -83,10 +83,12 @@
             <tr class="alert alert-info">
                 <th>Etablissement {{application_name}} </th>
                 <td>
-                    {% if finess.HaveEtablissement %}
+                    {% if finess.HasEtablissement %}
                        
-                        
-                        <a href="{{ path('backoffice_etablissement_view', { 'id':  finess.etablissement.id }) }}">{{  finess.etablissement }}</a></td>
+                                        
+                  
+                    </a>
+                        <a class='btn btn-primary btn-block btn-with-big-ico' href="{{ path('backoffice_etablissement_view', { 'id':  finess.etablissement.id }) }}">{{  finess.etablissement }}  {{'etablissement'  | get_icon | raw }}</a></td>
                     {% else %}
                         <div class='alert alert-warning full-width'>AUCUN !</div>
                

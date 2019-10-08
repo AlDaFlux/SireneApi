@@ -26,6 +26,7 @@ class EtablissementType extends AbstractType
     private $code_finess;
     private $gestionnaire;
     private $edit;
+    private $creai;
         
         
     /**
@@ -37,6 +38,7 @@ class EtablissementType extends AbstractType
         if (isset($options['code_finess'])) $this->code_finess = $options['code_finess'];
         if (isset($options['gestionnaire'])) $this->gestionnaire = $options['gestionnaire'];
         if (isset($options['edit'])) $this->edit = $options['edit'];
+        if (isset($options['creai'])) $this->creai = $options['creai'];
         
          
         
@@ -73,7 +75,7 @@ class EtablissementType extends AbstractType
            
             if ($this->gestionnaire) $builder->add('gestionnaire');
             
-            $builder->add('creai');
+            if ($this->creai) $builder->add('creai');
 
             
             $builder->add('ModeCotisation', EntityType::class, array(
@@ -92,7 +94,10 @@ class EtablissementType extends AbstractType
                         }   
                     ));
             
-               
+
+            if ($this->creai) 
+            {
+
                 $builder->add('delegationCreai', ChoiceType::class, array(
                         'multiple' => false,
                         'expanded' => true,
@@ -102,7 +107,7 @@ class EtablissementType extends AbstractType
                             "les conseillers techniques peuvent consulter l'évaluation de l'établissement" => '1'
                         ),
                     ));
-                
+            }
                 
                 $builder->add('StockageEtablissement', EntityType::class, [
                     'class' => 'Pericles3Bundle\Entity\StockageEtablissement'         
@@ -138,6 +143,7 @@ class EtablissementType extends AbstractType
             'gestionnaire' => true,
             'edit' => false,
             'mode_etablissement' => false,
+            'creai' => true,
         ));
     }
     

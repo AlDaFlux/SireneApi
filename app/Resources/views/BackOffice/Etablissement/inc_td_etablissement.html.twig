@@ -1,5 +1,8 @@
-{% if etablissement.category.reel %}
+{% if etablissement.impaye %}
+        <td  class='alert alert-danger' title='{{ etablissement.category.commentaire}}'> <a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}">{{etablissement}}</a>
+{% elseif etablissement.category.reel %}
         <td  class='alert alert-info' title='{{ etablissement.category.commentaire}}'> <a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}">{{etablissement}}</a>
     {% else %}
         <td  class='alert alert-warning' title='{{ etablissement.category.commentaire}}'> <a href="{{ path('backoffice_etablissement_view', { 'id': etablissement.id }) }}">{{etablissement}}</a>
 {% endif %}
+

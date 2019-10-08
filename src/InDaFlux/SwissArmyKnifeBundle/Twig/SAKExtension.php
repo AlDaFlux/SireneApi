@@ -15,18 +15,18 @@ class SAKExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('progressBar', array($this, 'progressBar')),
-            new \Twig_SimpleFilter('progressBarNotCent', array($this, 'progressBarNotCent')),
-            new \Twig_SimpleFilter('GetIconFile', array($this, 'GetIconFile')),
-            new \Twig_SimpleFilter('HighlightText', array($this, 'HighlightText')),
-            new \Twig_SimpleFilter('formatBytes', array($this, 'formatBytes')),
-            new \Twig_SimpleFilter('hiddenFormatBytes', array($this, 'hiddenFormatBytes')),
-            new \Twig_SimpleFilter('hiddenDate', array($this, 'hiddenDate')),
-            new \Twig_SimpleFilter('TdSortableDate', array($this, 'TdSortableDate')),
-            new \Twig_SimpleFilter('limitChar', array($this, 'limitChar')),
-            new \Twig_SimpleFilter('similar_text', array($this, 'similar_text')),
-            new \Twig_SimpleFilter('similar_text_td', array($this, 'similar_text_td')),
-             new \Twig_SimpleFilter('http_short', array($this, 'http_short')),
+            new \Twig_SimpleFilter('progressBar', array($this, 'progressBar', ['is_safe' => ['html']])),
+            new \Twig_SimpleFilter('progressBarNotCent', array($this, 'progressBarNotCent'), ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('GetIconFile', array($this, 'GetIconFile'), ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('HighlightText', array($this, 'HighlightText'), ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('formatBytes', array($this, 'formatBytes'), ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('hiddenFormatBytes', array($this, 'hiddenFormatBytes'), ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('hiddenDate', array($this, 'hiddenDate'), ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('TdSortableDate', array($this, 'TdSortableDate'), ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('limitChar', array($this, 'limitChar'), ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('similar_text', array($this, 'similar_text'), ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('similar_text_td', array($this, 'similar_text_td'), ['is_safe' => ['html']]),
+             new \Twig_SimpleFilter('http_short', array($this, 'http_short'), ['is_safe' => ['html']]),
             );
     }
 

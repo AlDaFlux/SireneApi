@@ -42,7 +42,7 @@ class GestionnaireType extends AbstractType
 
         if ($this->mega_admin)
         {
-            $builder->add('finess', AutocompleteType::class, ['required'    => false,'class' => 'Pericles3Bundle:FinessGestionnaire']);
+            $builder->add('finess', AutocompleteType::class, ['required'=> false,'class' => 'Pericles3Bundle:FinessGestionnaire']);
             $builder->add('newFonctionnaliteGestionnaire');
         }
         

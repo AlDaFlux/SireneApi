@@ -238,6 +238,33 @@ class GestionnaireController extends Controller
             throw $this->createAccessDeniedException("Vous n'avez pas les droits suffisants");
         }
     }
+      
+    /**
+     * Lists all etablissements entities.
+     *
+     * @Route("/{id}/unlinkfiness", name="backoffice_gestionnaire_unlinkfiness")
+     * @Method("GET")
+     */
+    public function UnLinkFinessGoGestionnaireAction(Gestionnaire $Gestionnaire)
+    {
+        $codeFiness=$Gestionnaire->getFiness()->getCodeFiness();
+        
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN_GESTIONNAIRE'))
+        {
+            $em = $this->getDoctrine()->getManager();
+            $this->addFlash('success', "Le gestionnaire a été détaché du finess <b>".$codeFiness."</b>");
+            $Gestionnaire->setFiness(null);
+//            $codeFiness->setGestionnaire($Gestionnaire);
+            $em->persist($Gestionnaire);
+//            $em->persist($codeFiness);
+            $em->flush();
+            return $this->redirectToRoute('backoffice_gestionnaire_show', array('id' => $Gestionnaire->getId()));
+        }
+        else
+        {
+            throw $this->createAccessDeniedException("Vous n'avez pas les droits suffisants");
+        }
+    }
     
     
     

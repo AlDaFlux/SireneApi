@@ -20,6 +20,7 @@ class DemandeGestionnaireRepository extends \Doctrine\ORM\EntityRepository
             $qb = $this->createQueryBuilder('demandes');
             $qb->select('count(demandes.id)');
             $qb->where("demandes.etat<>3");
+            $qb->andWhere("demandes.etat<>0");
             return($qb->getQuery()->getSingleScalarResult());
         }
       
@@ -27,10 +28,17 @@ class DemandeGestionnaireRepository extends \Doctrine\ORM\EntityRepository
         {
             $qb = $this->createQueryBuilder('demandes');
             $qb->where("demandes.etat<>3");
+            $qb->andWhere("demandes.etat<>0");
             return $qb->getQuery()->getResult();
         }
            
-   
+     public function findNonDevis() 
+        {
+            $qb = $this->createQueryBuilder('demandes');
+            $qb->Where("demandes.etat<>0");
+            return $qb->getQuery()->getResult();
+        }
+  
         public function findFini($limit=0) 
         {
             
@@ -53,5 +61,15 @@ class DemandeGestionnaireRepository extends \Doctrine\ORM\EntityRepository
         }
         
 
+             
+    public function nbParMail($email) 
+    {
+        $qb = $this->createQueryBuilder('demandes');
+        $qb->select('count(demandes.id)');
+        $qb->where("demandes.email=:aaa");
+        $qb->setParameter('aaa', $email);
+        return($qb->getQuery()->getSingleScalarResult());
+    }
+    
         
 }

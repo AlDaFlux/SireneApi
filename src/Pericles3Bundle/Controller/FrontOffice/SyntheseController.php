@@ -57,6 +57,7 @@ class SyntheseController extends Controller
             {
                 $etabsByRef[$etablissement->GetReferentielPublic()->GetID()][]=$etablissement;
             }
+            
 
             return $this->render('Synthese/index.html.twig', 
                 array('referentielsPublic'=> $referentiels, 

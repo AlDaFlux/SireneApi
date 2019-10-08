@@ -31,7 +31,7 @@ class BibliothequeAncreaiController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $bibliothequeAncreais = $em->getRepository('Pericles3Bundle:BibliothequeAncreai')->findBy(array(),array('dateUpdate' => 'DESC'));
-        $ReferentielsPublic = $em->getRepository('Pericles3Bundle:ReferentielPublic')->findNonEnCours();
+        $ReferentielsPublic = $em->getRepository('Pericles3Bundle:ReferentielPublic')->findAll();
         $editorial = $em->getRepository('Pericles3Bundle:Editorial')->findOneById(1);
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN'))        

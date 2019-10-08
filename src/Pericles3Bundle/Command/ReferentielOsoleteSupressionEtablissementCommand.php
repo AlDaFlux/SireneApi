@@ -27,6 +27,7 @@ class ReferentielOsoleteSupressionEtablissementCommand extends ContainerAwareCom
         $this->setHelp("Supprimme les référentiels désuets pour un établissement");
         $this->addOption('etablissement_id',null,InputOption::VALUE_REQUIRED,"L'identifiant de l'établissement",0);
         $this->addOption('all-etab',null,InputOption::VALUE_NONE,"!! Tous les établissements");
+        $this->addOption('softdeleteable',null,InputOption::VALUE_NONE,"désactive softdeleteable");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -35,12 +36,19 @@ class ReferentielOsoleteSupressionEtablissementCommand extends ContainerAwareCom
         $em = $doctrine->getEntityManager();
         
         $etablissementId = $input->getOption('etablissement_id');
+        $softdeleteable = $input->getOption('softdeleteable');
+
         $etablissement = $em->getRepository("Pericles3Bundle:Etablissement")->findOneById($etablissementId);
         
         $trashController = new \Pericles3Bundle\Controller\BackOffice\TrashController();
         $trashController->SetOutput($output);
         $trashController->SetEm($em);
         
+        if ($softdeleteable)
+        {
+            $em->getFilters()->disable('softdeleteable');
+        }
+
         
         if ($input->getOption('all-etab'))
         {
