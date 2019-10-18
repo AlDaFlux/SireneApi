@@ -1,0 +1,9 @@
+services:
+    sirene-api.sirene_service:
+        class: Aldaflux\SireneApiBundle\Service\SireneApiService
+        public: true
+        autowire: true
+        autoconfigure: true
+    Aldaflux\SireneApiBundle\Service\SireneApiService: '@sirene-api.sirene_service'
+
+

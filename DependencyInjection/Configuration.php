@@ -17,16 +17,19 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-		
-        $rootNode = $treeBuilder->root('sirene_api');
-        $rootNode->arrayNode('credentials')
-			->children()
-				->scalarNode( 'key' )->end()
-				->scalarNode( 'secret' )->end()
-			->end()
-		->end();
+//        $treeBuilder = new TreeBuilder();
+	 $treeBuilder = new TreeBuilder('aldaflux_sirene_api');
 
+        $treeBuilder->getRootNode()
+            ->children()
+                ->arrayNode('credentials')
+                    ->children()
+                        ->scalarNode('sirene_key')->end()
+                        ->scalarNode('sirene_secret')->end()
+                    ->end()
+                ->end() // twitter
+            ->end()
+        ;
         return $treeBuilder;
     }
 }
