@@ -4,6 +4,8 @@ services:
         public: true
         autowire: true
         autoconfigure: true
+        arguments:
+            $container: "@service_container"
     Aldaflux\SireneApiBundle\Service\SireneApiService: '@sirene-api.sirene_service'
 
 

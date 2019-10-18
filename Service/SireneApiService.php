@@ -6,6 +6,7 @@ namespace Aldaflux\SireneApiBundle\Service;
 #use  Aldaflux\YoutubeUtilsBundle\Utils\ApiYoutubeVideo;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
  
 class SireneApiService 
@@ -16,11 +17,12 @@ class SireneApiService
     private $key;
     private $secret;
 
-    public function __construct(ParameterBagInterface $params)
+    public function __construct(ContainerInterface $container)
     {
-        $this->key=$params->get("sirene_key");
-        $this->secret=$params->get("sirene_secret");
+        $this->key=$container->getParameter("sirene_key");
+        $this->secret=$container->getParameter("sirene_secret");
     }
+    
 
     function GetAuthorization64()
     {

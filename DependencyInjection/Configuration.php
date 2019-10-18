@@ -17,7 +17,25 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
+         $treeBuilder = new TreeBuilder();
+ 
+	 $rootNode = $treeBuilder->root('aldaflux_sirene_api');
+ 
+        $rootNode
+            ->children()
+                ->arrayNode('credentials')
+                    ->children()
+                        ->scalarNode('sirene_key')->end()
+                        ->scalarNode('sirene_secret')->end()
+                    ->end()
+                ->end() // twitter
+            ->end()
+        ;
+        return $treeBuilder;
+        
 //        $treeBuilder = new TreeBuilder();
+        
+        /*
 	 $treeBuilder = new TreeBuilder('aldaflux_sirene_api');
 
         $treeBuilder->getRootNode()
@@ -31,5 +49,7 @@ class Configuration implements ConfigurationInterface
             ->end()
         ;
         return $treeBuilder;
+         * 
+         */
     }
 }
