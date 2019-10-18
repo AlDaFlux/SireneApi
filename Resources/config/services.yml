@@ -7,3 +7,13 @@ services:
     Aldaflux\SireneApiBundle\Service\SireneApiService: '@sirene-api.sirene_service'
 
 
+    sirene-api.data_collector:
+        class: Aldaflux\SireneApiBundle\DataCollector\RequestCollector
+        tags:
+            -
+                name:     data_collector
+                template: '@AldafluxSireneApi/Collector/sirene_collector.html.twig'
+                id:       'aldaflux_sirene_api.request_collector'
+        public: false
+        
+ 
