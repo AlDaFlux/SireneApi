@@ -407,28 +407,17 @@ class BibliothequeAncreaiController extends Controller
         $editForm = $this->createForm('Pericles3Bundle\Form\BibliothequeAncreaiType', $bibliothequeAncreai);
         $editForm->handleRequest($request);
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
+        if ($editForm->isSubmitted() && $editForm->isValid()) 
+        {
             $em = $this->getDoctrine()->getManager();
             $bibliothequeAncreai->setDateUpdate(new \DateTime());
             $bibliothequeAncreai->setLastModifiedBy($this->GetUser());
-            
-            $file = $bibliothequeAncreai->getCache();
-            if ($file)
-            {
-                $fileName = $file->getClientOriginalName();
-                $file->move($this->getParameter('cache_biblio_directory'),$fileName);
-                $this->addFlash('success', "Code : ".$this->getParameter('cache_biblio_directory')."/".$fileName);
-                $bibliothequeAncreai->setCache($fileName);
-            }
-            
-
             $em->persist($bibliothequeAncreai);
             $em->flush();
             $this->CheckLink($bibliothequeAncreai);
             return $this->redirectToRoute('backoffice_bibliotheque_ancreai_show', array('id' => $bibliothequeAncreai->getId()));
-
         }
-
+        
         return $this->render('BackOffice/bibliothequeancreai/edit.html.twig', array(
             'bibliothequeAncreai' => $bibliothequeAncreai,
             'edit_form' => $editForm->createView()
@@ -444,7 +433,7 @@ class BibliothequeAncreaiController extends Controller
      */
     public function editCacheAction(Request $request, BibliothequeAncreai $bibliothequeAncreai)
     {
-        $editForm = $this->createForm('Pericles3Bundle\Form\BibliothequeAncreaiType', $bibliothequeAncreai, ["onlyfile"=>true]);
+        $editForm = $this->createForm('Pericles3Bundle\Form\BibliothequeAncreaiType', $bibliothequeAncreai, ["onlyfile"=>true,"validation_groups" => "cache"]);
         $editForm->handleRequest($request);
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $em = $this->getDoctrine()->getManager();

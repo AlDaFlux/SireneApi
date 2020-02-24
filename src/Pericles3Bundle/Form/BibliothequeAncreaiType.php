@@ -42,8 +42,6 @@ class BibliothequeAncreaiType extends AbstractType
                                                         'format' => 'dd-MM-yyyy',
                                                         'attr' => array('class' => 'date')
                                                         ));
-        //        $builder->add('cache', FileType::class,  array('required' => false, 'label' => 'Cache (PDF file)','data_class' => null));
-
                 if ($options['avec_public'])
                 {
                      $builder->add('referentielPublics', EntityType::class, array(

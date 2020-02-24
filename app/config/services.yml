@@ -17,6 +17,13 @@ services:
             $container: "@service_container"
             $token_storage: "@security.token_storage"
 
+    sirene-api.sirene_service:
+        class: Aldaflux\SireneApiBundle\Service\SireneApiService
+        public: true
+        autowire: true
+        autoconfigure: true
+        arguments:
+            $container: "@service_container"
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
  
     pericles3.login.listener:

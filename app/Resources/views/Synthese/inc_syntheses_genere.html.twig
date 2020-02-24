@@ -13,8 +13,8 @@
 
 
         {%  include "Synthese/inc_synthese_genere.html.twig" 
-                   with {'sub_titre': 'RBPP',
-                        'description_synthese': 'Rbpps',
+                   with {'sub_titre': 'Références réglementaires et recommandations',
+                        'description_synthese': 'Un rapport structuré selon les références des critères ',
                         'synthese': 'synthese_rbpp'
                             } %}
                             
@@ -45,10 +45,10 @@
         {% set colspan=6 %}
                 
         {% include "Synthese/inc_synthese_genere.html.twig" 
-                with {'sub_titre': 'Plan d\'amélioration de la qualité', 'description_synthese': 'Export du plan d\'amélioration de la qualité','synthese': 'synthese_paq'} %}
+                with {'sub_titre': 'PAQ ' ~ application_name, 'description_synthese': 'Plan d’amélioration de la qualité structuré selon les critères ' ~ application_name,'synthese': 'synthese_paq'} %}
 
         {% include "Synthese/inc_synthese_genere.html.twig" 
-                with {'sub_titre': 'Plan d\'amélioration de la qualité - Objectifs Opérationnels ', 'description_synthese': 'Export du plan d\'amélioration de la qualité par Objectif Opérationnel','synthese': 'synthese_paq_o'} %}
+                with {'sub_titre': 'PAQ – objectifs stratégiques/opérationnels ', 'description_synthese': 'Plan d’amélioration de la qualité structuré par objectifs stratégiques et opérationnels ','synthese': 'synthese_paq_o'} %}
 
              
         </div>
@@ -56,7 +56,7 @@
 
 
     {% if  appVersion>'1.0.0'  %}
-        <a href='{{ path("pericles3_synthese_export_config_etablissement", {'id':etablissement.id}) }}'  class ="btn btn-with-big-ico  btn-primary full-width" > Générer une synthèse personalisée pour <b>{{ etablissement }}</b>! <i class="glyphicon glyphicon-wrench"></i> </a>           
+        <a href='{{ path("pericles3_synthese_export_config_etablissement", {'id':etablissement.id}) }}'  class ="btn btn-with-big-ico  btn-primary full-width" > Générer un rapport personnalisé pour <b>{{ etablissement }}</b>! <i class="glyphicon glyphicon-wrench"></i> </a>           
     {% endif %}
                                 
      <div class='graphs graphs_calculate'> 

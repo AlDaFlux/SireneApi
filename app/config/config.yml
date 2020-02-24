@@ -8,7 +8,7 @@ imports:
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: en
+    locale: fr
 
 framework:
     #esi:             ~
@@ -25,7 +25,7 @@ framework:
         engines: ['twig']
     default_locale:  "%locale%"
     trusted_hosts:   ~
-    trusted_proxies: ~
+#    trusted_proxies: ~
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  session.handler.native_file
@@ -165,3 +165,9 @@ chartjs:
         fontStyle: 'bold'
         padding: 10
         text:	''    
+        
+aldaflux_sirene_api:
+    credentials:
+        sirene_key: 'yqb83iZ5TJcCdzQof0Wp_bPuhuIa'
+        sirene_secret: '1vjTIGKnFunfJ21EjyHIt5KY1Gsa'
+   

@@ -46,7 +46,7 @@
                 
 
             {% set showPassword= false %}
-            {% if is_granted('ROLE_MEGA_ADMIN')  or ((is_granted("ROLE_SUPER_ADMIN") or is_granted('ROLE_ADMIN')) and ( user.IsAnEtablissement  or user.IsGestionnaire ))    %}
+            {% if is_granted('ROLE_MEGA_ADMIN')  or (is_granted("ROLE_ADMIN_SUPERVISOR")) or ((is_granted("ROLE_SUPER_ADMIN") or is_granted('ROLE_ADMIN')) and ( user.IsAnEtablissement  or user.IsGestionnaire ))    %}
                 {% if user.ChangedPassword  %}
                 <tr>
                     <th>Mot de passe</th>

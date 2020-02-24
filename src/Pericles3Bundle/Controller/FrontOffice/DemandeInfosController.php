@@ -48,7 +48,7 @@ class DemandeInfosController extends Controller
     {
         $demandeInfo = new DemandeInfos();
         
-        $creai=$this->getParameter('creai');
+        $creai=$this->getParameter('activate.creai');
         
         
         $form = $this->createForm('Pericles3Bundle\Form\DemandeInfosType', $demandeInfo, ['creai'=>$creai]);

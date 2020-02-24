@@ -48,10 +48,9 @@ class BibliothequeAncreai
      * @var string
      *
      * @ORM\Column(type="string", length=255,nullable=true)
-     * @Assert\File(mimeTypes={ "application/pdf" })
+     * @Assert\File(mimeTypes={ "application/pdf" }, groups = {"cache"})
      */
     private $cache;
-
   
     
     

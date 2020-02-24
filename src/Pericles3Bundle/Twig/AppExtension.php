@@ -9,6 +9,11 @@ use Symfony\Component\Validator\Constraints\Time;
 use Symfony\Component\Validator\Constraints as Assert;
 //Twig_Extension_GlobalsInterface
 
+
+use Twig\Extension\AbstractExtension;
+use Twig\Extension\GlobalsInterface;
+
+
 //use Twig_Extension_GlobalsInterface;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -20,7 +25,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 
 //class AppExtension extends \Twig_Extension implements Twig_Extension_GlobalsInterface
-class AppExtension extends \Twig_Extension 
+class AppExtension  extends AbstractExtension implements GlobalsInterface
 {   
     
     protected $em;
@@ -100,7 +105,9 @@ class AppExtension extends \Twig_Extension
         $facturees_non_payees=$this->em->getRepository('Pericles3Bundle:FacturePresta')->findSomme(false,false)['total'];
         $facturees_payees=$this->em->getRepository('Pericles3Bundle:FacturePresta')->findSomme(true,false)['total'];
         $appVersion=$this->container->getParameter('app.version');
-
+        $applicationName=$this->container->getParameter('application_name');
+    
+        $header="/img/header/" .strtolower($applicationName).".jpg";
         
         
         $gestionnairesAjoutEtab=  new \Doctrine\Common\Collections\ArrayCollection();
@@ -175,6 +182,7 @@ class AppExtension extends \Twig_Extension
             'factureesNonPayees' => $facturees_non_payees,
             'factureesPayees' => $facturees_payees,
             'appVersion' => $appVersion,
+            'header' => $header,
         );
     }
     
@@ -214,7 +222,7 @@ class AppExtension extends \Twig_Extension
             new \Twig_SimpleFilter('StatePuce', array($this, 'StatePuce')),
             new \Twig_SimpleFilter('order', array($this, 'order')),
             new \Twig_SimpleFilter('typePreuveLib', array($this, 'typePreuveLib')),
-            new \Twig_SimpleFilter('getImageExport', array($this, 'getImageExport')),
+            new \Twig_SimpleFilter('getImageExport', array($this, 'getImageExport'), ['is_safe' => ['html']]),
             new \Twig_SimpleFilter('graph', array($this, 'graph')),
             new \Twig_SimpleFilter('graph2', array($this, 'graph2')),
             new \Twig_SimpleFilter('iconeBibliotheque', array($this, 'iconeBibliotheque')),
@@ -661,6 +669,8 @@ class AppExtension extends \Twig_Extension
     
     public function getImageExport($url,$type,$width=0,$height=0)
     { 
+        
+        
         if ($type=='PDF')
         {
             if (null !== WEB_DIR) $url_image=WEB_DIR.$url;
@@ -669,6 +679,10 @@ class AppExtension extends \Twig_Extension
             $src = 'data:'.mime_content_type($url_image).';base64,'.$imageData;
         }
         elseif ($type=='DOC')
+        {
+            $src="".$url;
+        }
+        elseif ($type=='PREVIEW')
         {
             $src="".$url;
         }

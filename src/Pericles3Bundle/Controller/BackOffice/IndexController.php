@@ -111,7 +111,7 @@ class IndexController extends Controller
     public function TestMailAction()
     {
         $message = \Swift_Message::newInstance()
-          ->setSubject("[ARSENE] - 6549872131 TEST ")
+          ->setSubject("[--------] - 6549872131 TEST ")
           ->setFrom($this->getParameter('mail_from'))
           ->setTo("antoine.lotz@creai-aquitaine.org")
           ->setBody("CA MARCHE");

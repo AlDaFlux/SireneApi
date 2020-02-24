@@ -74,11 +74,21 @@
 
                 
                     {% if  not is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
-                        {% if demandeGestionnaire.etat.id == 0  %}
+                        {% if demandeGestionnaire.etat.id < 2  %}
                                 <div class="col-sm-{{collnb}}">
                                     <a  class='btn btn-warning full-width' href="{{ path('demande_gestionnaire_edit', { 'id': demandeGestionnaire.id }) }}"> Modifier la demande</a>
                                 </div> 
                             {% endif %}
+                            
+                        {% if demandeGestionnaire.etat.id == 0 and not demandeGestionnaire.NbEtablissements %}
+                         <i data-invite="Voulez-vous supprimer définitivement la demande de création gestionnaire ? "
+                                data-url_delete="{{ path('demande_gestionnaire_delete_get', {'id':demandeGestionnaire.id}) }}" 
+                               class='btn btn-danger full-width DeleteBoxBefore glyphicon glyphicon-trash iconhead redText active full-width'
+                               >Supprimer  </i> 
+                        {% else %}
+                                 
+                            
+                        {% endif %}
                     {% else %}
                         </div>
                         <p>

@@ -49,18 +49,26 @@ class ReferentielOsoleteSupressionEtablissementCommand extends ContainerAwareCom
             $em->getFilters()->disable('softdeleteable');
         }
 
-        
         if ($input->getOption('all-etab'))
         {
             $etablissements =$em->getRepository('Pericles3Bundle:Etablissement')->FindWithReferentielDesuet();
-            foreach ($etablissements as $etablissement)
+            if (count($etablissements))
             {
-                $trashController->indexEtablissementDelOldRed($etablissement);
+                $output->writeln("<error>".count($etablissements)." Etablissements à traiter ! </error>");
+
+                foreach ($etablissements as $etablissement)
+                {
+                    $trashController->indexEtablissementDelOldRed($etablissement);
+                }
+            }
+            else
+            {
+                $output->writeln("<info>Aucun établissement à traiter ! </info>");
             }
         }
         elseif (! $etablissement)
         {
-            $output->writeln("<error>L'établissement ".$etablissement." n'exites pas<error>");
+            $output->writeln("<error>L'établissement ".$etablissement." n'exites pas</error>");
             return(0);
         }
         else

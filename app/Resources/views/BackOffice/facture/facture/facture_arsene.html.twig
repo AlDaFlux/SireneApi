@@ -21,7 +21,11 @@
         float:left;
     }
     
-    
+.hide
+{
+    display: none;
+}
+
 {% if nbPrestas < 14 %}
 
     #piedPagePrint {
@@ -31,10 +35,15 @@
         bottom: 0;
         right: 0;
     }
-    {% endif  %}
-
-
     
+.page-break-after
+ {
+     page-break-after: always; 
+ }
+  
+{% endif %}
+
+
     
 .info_complementaire_etab
 {
@@ -110,8 +119,10 @@
     .rib
     {
         padding:10px;
+        padding-top:-3px;
         margin-bottom:3px;
-        border: 3px solid #000000;
+        border: 2px solid #000000;
+        font-size:0.8em;
     }
     
     
@@ -156,10 +167,11 @@
     
     .adresse_cible
     {
-        padding:20px;
+        padding:15px;
+        margin-top:10px;
         border: 2px solid #000000;
-        font-size:1.3em;
-        margin-bottom: 15px;
+        font-size:1.1em;
+        margin-bottom: 10px; 
     }
     
     
@@ -189,9 +201,7 @@
   <br>Tél : 01 45 51 64 77
   <br>ancreai@ancreai.org
   
-  
-  
-  
+   
   
   
           <div class='adresse_cible'>
@@ -206,7 +216,7 @@
       {% set total = 0  %}
       
       
-  <table class='tabfact'>
+  <table id='facture_table' class='tabfact'>
       <tr class='entente'><td  colspan='2'>PRESTATION</td></tr> 
       <tr class='entente'><td  colspan='2'>{{application_name}} <br>{{application_description}}</td></tr>
 
@@ -265,21 +275,26 @@
                          </tr>
 
 
-  </table>      
- <hr class='separateur'>      
-  
-
- <div class='reception'> En votre aimable règlement à réception. - </div>
+  </table>   
+                  
+{% if nbPrestas > 8 %}
+     <hr class='page-break-after'>
+{% else  %}
+     <hr class='separateur'> 
+{% endif %}
+ 
+ <div class='reception'>
+     En votre aimable règlement à réception. 
     <div class='rib'>
- 
-{#      <br>IBAN : FR76 4255 9000 0421 0209 6450 749  #}
-      <br>IBAN : FR76 4255 9100 0008 0025 9962 640 
-      <br>BIC : CCOPFRPPXXX
-      <br><i><small>Le paiement par virement bancaire doit mentionner le numéro complet de la facture : {{facture.NumFactureFormate}}</small></i>
-      
+{#      <br>IBAN : FR76 4255 9000 0421 0209 6450 749   #}
+        <br><b>IBAN : </b>FR76 4255 9100 0008 0025 9962 640 
+        <br><b>BIC : </b>CCOPFRPPXXX
+        <br>Le paiement par virement bancaire doit mentionner le numéro complet de la facture :<b> {{facture.NumFactureFormate}}</b>
     </div>
+ </div>
 
- 
+  
+<div>
 
 <div id='piedPagePrint'>
     <div class='loi1901'>
@@ -289,7 +304,7 @@
     </div>
 
     <div class='declar'>
-         Déclaration d'activité en tant <br>que prestataire de formation  : <b>11.75.40.117.75<b>
+         Déclaration d'activité en tant <br>que prestataire de formation  : <b>11.75.40.117.75</b>
     </div>
 </div>
  

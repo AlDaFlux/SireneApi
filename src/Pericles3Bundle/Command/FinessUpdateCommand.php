@@ -321,6 +321,7 @@ WHERE gestionnaire.finess_id IS NULL AND finess_gestionnaire_import.code_finess 
        }        
     }
     
+     
     
     
 }

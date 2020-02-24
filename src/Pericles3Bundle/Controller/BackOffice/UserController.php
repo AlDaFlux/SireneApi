@@ -208,7 +208,7 @@ class UserController extends Controller
                 }
                 elseif ($role_principal =="ROLE_SUPER_ADMIN")
                 {
-                    $titre="Administrateur ARSENE";
+                    $titre="Administrateur APPLICATION";
                 }
                 if ($profil) $options= array('new'=>true, 'edit_password' => true,'niveau' => $role_principal, 'show_roles'=>false);
                 else  $options= array('new'=>true, 'edit_password' => true,'niveau' => $role_principal);
@@ -657,7 +657,7 @@ class UserController extends Controller
         }
         elseif ($role_principal =="ROLE_SUPER_ADMIN")
         {
-            $titre="Administrateur ARSENE";
+            $titre="Administrateur APPLICATION";
         }
         
         $options= array('edit_password' => false,'niveau' => $role_principal,"iammegaadmin" => $this->GetUser()->getIsMegaAdmin());

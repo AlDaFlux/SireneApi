@@ -82,7 +82,7 @@ HELP
                         $command = $this->getApplication()->find('etablissement:delete');
                         if ($softdeleteable)
                         {
-                            $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId(), "--force-softdeleteable");
+                            $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId(), "--delete-cascade");
                         }
                         else
                         {

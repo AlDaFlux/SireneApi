@@ -26,6 +26,7 @@ class EtablissementDeleteCommand extends ContainerAwareCommand
         $this->addOption('etablissement_id',null,InputOption::VALUE_REQUIRED,"L'identifiant du référentiel public ",0);
         //$this->addOption('force-delete',null,InputOption::VALUE_NONE,"Passe en force");
         $this->addOption('force-softdeleteable',null,InputOption::VALUE_NONE,"désactive softdeleteable");
+        $this->addOption('delete-cascade',null,InputOption::VALUE_NONE,"supprime en cascade les utilisateurs, les tats....");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -34,6 +35,7 @@ class EtablissementDeleteCommand extends ContainerAwareCommand
                 
 //        $force = $input->getOption('force-delete');
         $force_softdeleteable = $input->getOption('force-softdeleteable');
+        $deleteCascade = $input->getOption('delete-cascade');
 
                 
         $em = $doctrine->getEntityManager();
@@ -82,10 +84,8 @@ class EtablissementDeleteCommand extends ContainerAwareCommand
             
             $em->flush();
             */
-            if ($force_softdeleteable)
+            if ($deleteCascade or $force_softdeleteable)
             {
-              
-                
                 $users = $em->getRepository("Pericles3Bundle:User")->findByEtablissement($etablissement);
                 foreach ($users as $user)
                 {
@@ -121,9 +121,9 @@ class EtablissementDeleteCommand extends ContainerAwareCommand
                 
                 
                 $etablissement = $em->getRepository("Pericles3Bundle:Etablissement")->findOneById($etablissementId);
-                $em->remove($etablissement);
-                $em->flush();
             }
+            $em->remove($etablissement);
+            $em->flush();
         }
     }
 }

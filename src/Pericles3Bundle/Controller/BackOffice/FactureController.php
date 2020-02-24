@@ -434,7 +434,30 @@ class FactureController extends Controller
     
      
     
+    /**
+     * Creates a new facture entity.
+     *
+     * @Route("/fact_{numFacture}/pdf", name="facture_pdf")
+     * @Method({"GET", "POST"})
+     */
+    public function pdfAction(Facture $facture)
+    {
+        $this->GenerePDF($facture);
+        $filename=$facture.".pdf";
+        $file_to_save=$this->GetFolderFacture($facture)."/".$filename;
+        return new BinaryFileResponse($file_to_save);
+    }
     
+    /**
+     * Creates a new facture entity.
+     *
+     * @Route("/fact_{numFacture}/pdf_code", name="facture_pdf_code")
+     * @Method({"GET", "POST"})
+     */
+    public function pdfCodeAction(Facture $facture)
+    {
+        return $this->render('BackOffice/facture/facture/facture_'.strtolower($this->getParameter('application_name')).'.html.twig',  array('facture'=>$facture));
+    }
     
        
     /**
@@ -701,6 +724,8 @@ class FactureController extends Controller
         $em = $this->getDoctrine()->getManager();
         $view = $this->renderView('BackOffice/facture/facture/facture_'.strtolower($this->getParameter('application_name')).'.html.twig',  array('facture'=>$facture));
         $dompdf = new DOMPDF();
+        $dompdf->set_option('isHtml5ParserEnabled', true);
+        
         $dompdf->load_html($view);
         $dompdf->render();
         $filename=$facture.".pdf";

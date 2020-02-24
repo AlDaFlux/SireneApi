@@ -205,7 +205,7 @@ class EtablissementRepository extends \Doctrine\ORM\EntityRepository
         $qb->where("category.reel=1"); 
 
         $qb->groupBy('etablissement.nom');
-        $qb->having("dateEmission < '". date('Y-m-d',strtotime(date("Y-m-d", mktime()) . " - 365 day"))."'");
+        $qb->having("dateEmission < '". date('Y-m-d',strtotime(date("Y-m-d", time()) . " - 365 day"))."'");
         return $qb->getQuery()->getResult();
     }
     

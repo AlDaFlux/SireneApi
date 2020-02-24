@@ -4,9 +4,6 @@
 
 {% block body %}
     {% set etablissement = cur_etablissement %}
-
-    
-          
                 {% if etablissement.Impaye %}
                      <h1 class='fincontrat' title='{{ etablissement.category.commentaire}}'>Evaluation bloquée !: <br>Etablissement {{ etablissement.nom }}</h1>
                 {% elseif etablissement.category.reel %}
@@ -16,22 +13,12 @@
                 {% else %}
                      <h1 class='alert-warning' title='{{ etablissement.category.commentaire}}'>Etablissement {{ etablissement.nom }}</h1>
                 {% endif %}
-                
-                
-    
-    
-
-       
 
       {% include "BackOffice/Etablissement/inc_show.html.twig" %} 
-
-        
             {% include "BackOffice/Etablissement/suivi_eval.html.twig" %}
 
                <br>
                 
-
-               
     <div class="panel panel-primary">
         <div class="panel-heading"> <h3 class="panel-title"><i class='icon-user'></i>{{etablissement.users | length}} Utilisateurs ({{ etablissement.nom }})</h3> </div>
         
@@ -106,6 +93,26 @@
     </div>
         {% endif %}
     
+        
+    
+        {% if etablissement.nbDomaines == 0 %}
+             <p>&nbsp; <p>
+                     <div class='panel panel-danger'>
+                        <div class='panel-heading'>Pas de référentiel pour l'établissement!!!! </div>        
+                        <div   class='panel-body list-group'>
+                            <div class='alert alert-danger btn-with-big-ico  '>Une erreur est survenue lors de la création du référentiel !! L'évaluation est donc impossible !!!
+                                <i class='glyphicon glyphicon-warning-sign'></i>
+                            </div>
+                                    {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT')  %}
+                                        <a class='btn btn-danger btn-block btn-with-big-ico' href="{{ path('backoffice_etablissement_change_ref', { 'id': etablissement.id, 'ref_id': etablissement.ReferentielPublic.id })  }}">Essayer de regénérer le réferentiel   {{etablissement.ReferentielPublic}}<i class='glyphicon glyphicon-warning-sign'></i></a>
+                                    {% endif %}  
+                        </div>
+                    </div>
+        {% endif  %}
+         
+    
+    
+    
                 {% if is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE')  and etablissement.demande is not empty %}
                         {% if etablissement.demande.getEtat.Id != 3 %}
                             <div class='alert alert-danger btn-with-big-ico  '>La demande n'est pas considéré comme terminée, modifier <a href='{{ path('demande_etablissement_editancreai', {'id': etablissement.demande.id}) }}'>l'état de la demande </a>
@@ -147,8 +154,10 @@
 
 {% endif %}
     
-         
+  
     {% if is_granted('ROLE_SUPER_ADMIN_ETABLISSEMENT')  %}
+        
+        
         
         
         <div class='panel panel-danger'>

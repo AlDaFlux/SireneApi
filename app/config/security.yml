@@ -36,13 +36,14 @@ security:
                 login_path: login
                 check_path: login_check
             anonymous: true
+            logout_on_user_change : true
 
             logout:
                 path: /logout
                 target: /
 
             remember_me:
-                secret: %secret%
+                secret: "%secret%"
                 lifetime: 2232000
                 
     access_control:

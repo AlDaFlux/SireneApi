@@ -69,12 +69,12 @@
             </tr>
             
             <tr>
-                <th>Capacité de stocakge</th>
+                <th>Capacité de stockage</th>
                     <td>{{gestionnaire.getStockageGestionnaire}} :  {{gestionnaire.sizeMaxUpload | formatBytes}} </td>            
             </tr>
             
             <tr>
-                <th>Stocakge Utilisé</th>
+                <th>Stockage Utilisé</th>
                     {% if gestionnaire.sizeMaxUpload  <   gestionnaire | sizeTotalFileUploadGestionnaire %}
                         <td title='{{gestionnaire | sizeTotalFileUploadGestionnaire | formatBytes}} sur  {{gestionnaire.sizeMaxUpload | formatBytes}} autorisés.' class='alert alert-danger'>    
                     {% else %}

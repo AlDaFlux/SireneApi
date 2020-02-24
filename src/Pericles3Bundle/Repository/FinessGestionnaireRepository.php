@@ -61,7 +61,7 @@ class FinessGestionnaireRepository extends \Doctrine\ORM\EntityRepository
         {
                 $qb = $this->createQueryBuilder('anciens');
                 $qb->InnerJoin('anciens.demandesGestionnaire', 'demande');
-                $qb->leftJoin('Pericles3Bundle:FinessImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
+                $qb->leftJoin('Pericles3Bundle:FinessGestionnaireImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
                 $qb->Where('nouveaux.codeFiness IS NULL');
 		return $qb->getQuery()->getResult();
 	}
@@ -70,9 +70,11 @@ class FinessGestionnaireRepository extends \Doctrine\ORM\EntityRepository
         {
                 $qb = $this->createQueryBuilder('anciens');
                 $qb->InnerJoin('anciens.pericles', 'pericles');
-                $qb->leftJoin('Pericles3Bundle:FinessImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
+                $qb->leftJoin('Pericles3Bundle:FinessGestionnaireImport', 'nouveaux', 'WITH', 'nouveaux.codeFiness= anciens.codeFiness');
                 $qb->Where('nouveaux.codeFiness IS NULL');
+                $qb->setMaxResults(500);
 		return $qb->getQuery()->getResult();
+                
 	}
         
         

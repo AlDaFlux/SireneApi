@@ -304,7 +304,7 @@ class SyntheseController extends Controller
     {
 
         $uploadPath = WEB_DIR.'/upload/';
-        $filename="ARSENE -  ".$Etablissement.' - '.date("Y-m-d").'.'.$synthese_extension;
+        $filename=$this->getParameter('application_name')." - ".$Etablissement.' - '.date("Y-m-d").'.'.$synthese_extension;
         $file=$uploadPath.$Etablissement->GetUploadFolderPath()."/synthese/".date("Y-m-d").".".$synthese_extension;
         $view = $this->renderView('Synthese/export/generate/synthese.html.twig', ['parameters'=> $request->query->all(),'typeExport'=>strtoupper($synthese_extension) ,'etablissement'=>$Etablissement]);
         
@@ -358,7 +358,7 @@ class SyntheseController extends Controller
      */
     public function exportAction(Etablissement $Etablissement, $synthese_type, $synthese_extension){
         $uploadPath = WEB_DIR.'/upload/';
-        $filename="ARSENE - ".$synthese_type.' - ' .$Etablissement.' - '.date("Y-m-d").'.'.$synthese_extension;
+        $filename=$this->getParameter('application_name')." - ".$synthese_type.' - ' .$Etablissement.' - '.date("Y-m-d").'.'.$synthese_extension;
         $file=$uploadPath.$Etablissement->GetUploadFolderPath()."/synthese/".$synthese_type.".".$synthese_extension;
         return($this->exportFile($file,$filename,  $synthese_extension));
     }
@@ -374,13 +374,11 @@ class SyntheseController extends Controller
      */
     public function exportRefAction( ReferentielPublic $referentielPublic, $synthese_type, $synthese_extension){
         $uploadPath = WEB_DIR.'/upload/';
-        $filename="ARSENE - ".$synthese_type.' - ' .$referentielPublic.' - '.date("Y-m-d").'.'.$synthese_extension;
+        $filename=$this->getParameter('application_name')." - ".$synthese_type.' - ' .$referentielPublic.' - '.date("Y-m-d").'.'.$synthese_extension;
         $file=$uploadPath.$this->GetUser()->Getgestionnaire()->GetUploadFolderPath()."/synthese/".$synthese_type.".".$synthese_extension;
         return($this->exportFile($file,$filename,  $synthese_extension));
     }
-
-    
-    
+ 
     
     /**
      * Exportation du fichier
@@ -392,9 +390,8 @@ class SyntheseController extends Controller
         $uploadPath = WEB_DIR.'/upload/';
         $Etablissement= $Sauvegarde->GetEtablissement();
         
-        if ($synthese_type=="synthese_annexe") $filename="ARSENE - Annexe au rapport d'activité ".' - ' .$Etablissement.' - '.$Sauvegarde->getDateCreate()->format('d-m-Y')." - ".date("d-m-Y").'.'.$synthese_extension;
-        else $filename="ARSENE - Sauvegarde ".$synthese_type.' - ' .$Etablissement.' - '.$Sauvegarde->getDateCreate()->format('d-m-Y')." - ".date("d-m-Y").'.'.$synthese_extension;
-        
+        if ($synthese_type=="synthese_annexe") $filename=$this->getParameter('application_name')." - Annexe au rapport d'activité ".' - ' .$Etablissement.' - '.$Sauvegarde->getDateCreate()->format('d-m-Y')." - ".date("d-m-Y").'.'.$synthese_extension;
+        else $filename=$filename=$this->getParameter('application_name')." - Sauvegarde ".$synthese_type.' - ' .$Etablissement.' - '.$Sauvegarde->getDateCreate()->format('d-m-Y')." - ".date("d-m-Y").'.'.$synthese_extension;
         
         $file=$uploadPath.$Etablissement->GetUploadFolderPath()."/synthese/".$synthese_type."_".$Sauvegarde->GetId().".".$synthese_extension;
         return($this->exportFile($file,$filename,  $synthese_extension));

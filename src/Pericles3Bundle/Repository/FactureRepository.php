@@ -92,7 +92,7 @@ class FactureRepository extends \Doctrine\ORM\EntityRepository
         
         $subquery->groupBy('etablissement.nom','etablissement.id');
         $subquery->OrderBy('numFacture');
-        $subquery->having("dateEmission < '". date('Y-m-d',strtotime(date("Y-m-d", mktime()) . " - 365 day"))."'");
+        $subquery->having("dateEmission < '". date('Y-m-d',strtotime(date("Y-m-d", time()) . " - 365 day"))."'");
         return $subquery->getQuery()->getResult();
     }
     
@@ -102,7 +102,7 @@ class FactureRepository extends \Doctrine\ORM\EntityRepository
     public function ProchainesFacturesAEcheances($limit=10) 
     {
         $subquery = $this->createQueryBuilder('facture');
-        $subquery->Where("facture.dateEmission >= '". date('Y-m-d',strtotime(date("Y-m-d", mktime()) . " - 365 day"))."'");
+        $subquery->Where("facture.dateEmission >= '". date('Y-m-d',strtotime(date("Y-m-d", time()) . " - 365 day"))."'");
         $subquery->OrderBy('facture.dateEmission');
         if ($limit) $subquery->setMaxResults($limit);
         return $subquery->getQuery()->getResult();

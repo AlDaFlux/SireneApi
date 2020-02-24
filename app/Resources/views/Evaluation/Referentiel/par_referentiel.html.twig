@@ -3,7 +3,7 @@
       {% for referentielPublic in referentielsPublic %}
           
             <a href='{{ path('pericles3_referentiel_ref', {'id' :referentielPublic.id })}}'>
-             <div class="col-md-6 ">
+             <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="panel panel-primary panel_osa">            
                     <div class="panel-heading"> <h3 class="panel-title">{{ referentielPublic }}</h3> </div>
                       <div class="panel-body"> 
@@ -27,4 +27,4 @@
                             
                 </a>
     {% endfor %} 
-            </div>
+            </div>  

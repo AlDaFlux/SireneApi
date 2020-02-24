@@ -347,7 +347,7 @@ class PatchController extends AdminController
         }
         elseif ($aieul)
         {
-            $this->AddFlash('success','aieul : '.$aieul);
+//            $this->AddFlash('success','aieul : '.$aieul);
             //foreach($patch->getPatcheRefPublicSource()->getReferentielDomaines() as $ref)
             foreach($patch->getSource()->getReferentiels() as $ref)
             {
@@ -378,16 +378,17 @@ class PatchController extends AdminController
                 if ($patchRef &&  $patchRefAieul)
                 {
                       $this->Output('<info>'.$ref.'</info>');
+                      $patchRef->setValide(true);
                 }
                 else
                 {
                     $patchRef=new \Pericles3Bundle\Entity\PatchReferentiel;
                     $patchRef->setPatcheRefAieul($patchRefAieul);
                     $this->Output(''.$ref.'');
+                    $patchRef->setValide(false);
 
                 }
                 $patchRef->setPatcheRefCible($ref);
-                $patchRef->setValide(true);
                 $patchRef->setPatch($patch);
                 $em->persist($patchRef);
                 $em->flush();

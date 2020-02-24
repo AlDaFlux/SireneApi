@@ -32,6 +32,7 @@ class ReferentielOsoleteSupressionDomainesCommand extends ContainerAwareCommand
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getEntityManager();
 
+    $em->getFilters()->disable('softdeleteable');
 
     $domaines_desuet =$em->getRepository('Pericles3Bundle:Domaine')->FindReferentielDesuet();
     foreach ($domaines_desuet as $Domaine )

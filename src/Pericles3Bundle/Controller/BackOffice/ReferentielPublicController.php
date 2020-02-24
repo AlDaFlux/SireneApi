@@ -654,7 +654,7 @@ class ReferentielPublicController extends AdminController
         $response->headers->set('Cache-Control', 'private');
 //        $response->headers->set('Content-type', mime_content_type($filename));
         $response->headers->set('Content-type', $contenttype);
-        $response->headers->set('Content-Disposition', 'attachment; filename="ARSENE - '.$referentielPublic.'  - '.date("Y-m-d").'.'.$synthese_extension. '";');
+        $response->headers->set('Content-Disposition', 'attachment; filename="'.$referentielPublic.'  - '.date("Y-m-d").'.'.$synthese_extension. '";');
         $response->headers->set('Content-length', filesize($file));
         $response->sendHeaders();
         $response->setContent(file_get_contents($file));

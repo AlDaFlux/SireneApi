@@ -23,9 +23,12 @@ use Pericles3Bundle\Entity\FinessGestionnaire;
 use Pericles3Bundle\Form\DemandeEtablissementType;
 use Pericles3Bundle\Form\DemandeInfosType;
 use Pericles3Bundle\Form\DemandeGestionnaireType;
+use Aldaflux\SireneApiBundle\Form\Type\SiretType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 use Dompdf\Dompdf;
 
+use Aldaflux\SireneApiBundle\Service\SireneApiService;
 
 
 /**
@@ -143,6 +146,96 @@ class DemandeController extends Controller
     /**
      * Creates a new DemandeEtablissement entity.
      *
+     * @Route("/etablissement/new/bysiret", name="demande_etablissement_new_bysirene")
+     * @Method({"GET", "POST"})
+     */
+    public function newEtablissementazeBySireneAction(Request $request,SireneApiService $sirenService = null)
+    {
+
+        
+        $form = $this->createFormBuilder()
+                ->add('siret', SiretType::class)
+                ->add('send', SubmitType::class)
+                ->getForm();
+        
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                // data is an array with "name", "email", and "message" keys
+                $siret = $form->getData()["siret"];
+                $sirenService =  $this->container->get("sirene-api.sirene_service");
+                $sirenInfo=$sirenService->GetSiretInfo($siret);
+                
+
+                return $this->redirectToRoute('demande_etablissement_from_bysiret', array('siret' => $siret));
+            }
+    
+        
+        
+        return $this->render('BackOffice/Demande/Etablissement/new.html.twig', array(
+            'demandeEtablissement' => null,
+            'form' => $form->createView(),
+            'link_sans_finess' => false,
+        ));
+    }
+    
+
+    /**
+     * Creates a new DemandeEtablissement entity.
+     *
+     * @Route("/etablissement/new/fromsiret/{siret}", name="demande_etablissement_from_bysiret")
+     * @Method({"GET", "POST"})
+     */
+    public function newEtablissementazeFromSirenAction($siret,Request $request)
+    {
+        
+        $em = $this->getDoctrine()->getManager();
+        $demandeEtablissement = new DemandeEtablissement();
+
+        $sirenService =  $this->container->get("sirene-api.sirene_service");
+        $sirenInfo=$sirenService->GetSiretInfo($siret);
+                
+                dump($siret);
+                dump($sirenInfo);
+
+        $demandeEtablissement->setCodePostal($sirenInfo->adresseEtablissement->codePostalEtablissement);
+        $demandeEtablissement->setEtablissementNom($sirenInfo->uniteLegale->denominationUniteLegale);
+        $demandeEtablissement->setAdresse($sirenInfo->adresseEtablissement->numeroVoieEtablissement." ".$sirenInfo->adresseEtablissement->typeVoieEtablissement." ".$sirenInfo->adresseEtablissement->libelleVoieEtablissement);
+        $demandeEtablissement->setVille($sirenInfo->adresseEtablissement->libelleCommuneEtablissement);
+        
+        $form = $this->createForm('Pericles3Bundle\Form\DemandeEtablissementType', $demandeEtablissement, ["finess"=>false,"required"=>true]);
+        $form->handleRequest($request);
+
+        
+        $email=$form->getData()->GetEmail();
+        if ($email)
+        {
+            if ($this->mailFree($email))
+            {
+                if ($form->isSubmitted() && $form->isValid()) 
+                {
+                    $demandeEtablissement->setCreai($this->getUser()->GetCreai());
+                    $demandeEtablissement->setEtat($em->getRepository('Pericles3Bundle:DemandeEtat')->findOneById(0));
+                    $demandeEtablissement->setDateDemande(new \DateTime(date("Y-m-d H:i:s")));
+                    $em->persist($demandeEtablissement);
+                    $em->flush();
+                    return $this->redirectToRoute('demande_etablissement_show', array('id' => $demandeEtablissement->getId()));
+                 }
+            }
+        }
+
+
+        return $this->render('BackOffice/Demande/Etablissement/new.html.twig', array(
+            'demandeEtablissement' => $demandeEtablissement,
+            'form' => $form->createView(),
+             'link_sans_finess' => false,
+        ));
+        
+    }
+        
+    /**
+     * Creates a new DemandeEtablissement entity.
+     *
      * @Route("/etablissement/new/byfiness", name="demande_etablissement_new_byfiness")
      * @Method({"GET", "POST"})
      */
@@ -195,7 +288,7 @@ class DemandeController extends Controller
         $em = $this->getDoctrine()->getManager();
          if ($em->getRepository('Pericles3Bundle:User')->nbParMail($email))
         {
-            $this->addFlash('error', "L'utilisateur <i>".$email."</i> à déja un compte ARSENE : ".$em->getRepository('Pericles3Bundle:User')->nbParMail($email));
+            $this->addFlash('error', "L'utilisateur <i>".$email."</i> à déja un compte  : ".$em->getRepository('Pericles3Bundle:User')->nbParMail($email));
             return(false);
         }
         elseif ($em->getRepository('Pericles3Bundle:DemandeEtablissement')->nbParMail($email))
@@ -280,7 +373,7 @@ class DemandeController extends Controller
         
         if ($em->getRepository('Pericles3Bundle:User')->nbParMail($email))
         {
-            $this->addFlash('error', "L'utilisateur <i>".$email."</i> à déja un compte ARSENE : ");
+            $this->addFlash('error', "L'utilisateur <i>".$email."</i> à déja un compte  : ");
         }
         elseif ($em->getRepository('Pericles3Bundle:DemandeEtablissement')->nbParMail($email))
         {
@@ -1064,7 +1157,7 @@ class DemandeController extends Controller
             $dompdf->render();
             $response = new Response($dompdf->output());
             $disposition = $response->headers->makeDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,"Devis ".$demandeGestionnaire." - (".date("d-m-Y").").pdf"
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,"Devis - ".date("d-m-Y").".pdf"
         );
         $response->headers->set('Content-Disposition', $disposition);
         return $response;
