@@ -2542,6 +2542,13 @@ class EtablissementController extends AdminController
         $em = $this->getEm();
         foreach ($Etablissement->getBibliotheques() as $biblio )
         {
+            foreach ($biblio->getPreuves() as $preuve)
+            {
+                $this->OutputOrFlashSuccess("<info> preuve  : ".$preuve."</info>");
+                $em->remove($preuve);
+                $em->flush();
+            }
+            $em->flush();
             $em->remove($biblio);
             $this->OutputOrFlashSuccess("Supression de ".$biblio);
         }
