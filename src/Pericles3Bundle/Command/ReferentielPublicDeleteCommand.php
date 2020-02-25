@@ -58,6 +58,7 @@ HELP
         
         if ($softdeleteable)
         {
+            $output->writeln("<info>SOFTDELETE DESACTIVE</info>");
             $em->getFilters()->disable('softdeleteable');
         }
 
@@ -78,19 +79,19 @@ HELP
                 {
                     foreach ($refPublic->GetEtablissements() as $etablissement)
                     {
-                        $output->writeln("<info> SUPPRESION ETABLISSEMENT".$etablissement."</info>");
+                        $output->writeln("<info> ----SUPPRESION ETABLISSEMENT : ".$etablissement."</info>");
                         $command = $this->getApplication()->find('etablissement:delete');
                         if ($softdeleteable)
                         {
-                            $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId(), "--delete-cascade");
+                            $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId(), "--delete-cascade"=> true);
                         }
                         else
                         {
                             $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId());
                         }
-                            
                         $PatchEtabInput = new ArrayInput($arguments);
                         $command->run($PatchEtabInput, $output);
+                        $output->writeln("<info> ----SUPPRESION ETABLISSEMENT : OK !!!   </info>");
                     }
                 }
                 else
@@ -100,6 +101,8 @@ HELP
                     
                 }
             }
+            
+            
             if ($refPublic->hasPatch())
             {
                 $output->writeln("<error>Le référentiel Public  ".$refPublic." a des patchs </error>");
