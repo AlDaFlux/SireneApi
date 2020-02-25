@@ -2411,8 +2411,16 @@ class EtablissementController extends AdminController
         {
             foreach ($Domaine->getObjectifsSrategique() as $ObjectifSrategique )
             {
-                    $em->remove($ObjectifSrategique);
-                    $em->flush();
+                foreach ($ObjectifSrategique->getObjectifsOperationnel() as $oo)
+                {
+                    $oo->SetObjectifStrategique(null);
+                    $ObjectifSrategique->removeObjectifsOperationnel($oo);
+                    $em->persist($ObjectifSrategique);
+                }
+                $em->flush();
+                
+                $em->remove($ObjectifSrategique);
+                $em->flush();
             }
             foreach ($Domaine->getCommentaires() as $commentaire )
             {
@@ -2494,6 +2502,7 @@ class EtablissementController extends AdminController
         }
        return $this->redirectToRoute('backoffice_etablissement_view', array('id' => $Etablissement->getId()));
     }
+    
     
     function deleteObjectifsOperationnelEtablissement(Etablissement $Etablissement)
     {
