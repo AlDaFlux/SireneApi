@@ -53,8 +53,7 @@ class EtablissementDeleteCommand extends ContainerAwareCommand
         }
         else
         {         
-            $output->writeln("referentiel choisi : ");
-            $output->writeln("<info>".$etablissement."</info>");
+            $output->writeln("Etablissement  choisi : ".$etablissement.'('.$etablissement->GetId().')');
             
             
             
@@ -66,6 +65,17 @@ class EtablissementDeleteCommand extends ContainerAwareCommand
             $etablissementController = new \Pericles3Bundle\Controller\BackOffice\EtablissementController();
             $etablissementController->SetOutput($output);
             $etablissementController->SetEm($em);
+            
+            foreach ($etablissement->getPreuves() as $preuve)
+            {
+                $output->writeln("<info> preuve  : ".$preuve."</info>");
+                $em->remove($preuve);
+                $em->flush();
+            }
+            
+            
+            
+            
             $etablissementController->deleteSaisiesEtablissement($etablissement,true);
             $etablissementController->deleteObjectifsOperationnelEtablissement($etablissement);
             
