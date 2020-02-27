@@ -33,7 +33,6 @@ class GestionnaireDeleteAllCommand extends ArseneCommand
         $this->output=$output;
 
        
-        $gestionnaire = $this->GetGestionnaireById($gestionnaireId);
         
   
         
