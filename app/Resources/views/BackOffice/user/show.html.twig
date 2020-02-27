@@ -231,8 +231,7 @@
     {% endif %}
                   
     {% if user.IsAnEtablissement %}
-        {% if  is_granted('ROLE_SUPER_ADMIN_UTILISATEUR') or (is_granted('ROLE_ADMIN') and not app.user.isAdminPole and app.user.isGestionnaire ) %}
-
+        {% if user.etablissement.gestionnaire is defined and (is_granted('ROLE_SUPER_ADMIN_UTILISATEUR') or (is_granted('ROLE_ADMIN') and not app.user.isAdminPole and app.user.isGestionnaire )) %}
                      {% if app.user.CanModify(user) %}
 
                         <a class="btn btn-warning glyphicon glyphicon-pencil full-width" href="{{ path('backoffice_user_uptogestionnaire', { 'id': user.id }) }}">Transformer l'utilisateur en gestionnaire pole</a>
