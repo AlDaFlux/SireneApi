@@ -46,8 +46,14 @@
 
             <a  class='btn btn-primary'  href="{{ path('backoffice_editorial_clu_new') }}">Create a new editorialCLU</a>
 
-            
+
+    {%  if lastCGU %}
     <iframe id="iframepdf" src="/clu/{{ lastCGU.fichier }}"></iframe>       
+    {%  else  %}
+    <div class='alert alert-danger'>
+        Aucune CGU !!! 
+    </div>
+    {%  endif %}
 
 
 {% endblock %}
