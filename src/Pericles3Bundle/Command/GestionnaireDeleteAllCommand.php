@@ -46,14 +46,11 @@ class GestionnaireDeleteAllCommand extends ArseneCommand
                 else
                 {
                     $output->writeln("<info> ----SUPPRESION GESTIONNAIRE : ".$gestionnaire."</info>");
-                    /*
                     $command = $this->getApplication()->find('gestionnaire:delete');
-                    $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $gestionnaire->GetId(), "--delete-cascade"=> true);
+                    $arguments = array('command' => 'gestionnaire:delete','--gestionnaire_id'  => $gestionnaire->GetId(), "--force-softdeleteable"=> true);
                     $input = new ArrayInput($arguments);
                     $command->run($input, $output);
-                     * 
-                     */
-                    $output->writeln("<info> ----SUPPRESION GESTIONNAIRE : OK !!!   </info>");
+                    $output->write(" ----: OK !!!");
                 }
         }
     }
