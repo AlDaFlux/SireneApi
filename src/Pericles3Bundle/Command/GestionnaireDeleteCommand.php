@@ -111,7 +111,7 @@ HELP
                 $demande->SetGestionnaire(null);
                 $em->persist($demande);
                 $em->flush();
-            }*/
+            }
                     
  
             foreach ($gestionnaire->getFiness() as $finess)
@@ -120,7 +120,7 @@ HELP
                 $em->persist($finess);
                 $em->flush();
             }
-                    
+                    */
             foreach ($gestionnaire->getBibliotheques() as $biblio)
             {
                 $em->remove($biblio);
