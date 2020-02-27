@@ -94,7 +94,7 @@ class EtablissementDeleteCommand extends ContainerAwareCommand
             
             $em->flush();
             */
-            if ($deleteCascade or $force_softdeleteable)
+            if ($deleteCascade)
             {
                 $users = $em->getRepository("Pericles3Bundle:User")->findByEtablissement($etablissement);
                 foreach ($users as $user)

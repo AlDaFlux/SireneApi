@@ -81,16 +81,9 @@ HELP
                     {
                         $output->writeln("<info> ----SUPPRESION ETABLISSEMENT : ".$etablissement."</info>");
                         $command = $this->getApplication()->find('etablissement:delete');
-                        if ($softdeleteable)
-                        {
-                            $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId(), "--delete-cascade"=> true);
-                        }
-                        else
-                        {
-                            $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId());
-                        }
-                        $PatchEtabInput = new ArrayInput($arguments);
-                        $command->run($PatchEtabInput, $output);
+                        $arguments = array('command' => 'etablissement:delete','--etablissement_id'  => $etablissement->GetId(), "--delete-cascade"=> true);
+                        $EtabInput = new ArrayInput($arguments);
+                        $command->run($EtabInput, $output);
                         $output->writeln("<info> ----SUPPRESION ETABLISSEMENT : OK !!!   </info>");
                     }
                 }
