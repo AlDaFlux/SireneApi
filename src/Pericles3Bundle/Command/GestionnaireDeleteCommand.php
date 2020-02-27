@@ -128,9 +128,21 @@ HELP
             }
             foreach ($gestionnaire->getUsers() as $user)
             {
+                foreach ($user->getStatsUserConnect() as $stats)
+                {
+                      $output->writeln("<info>Stats</info>");
+                      $em->remove($stats);
+                      $em->flush();
+                }
                 $em->remove($user);
                 $em->flush();
             }
+            
+            $em->remove($gestionnaire);
+            $em->flush();
+            
+            
+            
         }
     }
 }
