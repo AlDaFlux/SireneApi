@@ -22,8 +22,8 @@ class GestionnaireDeleteAllCommand extends ArseneCommand
     {
         $this->setName('gestionnaire:delete:all');
         $this->setDescription('suprimme tous les gestionnaires sans établissements !!! !Atention ');
-        $this->setHelp("<info>gestionnaire:delete:all</info> <comment> </comment> suprimme tous les gestionnaires sans établissements !!! !Atention ")
-        ;
+        $this->addOption('force-softdeleteable',null,InputOption::VALUE_NONE,"désactive softdeleteable");
+        $this->setHelp("<info>gestionnaire:delete:all</info> <comment> --force-softdeleteable</comment> suprimme tous les gestionnaires sans établissements !!! !Atention ");
            
     }
 
@@ -32,6 +32,12 @@ class GestionnaireDeleteAllCommand extends ArseneCommand
         $this->input=$input;
         $this->output=$output;
 
+        $force_softdeleteable = $input->getOption('force-softdeleteable');
+        if ($force_softdeleteable)
+        {
+            $output->writeln("<info>SOFTDELETE DESACTIVE</info>");
+          
+        }
        
         
   
@@ -47,7 +53,7 @@ class GestionnaireDeleteAllCommand extends ArseneCommand
                 {
                     $output->writeln("<info> ----SUPPRESION GESTIONNAIRE : ".$gestionnaire."</info>");
                     $command = $this->getApplication()->find('gestionnaire:delete');
-                    $arguments = array('command' => 'gestionnaire:delete','--gestionnaire_id'  => $gestionnaire->GetId(), "--force-softdeleteable"=> true);
+                    $arguments = array('command' => 'gestionnaire:delete','--gestionnaire_id'  => $gestionnaire->GetId(), "--force-softdeleteable"=> $force_softdeleteable);
                     $input = new ArrayInput($arguments);
                     $command->run($input, $output);
                     $output->write(" ----: OK !!!");
