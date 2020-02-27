@@ -105,12 +105,13 @@ HELP
                 $em->persist($demande);
                 $em->flush();
             }
+            /*
             foreach ($gestionnaire->getDemandeGestionnaire() as $demande)
             {
                 $demande->SetGestionnaire(null);
                 $em->persist($demande);
                 $em->flush();
-            }
+            }*/
                     
  
             foreach ($gestionnaire->getFiness() as $finess)
