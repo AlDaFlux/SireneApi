@@ -38,7 +38,7 @@ HELP
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-                $this->input=$input;
+        $this->input=$input;
         $this->output=$output;
 
         
@@ -59,12 +59,12 @@ HELP
         
         if (! $gestionnaire)
         {
-            $output->writeln("<error>L'établissement ".$gestionnaireId." n'exites pas<error>");
+            $output->writeln("<error>Le gestionnaire ".$gestionnaireId." n'exites pas<error>");
         }
         else
         {         
             
-            $output->writeln("Etablissement  choisi : ".$gestionnaire.'('.$gestionnaire->GetId().')');
+            $output->writeln("Gestionnaire  choisi : ".$gestionnaire.'('.$gestionnaire->GetId().')');
             $output->writeln("<info>Nombre d'éatblissement : ".$gestionnaire->getNbEtablissements()."</info>");
             if ((!$deleteCascade) && $gestionnaire->getNbEtablissements())
             {
@@ -128,9 +128,10 @@ HELP
             }
             foreach ($gestionnaire->getUsers() as $user)
             {
+                $output->writeln("<info>Supresiion Stats</info>");
                 foreach ($user->getStatsUserConnect() as $stats)
                 {
-                      $output->writeln("<info>Stats</info>");
+                    $output->write(".");
                       $em->remove($stats);
                       $em->flush();
                 }
