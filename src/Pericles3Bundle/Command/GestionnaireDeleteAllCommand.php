@@ -22,10 +22,7 @@ class GestionnaireDeleteAllCommand extends ArseneCommand
     {
         $this->setName('gestionnaire:delete:all');
         $this->setDescription('suprimme tous les gestionnaires sans établissements !!! !Atention ');
-        $this->setHelp(<<<'HELP'
-                        <info>gestionnaire:delete:all</info> <comment> </comment> suprimme tous les gestionnaires sans établissements !!! !Atention 
-                HELP
-            )
+        $this->setHelp("<info>gestionnaire:delete:all</info> <comment> </comment> suprimme tous les gestionnaires sans établissements !!! !Atention ")
         ;
            
     }
@@ -35,11 +32,7 @@ class GestionnaireDeleteAllCommand extends ArseneCommand
         $this->input=$input;
         $this->output=$output;
 
-        
-        $doctrine = $this->getContainer()->get('doctrine');
-        $em = $doctrine->getEntityManager();
-        $gestionnaireId = $input->getOption('gestionnaire_id');
-        
+       
         $gestionnaire = $this->GetGestionnaireById($gestionnaireId);
         
   
