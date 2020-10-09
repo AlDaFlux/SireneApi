@@ -1,7 +1,0 @@
-{% if etablissement.ModeCotisation.id == 0 %}
-    <td class='alert alert-danger'>{{etablissement.ModeCotisation }}</td>
-{% elseif etablissement.ModeCotisation.id==5 %}
-    <td class='alert alert-warning'>{{etablissement.ModeCotisation }}</td>
-    {% else %}
-    <td class='alert alert-info'>{{etablissement.ModeCotisation }}</td>
-{% endif %}

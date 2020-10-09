@@ -1,3 +1,0 @@
-services:
-    HtmlToMht:
-        class: InDaFlux\HtmlToDocWImgBundle\Utils\HtmlToMht

@@ -1,7 +1,0 @@
-        
-        {% if is_granted('ROLE_SUPER_ADMIN_TRAITEMENT_DEMANDE') %}
-            {% set demandes_en_cours = NbDemandesEtablissementNonFinies + NbDemandesGestionnaireNonFinies  + NbDemandeInfosSansCreaiNonFinies %}
-            {% set demandes_atraiter = NbDemandesEtablissementATraiter + NbDemandesGestionnaireATraiter  + NbDemandeInfosSansCreaiATraiter %}
-            {{ demandes_en_cours | NotifDemandes(demandes_atraiter,' de création d’établissements') | raw }}
-        {% endif %}                                                                                          
-    

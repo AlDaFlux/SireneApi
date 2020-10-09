@@ -1,6 +1,0 @@
-[{% for gestionnaire in results -%}
-    {{ {id: gestionnaire.codeFiness, label: gestionnaire.codeFiness ~ ' : '  ~  gestionnaire.raisonSociale , value: gestionnaire.codeFiness  }|json_encode|raw }}
-    {# use "value" instead of "id" key, if you use jquery-ui #}
-    {%- if not loop.last %},{% endif -%}
-{%- endfor %}]
-

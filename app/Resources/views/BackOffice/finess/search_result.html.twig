@@ -1,6 +1,0 @@
-[{% for etablissement in results -%}
-    {{ {id: etablissement.codeFiness, label: etablissement.codeFiness ~ ' : '  ~  etablissement.raisonSociale , value: etablissement.codeFiness  }|json_encode|raw }}
-    {# use "value" instead of "id" key, if you use jquery-ui #}
-    {%- if not loop.last %},{% endif -%}
-{%- endfor %}]
-

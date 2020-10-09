@@ -1,7 +1,0 @@
-<td class=' {% include "BackOffice/referentielpublic/arborescence_class.html.twig"  with {'ref':refPublic} %}'>{{refPublic.Version}}</td>
-                
-{% if refPublic.getVersionningChildrenFirst %}
-        {% include "BackOffice/referentielpublic/arborescence_versionning_inc_td.html.twig"  with {'refPublic':refPublic.getVersionningChildrenFirst} %}
- 
-                    
-{% endif %}

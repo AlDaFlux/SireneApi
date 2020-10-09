@@ -1,8 +1,0 @@
-
-
-<h3>Cotation moyenne des {{ etablissement.domaines|length }} domaines d'évaluation (10 points maximum)</h3>
-<div class='graph_big'>
-        {% set img_note = '/upload/st01/etablissement_' ~ etablissement.id ~ '/synthese/graphs/general.jpg' %}
-        {{ img_note | getImageExport(typeExport) | raw }}
-
-</div>
