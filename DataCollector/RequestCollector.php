@@ -7,29 +7,42 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollectorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Aldaflux\SireneApiBundle\Service\SireneApiService;
+
 class RequestCollector extends DataCollector implements DataCollectorInterface
 {
     
-    private $container;
+    private $sireneApiService;
 
-    /**
-     * Constructor.
-     *
-     * We don't inject the message logger and mailer here
-     * to avoid the creation of these objects when no emails are sent.
-     *
-     * @param ContainerInterface $container A ContainerInterface instance
-  */
-    public function __construct()
+    
+    public function __construct(SireneApiService $sireneApiService)
     {
-//        $this->container = $container;
+        $this->sireneApiService = $sireneApiService;
     }   
-     public function collect(Request $request, Response $response, \Exception $exception = null)
+    
+    
+     public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
-        $this->data = [
-            'method' => $request->getMethod(),
-            'acceptable_content_types' => $request->getAcceptableContentTypes(),
-        ];
+         if ($this->sireneApiService->GetUsed())
+         {
+            $this->data = [
+                'acceptable_content_types' => $request->getAcceptableContentTypes(),
+                'logs' =>  $this->sireneApiService->getLogs(),
+                'errorlogs' =>  $this->sireneApiService->getErrorLogs(),
+                'token' =>  $this->sireneApiService->GetToken(),
+                'used' =>  $this->sireneApiService->GetUsed(),
+            ];
+         }
+         else
+         {
+            $this->data = [
+                'acceptable_content_types' => $request->getAcceptableContentTypes(),
+                'logs' =>  $this->sireneApiService->getLogs(),
+                'token' =>  "-----",
+                'used' =>  $this->sireneApiService->GetUsed(),
+            ];
+             
+         }
     }
 
     public function reset()
@@ -43,14 +56,31 @@ class RequestCollector extends DataCollector implements DataCollectorInterface
     }
 
     
- public function getMethod()
+
+    public function getToken()
     {
-        return $this->data['method'];
+        return $this->data['token'];
     }
+    
+    public function getLogs()
+    {
+        return $this->data['logs'];
+    }
+    public function getErrorLogs()
+    {
+        return $this->data['errorlogs'];
+    }
+    
+    public function getUsed()
+    {
+        return $this->data['used'];
+    }
+    
+    
 
      public function LogCount()
     {
-        return 666;
+        return 111;
     }
 
     public function getAcceptableContentTypes()

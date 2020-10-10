@@ -17,9 +17,9 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-         $treeBuilder = new TreeBuilder();
+         $treeBuilder = new TreeBuilder('aldaflux_sirene_api');
+        $rootNode = $treeBuilder->getRootNode();
  
-	 $rootNode = $treeBuilder->root('aldaflux_sirene_api');
  
         $rootNode
             ->children()

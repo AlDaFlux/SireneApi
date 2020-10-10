@@ -2,23 +2,43 @@
 
 {% block toolbar %}
     {% set icon %}
-        {% include('@AldafluxSireneApi/Collector/icons/insee.html.twig') %}
+                        
+{#        {% set status = collector.invalidEntityCount > 0 ? 'red' : collector.querycount > 50 ? 'yellow' %} #}
+                        
+        {%  if collector.used %}
+            {% include('@AldafluxSireneApi/Collector/icons/sirene_on.html.twig') %}
+    
+            {%  if collector.errorLogs | length > 0 %}
+                {% set status = 'red'%} 
+            {%  else  %}
+                {% set status = 'green'%} 
+            {%  endif  %}
+            
+
+
+        {%  else %}
+            {% include('@AldafluxSireneApi/Collector/icons/sirene_off.html.twig') %}
+        {%  endif %}
          <span class="sf-toolbar-value">SIRENE</span>
+        
     {% endset %}
 
-    {% set text %}
-        {# this is the content displayed when hovering the mouse over
-           the toolbar panel #}
-        <div class="sf-toolbar-info-piece">
-            <b>Method</b>
-            <span>{{ collector.method }}</span>
-        </div>
+        {%  if collector.used %}
+            {% set text %}
+            <div class="sf-toolbar-info-piece">
+                <b>Token</b>
+                <span>{{ collector.token}}</span>
+            </div>
+                            
 
-        <div class="sf-toolbar-info-piece">
-            <b>Accepted content type</b>
-            <span>{{ collector.acceptableContentTypes|join(', ') }}</span>
-        </div>
-    {% endset %}
+
+            <div class="sf-toolbar-info-piece">
+                <b>Errors Call</b>
+                <span class="sf-toolbar-status {%  if collector.errorLogs | length > 0 %}sf-toolbar-status-red{% endif  %}">{{ collector.errorLogs| length }}</span>
+            </div>
+
+                {% endset %}
+        {%  endif %}
 
     {{ include('@WebProfiler/Profiler/toolbar_item.html.twig') }}
 {% endblock %}
@@ -30,7 +50,7 @@
     <span class="label ">
         
         <span class="icon">
-        {% include('@AldafluxSireneApi/Collector/icons/insee.html.twig') %}
+        {% include('@AldafluxSireneApi/Collector/icons/sirene_on.html.twig') %}
         </span>
         <strong>Siren</strong>
             <span class="count">
@@ -55,10 +75,20 @@
     {% endif %}
 
     <h2>Siren</h2>
+    
+    {%  for log in collector.logs  %}
+        {{ dump(log) }}
+    {%  endfor %}
+    
           <div class="empty">
-            <p>There are no IDS logs .</p>
+            <p>There are no logs .</p>
          </div>
         
+    <div class="alert alert-danger">
+    {%  for log in collector.errorlogs  %}
+        {{ dump(log) }}
+    {%  endfor %}
+    </div>
 
                    
 </div>
