@@ -29,9 +29,6 @@ class SireneSiretService
     {
         $this->codeSiret=$codeSiret;
         $this->siretInfo=$this->sireneService->GetSiretInfo($this->codeSiret);
-        dump($this->siretInfo);
-        
-        
     }
     
     
