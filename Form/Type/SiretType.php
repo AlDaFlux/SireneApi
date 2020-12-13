@@ -18,7 +18,7 @@ class SiretType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['empty_data' => '','required'=>false, 'invalid_message'=>"Le SIRET n'est pas valide" ]);
+        $resolver->setDefaults(['empty_data' => '','paceholder' => '12345678911234','required'=>false, 'invalid_message'=>"Le SIRET n'est pas valide" ]);
     }
 
     public function getParent()
@@ -52,7 +52,7 @@ class SiretType extends AbstractType
                                     $privateErrorMessage = "Le Siret doit être composé de 14 chiffres";
                                     $publicErrorMessage = "Le Siret doit être composé de 14 chiffres";
                                     $failure = new TransformationFailedException($privateErrorMessage);
-                                    $failure->setInvalidMessage($publicErrorMessage, ['{{ value }}' => $issueNumber,]);
+                                    $failure->setInvalidMessage($publicErrorMessage, ['{{ value }}' => 6543243,]);
                                     throw $failure;
                             }
                         }
@@ -61,6 +61,7 @@ class SiretType extends AbstractType
                                     $privateErrorMessage = "Le SIRET doit être composé de chiffre";
                                     $publicErrorMessage = "Le SIRET doit être composé de chiffre";
                                     $failure = new TransformationFailedException($privateErrorMessage);
+                                    $failure->setInvalidMessage($publicErrorMessage, ['{{ value }}' => 564564,]);
                                     throw $failure;
                         }
                             

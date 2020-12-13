@@ -133,8 +133,14 @@ class SireneApiService
         $url="siret/".$siret."?masquerValeursNulles=true";
         //        $url="https://api.insee.fr/entreprises/sirene/V3/siret/".$siret."?masquerValeursNulles=true";
 
-        return($this->GetJson($url)->etablissement);
+        $result=$this->GetJson($url);
+        if (isset($result->etablissement))
+        {
+            return($result->etablissement);
+        }
     }
+    
+    
     function GetSirenInfo($siren)
     {
         $url="siren/".$siren."?masquerValeursNulles=true";
