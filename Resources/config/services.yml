@@ -13,6 +13,15 @@ services:
             $container: "@service_container"
     Aldaflux\SireneApiBundle\Service\SireneApiService: '@sirene-api.sirene_service'
 
+    sirene-api.sirene_siret_service:
+        class: Aldaflux\SireneApiBundle\Service\SireneSiretService
+        public: true
+        autowire: true
+        autoconfigure: true
+        arguments:
+            $sireneService: "@sirene-api.sirene_service"
+    Aldaflux\SireneApiBundle\Service\SireneSiretService: '@sirene-api.sirene_siret_service'
+
 
     sirene-api.data_collector:
         class: Aldaflux\SireneApiBundle\DataCollector\RequestCollector
