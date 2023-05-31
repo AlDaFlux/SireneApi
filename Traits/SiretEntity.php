@@ -9,25 +9,19 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 
-
-/**
- * Add siret 
- */
+ 
 trait SiretEntity
 {
 
     
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=14, unique=true, nullable=true)
-     * @Assert\Length(
-     *      min = 14,
-     *      max = 14,
-     *      minMessage = "Le code Finess doit être composé de 14 chiffres",
-     *      maxMessage = "Le code Finess doit être composé de 14 chiffres"
-     * )
-     */
+    
+    #[ORM\Column(name: 'siret', type: 'string', length: 14, unique:true, nullable:true)]
+    #[Assert\Length(
+        min: 14,
+        max: 14,
+        minMessage: 'Le code Siret doit être composé de 14 chiffres',
+        maxMessage: 'Le code Siret doit être composé de 14 chiffres',
+    )]    
     private $siret;
 
 
