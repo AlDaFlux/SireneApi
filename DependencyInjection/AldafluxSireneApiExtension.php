@@ -23,7 +23,7 @@ class AldafluxSireneApiExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
         
 
-        if ($config['credentials'])
+        if (isset($config['credentials']))
         {
             $container->setParameter('sirene_key', $config['credentials']["sirene_key"]);
             $container->setParameter('sirene_secret', $config['credentials']["sirene_secret"]);
