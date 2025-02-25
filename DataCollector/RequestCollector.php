@@ -21,7 +21,7 @@ class RequestCollector extends DataCollector implements DataCollectorInterface
     }   
     
     
-     public function collect(Request $request, Response $response, \Throwable $exception = null)
+     public function collect(Request $request, Response $response, \Throwable $exception = null) : void
     {
          if ($this->sireneApiService->GetUsed())
          {
@@ -45,12 +45,12 @@ class RequestCollector extends DataCollector implements DataCollectorInterface
          }
     }
 
-    public function reset()
+    public function reset() : void 
     {
         $this->data = [];
     }
    
-    public function getName()
+    public function getName() : string
     {
         return 'aldaflux_sirene_api.request_collector';
     }
