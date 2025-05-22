@@ -1,0 +1,96 @@
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block toolbar %}
+    {% set icon %}
+                        
+{#        {% set status = collector.invalidEntityCount > 0 ? 'red' : collector.querycount > 50 ? 'yellow' %} #}
+                        
+        {%  if collector.used %}
+            {% include('@AldafluxSireneApi/Collector/icons/sirene_on.html.twig') %}
+    
+            {%  if collector.errorLogs | length > 0 %}
+                {% set status = 'red'%} 
+            {%  else  %}
+                {% set status = 'green'%} 
+            {%  endif  %}
+            
+
+
+        {%  else %}
+            {% include('@AldafluxSireneApi/Collector/icons/sirene_off.html.twig') %}
+        {%  endif %}
+         <span class="sf-toolbar-value">SIRENE</span>
+        
+    {% endset %}
+
+        {%  if collector.used %}
+            {% set text %}
+            <div class="sf-toolbar-info-piece">
+                <b>Token</b>
+                <span>{{ collector.token}}</span>
+            </div>
+                            
+
+
+            <div class="sf-toolbar-info-piece">
+                <b>Errors Call</b>
+                <span class="sf-toolbar-status {%  if collector.errorLogs | length > 0 %}sf-toolbar-status-red{% endif  %}">{{ collector.errorLogs| length }}</span>
+            </div>
+
+                {% endset %}
+        {%  endif %}
+
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig') }}
+{% endblock %}
+
+
+{% block menu %}
+    {% set profiler_markup_version = profiler_markup_version|default(1) %}
+
+    <span class="label ">
+        
+        <span class="icon">
+        {% include('@AldafluxSireneApi/Collector/icons/sirene_on.html.twig') %}
+        </span>
+        <strong>Siren</strong>
+            <span class="count">
+                <span>{{collector.LogCount}}</span>
+            </span>
+    </span>
+{% endblock %}
+
+{% block panel %}
+    {% set profiler_markup_version = profiler_markup_version|default(1) %}
+
+    {% if profiler_markup_version == 1 %}
+        <style>
+            h3 { margin-top: 2em; }
+            h3 span { color: #999; font-weight: normal; }
+            h3 small { color: #999; }
+            h4 { font-size: 14px; font-weight: bold; }
+            .card { background: #F5F5F5; margin: .5em 0 1em; padding: .5em; }
+            .card .label { display: block; font-size: 13px; font-weight: bold; margin-bottom: .5em; }
+            .card .card-block { margin-bottom: 1em; }
+        </style>
+    {% endif %}
+
+    <h2>Siren</h2>
+    
+    {%  for log in collector.logs  %}
+        {{ dump(log) }}
+    {%  endfor %}
+    
+          <div class="empty">
+            <p>There are no logs .</p>
+         </div>
+        
+    <div class="alert alert-danger">
+    {%  for log in collector.errorlogs  %}
+        {{ dump(log) }}
+    {%  endfor %}
+    </div>
+
+                   
+</div>
+{% endblock %}
+

@@ -1,0 +1,15 @@
+{
+        "name": "aldaflux/sirene-api-bundle",
+        "type": "symfony-bundle",
+        "description": "Symfony Bundle pour l'API sirene ",
+        "keywords": ["api", "siren", "siret"],
+        "license": "GPL-3.0+",
+        "require": {
+            "php": ">=8.0.2",
+            "symfony/framework-bundle": ">=7.1"
+        },
+        "autoload": {
+            "psr-4": { "Aldaflux\\SireneApiBundle\\": "" }
+        },
+        "minimum-stability": "dev"
+    }
